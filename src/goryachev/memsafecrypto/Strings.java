@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-import java.util.ArrayList;
 import java.util.Vector;
 
 
@@ -318,62 +317,8 @@ public final class Strings
 	}
 
 
-	public static StringList newList()
-	{
-		return new StringListImpl();
-	}
-
-
 	public static String lineSeparator()
 	{
 		return LINE_SEPARATOR;
-	}
-
-	private static class StringListImpl
-		extends ArrayList<String>
-		implements StringList
-	{
-		public boolean add(String s)
-		{
-			return super.add(s);
-		}
-
-
-		public String set(int index, String element)
-		{
-			return super.set(index, element);
-		}
-
-
-		public void add(int index, String element)
-		{
-			super.add(index, element);
-		}
-
-
-		public String[] toStringArray()
-		{
-			String[] strs = new String[this.size()];
-
-			for(int i = 0; i != strs.length; i++)
-			{
-				strs[i] = this.get(i);
-			}
-
-			return strs;
-		}
-
-
-		public String[] toStringArray(int from, int to)
-		{
-			String[] strs = new String[to - from];
-
-			for(int i = from; i != this.size() && i != to; i++)
-			{
-				strs[i - from] = this.get(i);
-			}
-
-			return strs;
-		}
 	}
 }
