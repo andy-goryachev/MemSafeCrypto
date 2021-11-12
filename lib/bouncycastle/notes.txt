@@ -1,0 +1,7 @@
+﻿https://www.bouncycastle.org/latest_releases.html
+
+look under JCE with provider and lightweight API | Lightweight API 
+
+bcprov-jdk15on-*.jar    - binary
+lcrypto-jdk15on-*.zip   - sources
+
