@@ -1,23 +1,12 @@
+// Copyright © 2021 Andy Goryachev <andy@goryachev.com>
 package goryachev.memsafecrypto;
 
 
 /**
- * General array utilities.
+ * Utility methods.
  */
-public final class Arrays
+public class Utils
 {
-	public static void fill(byte[] a, byte val)
-	{
-		java.util.Arrays.fill(a, val);
-	}
-
-
-	public static void fill(long[] a, long val)
-	{
-		java.util.Arrays.fill(a, val);
-	}
-
-	
 	public static byte[] clone(byte[] data)
 	{
 		return null == data ? null : data.clone();

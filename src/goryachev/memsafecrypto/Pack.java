@@ -37,14 +37,6 @@ public abstract class Pack
 		return ns;
 	}
 
-	
-	public static byte[] intToLittleEndian(int n)
-	{
-		byte[] bs = new byte[4];
-		intToLittleEndian(n, bs, 0);
-		return bs;
-	}
-
 
 	public static void intToLittleEndian(int n, byte[] bs, int off)
 	{

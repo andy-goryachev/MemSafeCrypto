@@ -1,4 +1,5 @@
 package goryachev.memsafecrypto;
+import java.util.Arrays;
 
 
 /*  The BLAKE2 cryptographic hash function was designed by Jean-
@@ -121,13 +122,13 @@ public class Blake2bDigest
 	public Blake2bDigest(Blake2bDigest digest)
 	{
 		this.bufferPos = digest.bufferPos;
-		this.buffer = Arrays.clone(digest.buffer);
+		this.buffer = Utils.clone(digest.buffer);
 		this.keyLength = digest.keyLength;
-		this.key = Arrays.clone(digest.key);
+		this.key = Utils.clone(digest.key);
 		this.digestLength = digest.digestLength;
-		this.chainValue = Arrays.clone(digest.chainValue);
-		this.personalization = Arrays.clone(digest.personalization);
-		this.salt = Arrays.clone(digest.salt);
+		this.chainValue = Utils.clone(digest.chainValue);
+		this.personalization = Utils.clone(digest.personalization);
+		this.salt = Utils.clone(digest.salt);
 		this.t0 = digest.t0;
 		this.t1 = digest.t1;
 		this.f0 = digest.f0;
