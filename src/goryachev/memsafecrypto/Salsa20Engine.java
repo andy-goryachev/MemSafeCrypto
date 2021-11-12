@@ -14,18 +14,6 @@ public class Salsa20Engine
 
 	private final static int[] TAU_SIGMA = Pack.littleEndianToInt(Strings.toByteArray("expand 16-byte k" + "expand 32-byte k"), 0, 8);
 
-	protected void packTauOrSigma(int keyLength, int[] state, int stateOffset)
-	{
-		int tsOff = (keyLength - 16) / 4;
-		state[stateOffset] = TAU_SIGMA[tsOff];
-		state[stateOffset + 1] = TAU_SIGMA[tsOff + 1];
-		state[stateOffset + 2] = TAU_SIGMA[tsOff + 2];
-		state[stateOffset + 3] = TAU_SIGMA[tsOff + 3];
-	}
-
-	/** @deprecated */
-	protected final static byte[] sigma = Strings.toByteArray("expand 32-byte k"), tau = Strings.toByteArray("expand 16-byte k");
-
 	protected int rounds;
 
 	/*

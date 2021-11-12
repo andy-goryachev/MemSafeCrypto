@@ -8,6 +8,7 @@ public class Longs
 {
 	public static final int BYTES = Long.BYTES;
 	public static final int SIZE = Long.SIZE;
+	
 
 	public static int numberOfLeadingZeros(long i)
 	{
