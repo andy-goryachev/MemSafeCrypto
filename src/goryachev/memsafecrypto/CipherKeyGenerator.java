@@ -7,32 +7,33 @@ import java.security.SecureRandom;
  */
 public class CipherKeyGenerator
 {
-    protected SecureRandom  random;
-    protected int           strength;
+	protected SecureRandom random;
+	protected int strength;
 
-    /**
-     * initialise the key generator.
-     *
-     * @param param the parameters to be used for key generation
-     */
-    public void init(
-        KeyGenerationParameters param)
-    {
-        this.random = param.getRandom();
-        this.strength = (param.getStrength() + 7) / 8;
-    }
+	
+	/**
+	 * initialise the key generator.
+	 *
+	 * @param param the parameters to be used for key generation
+	 */
+	public void init(KeyGenerationParameters param)
+	{
+		this.random = param.getRandom();
+		this.strength = (param.getStrength() + 7) / 8;
+	}
 
-    /**
-     * generate a secret key.
-     *
-     * @return a byte array containing the key value.
-     */
-    public byte[] generateKey()
-    {
-        byte[]  key = new byte[strength];
 
-        random.nextBytes(key);
+	/**
+	 * generate a secret key.
+	 *
+	 * @return a byte array containing the key value.
+	 */
+	public byte[] generateKey()
+	{
+		byte[] key = new byte[strength];
 
-        return key;
-    }
+		random.nextBytes(key);
+
+		return key;
+	}
 }

@@ -2,28 +2,26 @@ package goryachev.memsafecrypto;
 
 
 public class KeyParameter
-    implements CipherParameters
+	implements CipherParameters
 {
-    private byte[]  key;
+	private byte[] key;
 
-    public KeyParameter(
-        byte[]  key)
-    {
-        this(key, 0, key.length);
-    }
+	public KeyParameter(byte[] key)
+	{
+		this(key, 0, key.length);
+	}
 
-    public KeyParameter(
-        byte[]  key,
-        int     keyOff,
-        int     keyLen)
-    {
-        this.key = new byte[keyLen];
 
-        System.arraycopy(key, keyOff, this.key, 0, keyLen);
-    }
+	public KeyParameter(byte[] key, int keyOff, int keyLen)
+	{
+		this.key = new byte[keyLen];
 
-    public byte[] getKey()
-    {
-        return key;
-    }
+		System.arraycopy(key, keyOff, this.key, 0, keyLen);
+	}
+
+
+	public byte[] getKey()
+	{
+		return key;
+	}
 }

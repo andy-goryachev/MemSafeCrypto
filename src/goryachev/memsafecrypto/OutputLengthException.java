@@ -2,10 +2,10 @@ package goryachev.memsafecrypto;
 
 
 public class OutputLengthException
-    extends DataLengthException
+	extends DataLengthException
 {
-    public OutputLengthException(String msg)
-    {
-        super(msg);
-    }
+	public OutputLengthException(String msg)
+	{
+		super(msg);
+	}
 }

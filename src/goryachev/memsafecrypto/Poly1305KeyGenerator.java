@@ -15,101 +15,106 @@ import org.bouncycastle.crypto.macs.Poly1305;
  * @see Poly1305
  */
 public class Poly1305KeyGenerator
-    extends CipherKeyGenerator
+	extends CipherKeyGenerator
 {
-    private static final byte R_MASK_LOW_2 = (byte)0xFC;
-    private static final byte R_MASK_HIGH_4 = (byte)0x0F;
+	private static final byte R_MASK_LOW_2 = (byte)0xFC;
+	private static final byte R_MASK_HIGH_4 = (byte)0x0F;
+	
 
-    /**
-     * Initialises the key generator.<br>
-     * Poly1305 keys are always 256 bits, so the key length in the provided parameters is ignored.
-     */
-    public void init(KeyGenerationParameters param)
-    {
-        // Poly1305 keys are always 256 bits
-        super.init(new KeyGenerationParameters(param.getRandom(), 256));
-    }
+	/**
+	 * Initialises the key generator.<br>
+	 * Poly1305 keys are always 256 bits, so the key length in the provided parameters is ignored.
+	 */
+	public void init(KeyGenerationParameters param)
+	{
+		// Poly1305 keys are always 256 bits
+		super.init(new KeyGenerationParameters(param.getRandom(), 256));
+	}
 
-    /**
-     * Generates a 256 bit key in the format required for Poly1305 - e.g.
-     * <code>k[0] ... k[15], r[0] ... r[15]</code> with the required bits in <code>r</code> cleared
-     * as per {@link #clamp(byte[])}.
-     */
-    public byte[] generateKey()
-    {
-        final byte[] key = super.generateKey();
-        clamp(key);
-        return key;
-    }
 
-    /**
-     * Modifies an existing 32 byte key value to comply with the requirements of the Poly1305 key by
-     * clearing required bits in the <code>r</code> (second 16 bytes) portion of the key.<br>
-     * Specifically:
-     * <ul>
-     * <li>r[3], r[7], r[11], r[15] have top four bits clear (i.e., are {0, 1, . . . , 15})</li>
-     * <li>r[4], r[8], r[12] have bottom two bits clear (i.e., are in {0, 4, 8, . . . , 252})</li>
-     * </ul>
-     *
-     * @param key a 32 byte key value <code>k[0] ... k[15], r[0] ... r[15]</code>
-     */
-    public static void clamp(byte[] key)
-    {
-        /*
-         * Key is k[0] ... k[15], r[0] ... r[15] as per poly1305_aes_clamp in ref impl.
-         */
-        if (key.length != 32)
-        {
-            throw new IllegalArgumentException("Poly1305 key must be 256 bits.");
-        }
+	/**
+	 * Generates a 256 bit key in the format required for Poly1305 - e.g.
+	 * <code>k[0] ... k[15], r[0] ... r[15]</code> with the required bits in <code>r</code> cleared
+	 * as per {@link #clamp(byte[])}.
+	 */
+	public byte[] generateKey()
+	{
+		final byte[] key = super.generateKey();
+		clamp(key);
+		return key;
+	}
 
-        /*
-         * r[3], r[7], r[11], r[15] have top four bits clear (i.e., are {0, 1, . . . , 15})
-         */
-        key[3] &= R_MASK_HIGH_4;
-        key[7] &= R_MASK_HIGH_4;
-        key[11] &= R_MASK_HIGH_4;
-        key[15] &= R_MASK_HIGH_4;
 
-        /*
-         * r[4], r[8], r[12] have bottom two bits clear (i.e., are in {0, 4, 8, . . . , 252}).
-         */
-        key[4] &= R_MASK_LOW_2;
-        key[8] &= R_MASK_LOW_2;
-        key[12] &= R_MASK_LOW_2;
-    }
+	/**
+	 * Modifies an existing 32 byte key value to comply with the requirements of the Poly1305 key by
+	 * clearing required bits in the <code>r</code> (second 16 bytes) portion of the key.<br>
+	 * Specifically:
+	 * <ul>
+	 * <li>r[3], r[7], r[11], r[15] have top four bits clear (i.e., are {0, 1, . . . , 15})</li>
+	 * <li>r[4], r[8], r[12] have bottom two bits clear (i.e., are in {0, 4, 8, . . . , 252})</li>
+	 * </ul>
+	 *
+	 * @param key a 32 byte key value <code>k[0] ... k[15], r[0] ... r[15]</code>
+	 */
+	public static void clamp(byte[] key)
+	{
+		/*
+		 * Key is k[0] ... k[15], r[0] ... r[15] as per poly1305_aes_clamp in ref impl.
+		 */
+		if(key.length != 32)
+		{
+			throw new IllegalArgumentException("Poly1305 key must be 256 bits.");
+		}
 
-    /**
-     * Checks a 32 byte key for compliance with the Poly1305 key requirements, e.g.
-     * <code>k[0] ... k[15], r[0] ... r[15]</code> with the required bits in <code>r</code> cleared
-     * as per {@link #clamp(byte[])}.
-     *
-     * @throws IllegalArgumentException if the key is of the wrong length, or has invalid bits set
-     *             in the <code>r</code> portion of the key.
-     */
-    public static void checkKey(byte[] key)
-    {
-        if (key.length != 32)
-        {
-            throw new IllegalArgumentException("Poly1305 key must be 256 bits.");
-        }
+		/*
+		 * r[3], r[7], r[11], r[15] have top four bits clear (i.e., are {0, 1, . . . , 15})
+		 */
+		key[3] &= R_MASK_HIGH_4;
+		key[7] &= R_MASK_HIGH_4;
+		key[11] &= R_MASK_HIGH_4;
+		key[15] &= R_MASK_HIGH_4;
 
-        checkMask(key[3], R_MASK_HIGH_4);
-        checkMask(key[7], R_MASK_HIGH_4);
-        checkMask(key[11], R_MASK_HIGH_4);
-        checkMask(key[15], R_MASK_HIGH_4);
+		/*
+		 * r[4], r[8], r[12] have bottom two bits clear (i.e., are in {0, 4, 8, . . . , 252}).
+		 */
+		key[4] &= R_MASK_LOW_2;
+		key[8] &= R_MASK_LOW_2;
+		key[12] &= R_MASK_LOW_2;
+	}
 
-        checkMask(key[4], R_MASK_LOW_2);
-        checkMask(key[8], R_MASK_LOW_2);
-        checkMask(key[12], R_MASK_LOW_2);
-    }
 
-    private static void checkMask(byte b, byte mask)
-    {
-        if ((b & (~mask)) != 0)
-        {
-            throw new IllegalArgumentException("Invalid format for r portion of Poly1305 key.");
-        }
-    }
+	/**
+	 * Checks a 32 byte key for compliance with the Poly1305 key requirements, e.g.
+	 * <code>k[0] ... k[15], r[0] ... r[15]</code> with the required bits in <code>r</code> cleared
+	 * as per {@link #clamp(byte[])}.
+	 *
+	 * @throws IllegalArgumentException if the key is of the wrong length, or has invalid bits set
+	 *             in the <code>r</code> portion of the key.
+	 */
+	public static void checkKey(byte[] key)
+	{
+		if(key.length != 32)
+		{
+			throw new IllegalArgumentException("Poly1305 key must be 256 bits.");
+		}
+
+		checkMask(key[3], R_MASK_HIGH_4);
+		checkMask(key[7], R_MASK_HIGH_4);
+		checkMask(key[11], R_MASK_HIGH_4);
+		checkMask(key[15], R_MASK_HIGH_4);
+
+		checkMask(key[4], R_MASK_LOW_2);
+		checkMask(key[8], R_MASK_LOW_2);
+		checkMask(key[12], R_MASK_LOW_2);
+	}
+
+
+	private static void checkMask(byte b, byte mask)
+	{
+		if((b & (~mask)) != 0)
+		{
+			throw new IllegalArgumentException("Invalid format for r portion of Poly1305 key.");
+		}
+	}
 
 }

@@ -7,24 +7,24 @@ package goryachev.memsafecrypto;
  * insufficient input. In general this exception will get thrown rather
  * than an ArrayOutOfBounds exception.
  */
-public class DataLengthException 
-    extends RuntimeCryptoException
+public class DataLengthException
+	extends RuntimeCryptoException
 {
-    /**
-     * base constructor.
-     */
-    public DataLengthException()
-    {
-    }
+	/**
+	 * base constructor.
+	 */
+	public DataLengthException()
+	{
+	}
 
-    /**
-     * create a DataLengthException with the given message.
-     *
-     * @param message the message to be carried with the exception.
-     */
-    public DataLengthException(
-        String  message)
-    {
-        super(message);
-    }
+
+	/**
+	 * create a DataLengthException with the given message.
+	 *
+	 * @param message the message to be carried with the exception.
+	 */
+	public DataLengthException(String message)
+	{
+		super(message);
+	}
 }
