@@ -262,16 +262,16 @@ public class Blake2bDigest
 			chainValue[5] = blake2b_IV[5];
 			if(salt != null)
 			{
-				chainValue[4] ^= Pack.littleEndianToLong(salt, 0);
-				chainValue[5] ^= Pack.littleEndianToLong(salt, 8);
+				chainValue[4] ^= Utils.littleEndianToLong(salt, 0);
+				chainValue[5] ^= Utils.littleEndianToLong(salt, 8);
 			}
 
 			chainValue[6] = blake2b_IV[6];
 			chainValue[7] = blake2b_IV[7];
 			if(personalization != null)
 			{
-				chainValue[6] ^= Pack.littleEndianToLong(personalization, 0);
-				chainValue[7] ^= Pack.littleEndianToLong(personalization, 8);
+				chainValue[6] ^= Utils.littleEndianToLong(personalization, 0);
+				chainValue[7] ^= Utils.littleEndianToLong(personalization, 8);
 			}
 		}
 	}
@@ -405,7 +405,7 @@ public class Blake2bDigest
 
 		for(int i = 0; i < chainValue.length && (i * 8 < digestLength); i++)
 		{
-			byte[] bytes = Pack.longToLittleEndian(chainValue[i]);
+			byte[] bytes = Utils.longToLittleEndian(chainValue[i]);
 
 			if(i * 8 < digestLength - 8)
 			{
@@ -454,7 +454,7 @@ public class Blake2bDigest
 		long[] m = new long[16];
 		for(int j = 0; j < 16; j++)
 		{
-			m[j] = Pack.littleEndianToLong(message, messagePos + j * 8);
+			m[j] = Utils.littleEndianToLong(message, messagePos + j * 8);
 		}
 
 		for(int round = 0; round < ROUNDS; round++)
@@ -483,13 +483,13 @@ public class Blake2bDigest
 	private void G(long m1, long m2, int posA, int posB, int posC, int posD)
 	{
 		internalState[posA] = internalState[posA] + internalState[posB] + m1;
-		internalState[posD] = Longs.rotateRight(internalState[posD] ^ internalState[posA], 32);
+		internalState[posD] = Long.rotateRight(internalState[posD] ^ internalState[posA], 32);
 		internalState[posC] = internalState[posC] + internalState[posD];
-		internalState[posB] = Longs.rotateRight(internalState[posB] ^ internalState[posC], 24); // replaces 25 of BLAKE
+		internalState[posB] = Long.rotateRight(internalState[posB] ^ internalState[posC], 24); // replaces 25 of BLAKE
 		internalState[posA] = internalState[posA] + internalState[posB] + m2;
-		internalState[posD] = Longs.rotateRight(internalState[posD] ^ internalState[posA], 16);
+		internalState[posD] = Long.rotateRight(internalState[posD] ^ internalState[posA], 16);
 		internalState[posC] = internalState[posC] + internalState[posD];
-		internalState[posB] = Longs.rotateRight(internalState[posB] ^ internalState[posC], 63); // replaces 11 of BLAKE
+		internalState[posB] = Long.rotateRight(internalState[posB] ^ internalState[posC], 63); // replaces 11 of BLAKE
 	}
 
 

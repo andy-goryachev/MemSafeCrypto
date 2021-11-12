@@ -12,7 +12,7 @@ public class Salsa20Engine
 	/** Constants */
 	private final static int STATE_SIZE = 16; // 16, 32 bit ints = 64 bytes
 
-	private final static int[] TAU_SIGMA = Pack.littleEndianToInt(Strings.toByteArray("expand 16-byte k" + "expand 32-byte k"), 0, 8);
+	private final static int[] TAU_SIGMA = Utils.littleEndianToInt(Utils.toByteArray("expand 16-byte k" + "expand 32-byte k"), 0, 8);
 
 	protected int rounds;
 
@@ -371,19 +371,19 @@ public class Salsa20Engine
 			engineState[15] = TAU_SIGMA[tsOff + 3];
 
 			// Key
-			Pack.littleEndianToInt(keyBytes, 0, engineState, 1, 4);
-			Pack.littleEndianToInt(keyBytes, keyBytes.length - 16, engineState, 11, 4);
+			Utils.littleEndianToInt(keyBytes, 0, engineState, 1, 4);
+			Utils.littleEndianToInt(keyBytes, keyBytes.length - 16, engineState, 11, 4);
 		}
 
 		// IV
-		Pack.littleEndianToInt(ivBytes, 0, engineState, 6, 2);
+		Utils.littleEndianToInt(ivBytes, 0, engineState, 6, 2);
 	}
 
 
 	protected void generateKeyStream(byte[] output)
 	{
 		salsaCore(rounds, engineState, x);
-		Pack.intToLittleEndian(x, output, 0);
+		Utils.intToLittleEndian(x, output, 0);
 	}
 
 
