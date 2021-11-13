@@ -1,4 +1,5 @@
-package goryachev.memsafecrypto;
+package goryachev.memsafecrypto.bc;
+import goryachev.memsafecrypto.ICryptoZeroable;
 
 
 /**
@@ -14,7 +15,7 @@ package goryachev.memsafecrypto;
  * @see Poly1305KeyGenerator
  */
 public class Poly1305
-	implements Mac
+	implements Mac, ICryptoZeroable
 {
 	private static final int BLOCK_SIZE = 16;
 
@@ -324,5 +325,11 @@ public class Poly1305
 	private static final long mul32x32_64(int i1, int i2)
 	{
 		return (i1 & 0xFFFFFFFFL) * i2;
+	}
+	
+	
+	public final void zero()
+	{
+		// TODO
 	}
 }

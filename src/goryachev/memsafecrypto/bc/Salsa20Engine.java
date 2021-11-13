@@ -1,11 +1,12 @@
-package goryachev.memsafecrypto;
+package goryachev.memsafecrypto.bc;
+import goryachev.memsafecrypto.ICryptoZeroable;
 
 
 /**
  * Implementation of Daniel J. Bernstein's Salsa20 stream cipher, Snuffle 2005
  */
 public class Salsa20Engine
-	implements SkippingStreamCipher
+	implements SkippingStreamCipher, ICryptoZeroable
 {
 	public final static int DEFAULT_ROUNDS = 20;
 
@@ -517,5 +518,11 @@ public class Salsa20Engine
 		}
 
 		return false;
+	}
+	
+	
+	public void zero()
+	{
+		// TODO
 	}
 }

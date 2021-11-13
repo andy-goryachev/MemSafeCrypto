@@ -2,6 +2,7 @@
 package goryachev.crypto;
 import goryachev.common.log.Log;
 import goryachev.common.util.CKit;
+import goryachev.memsafecrypto.ICryptoZeroable;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
@@ -31,6 +32,19 @@ import org.bouncycastle.crypto.signers.RSADigestSigner;
 public class Crypto
 {
 	protected static final Log log = Log.get("Crypto");
+	
+	
+	public static void zero(ICryptoZeroable z)
+	{
+		try
+		{
+			z.zero();
+		}
+		catch(Throwable e)
+		{
+			log.error(e);
+		}
+	}
 	
 	
 	public static void zero(CipherParameters p)

@@ -1,8 +1,9 @@
-package goryachev.memsafecrypto;
+package goryachev.memsafecrypto.bc;
+import goryachev.memsafecrypto.ICryptoZeroable;
 
 
 public class KeyParameter
-	implements CipherParameters
+	implements CipherParameters, ICryptoZeroable
 {
 	private byte[] key;
 
@@ -23,5 +24,11 @@ public class KeyParameter
 	public byte[] getKey()
 	{
 		return key;
+	}
+	
+	
+	public void zero()
+	{
+		// TODO
 	}
 }

@@ -1,4 +1,4 @@
-package goryachev.memsafecrypto;
+package goryachev.memsafecrypto.bc;
 import java.security.SecureRandom;
 
 

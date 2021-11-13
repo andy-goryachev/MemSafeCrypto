@@ -1,5 +1,5 @@
 // Copyright © 2021 Andy Goryachev <andy@goryachev.com>
-package goryachev.memsafecrypto;
+package goryachev.memsafecrypto.bc;
 
 
 /**
