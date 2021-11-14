@@ -20,7 +20,7 @@ public class DirectArrayBase
 	
 	protected DirectArrayBase(DirectArrayBase src)
 	{
-		int sz = src.size();
+		int sz = src.sizeInBytes();
 		buffer = ByteBuffer.allocateDirect(sz);
 		
 		// copy without affecting the source buffer position
@@ -30,9 +30,21 @@ public class DirectArrayBase
 			buffer.put(i, v);
 		}
 	}
+	
+	
+	protected void copyBytes(int index, DirectArrayBase src, int srcOffset, int srcLength)
+	{
+		// TODO validate input
+		
+		for(int i=0; i<srcLength; i++)
+		{
+			byte v = src.buffer.get(srcOffset + i);
+			buffer.put(index + i, v);
+		}
+	}
 
 	
-	public int size()
+	protected int sizeInBytes()
 	{
 		return buffer.capacity();
 	}
@@ -40,7 +52,7 @@ public class DirectArrayBase
 
 	public void zero()
 	{
-		int sz = size();
+		int sz = sizeInBytes();
 		byte[] b = new byte[sz];
 		buffer.put(b, 0, sz);
 	}

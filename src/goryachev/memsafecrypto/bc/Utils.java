@@ -1,6 +1,8 @@
 // Copyright © 2021 Andy Goryachev <andy@goryachev.com>
 package goryachev.memsafecrypto.bc;
 
+import goryachev.memsafecrypto.ByteArray;
+import goryachev.memsafecrypto.IntArray;
 
 /**
  * Utility methods.
@@ -42,6 +44,16 @@ public final class Utils
 		n |= bs[++off] << 24;
 		return n;
 	}
+	
+	
+	public static int littleEndianToInt(ByteArray b, int off)
+	{
+		int n = b.get(off) & 0xff;
+		n |= (b.get(++off) & 0xff) << 8;
+		n |= (b.get(++off) & 0xff) << 16;
+		n |= b.get(++off) << 24;
+		return n;
+	}
 
 	
 	public static void littleEndianToInt(byte[] bs, int bOff, int[] ns, int nOff, int count)
@@ -52,8 +64,18 @@ public final class Utils
 			bOff += 4;
 		}
 	}
-
-
+	
+	
+	public static void littleEndianToInt(ByteArray bs, int bOff, IntArray ns, int nOff, int count)
+	{
+		for(int i = 0; i < count; ++i)
+		{
+			ns.set(nOff + i, littleEndianToInt(bs, bOff));
+			bOff += 4;
+		}
+	}
+	
+	
 	public static int[] littleEndianToInt(byte[] bs, int off, int count)
 	{
 		int[] ns = new int[count];
@@ -73,6 +95,15 @@ public final class Utils
 		bs[++off] = (byte)(n >>> 16);
 		bs[++off] = (byte)(n >>> 24);
 	}
+	
+	
+	public static void intToLittleEndian(int n, ByteArray bs, int off)
+	{
+		bs.set(off, (byte)(n));
+		bs.set(++off, (byte)(n >>> 8));
+		bs.set(++off, (byte)(n >>> 16));
+		bs.set(++off, (byte)(n >>> 24));
+	}
 
 
 	public static void intToLittleEndian(int[] ns, byte[] bs, int off)
@@ -80,6 +111,16 @@ public final class Utils
 		for(int i = 0; i < ns.length; ++i)
 		{
 			intToLittleEndian(ns[i], bs, off);
+			off += 4;
+		}
+	}
+	
+	
+	public static void intToLittleEndian(IntArray ns, ByteArray b, int off)
+	{
+		for(int i = 0; i < ns.length(); ++i)
+		{
+			intToLittleEndian(ns.get(i), b, off);
 			off += 4;
 		}
 	}

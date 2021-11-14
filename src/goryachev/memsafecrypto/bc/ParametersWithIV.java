@@ -1,10 +1,11 @@
 package goryachev.memsafecrypto.bc;
+import goryachev.memsafecrypto.ByteArray;
 
 
 public class ParametersWithIV
 	implements CipherParameters
 {
-	private byte[] iv;
+	private ByteArray iv;
 	private CipherParameters parameters;
 	
 
@@ -16,14 +17,12 @@ public class ParametersWithIV
 
 	public ParametersWithIV(CipherParameters parameters, byte[] iv, int ivOff, int ivLen)
 	{
-		this.iv = new byte[ivLen];
+		this.iv = ByteArray.readOnly(iv, ivOff, ivLen);  
 		this.parameters = parameters;
-
-		System.arraycopy(iv, ivOff, this.iv, 0, ivLen);
 	}
 
 
-	public byte[] getIV()
+	public ByteArray getIV()
 	{
 		return iv;
 	}

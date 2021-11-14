@@ -25,32 +25,74 @@ public final class ByteArray
 	}
 	
 	
+	public int length()
+	{
+		return sizeInBytes();
+	}
+	
+	
 	public void setReadOnly()
 	{
 		readonly = true;
 	}
 
 	
-	public byte get(int ix)
+	public byte get(int index)
 	{
-		return buffer.get(ix);
+		return buffer.get(index);
 	}
 	
 	
-	public void set(int ix, byte value)
+	public void set(int index, byte value)
 	{
 		if(readonly)
 		{
 			throw new Error("read-only");
 		}
 		
-		buffer.put(ix, value);
+		buffer.put(index, value);
 	}
 	
 	
-	public ByteArray readOnlyArray()
+	public void set(int index, byte[] src, int offset, int len)
+	{
+		if(readonly)
+		{
+			throw new Error("read-only");
+		}
+		
+		buffer.position(index);
+		buffer.put(src, offset, len);
+	}
+	
+	
+	public ByteArray toReadOnly()
 	{
 		ByteArray b = new ByteArray(this);
+		b.setReadOnly();
+		return b;
+	}
+	
+	
+	public ByteArray toReadOnly(int offset, int length)
+	{
+		ByteArray b = new ByteArray(length);
+		b.copyBytes(0, this, offset, length);
+		b.setReadOnly();
+		return b;
+	}
+	
+	
+	public static ByteArray readOnly(byte[] src)
+	{
+		return readOnly(src, 0, src.length);
+	}
+	
+	
+	public static ByteArray readOnly(byte[] src, int offset, int len)
+	{
+		ByteArray b = new ByteArray(len);
+		b.set(0, src, offset, len);
 		b.setReadOnly();
 		return b;
 	}

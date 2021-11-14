@@ -1,5 +1,7 @@
 package goryachev.memsafecrypto.bc;
+import goryachev.memsafecrypto.ByteArray;
 import goryachev.memsafecrypto.ICryptoZeroable;
+import goryachev.memsafecrypto.IntArray;
 
 
 /**
@@ -22,9 +24,9 @@ public class Salsa20Engine
 	 * during encryption and decryption
 	 */
 	private int index = 0;
-	protected int[] engineState = new int[STATE_SIZE]; // state
-	protected int[] x = new int[STATE_SIZE]; // internal buffer
-	private byte[] keyStream = new byte[STATE_SIZE * 4]; // expanded state, 64 bytes
+	protected IntArray engineState = new IntArray(STATE_SIZE); // state
+	protected IntArray x = new IntArray(STATE_SIZE); // internal buffer
+	private ByteArray keyStream = new ByteArray(STATE_SIZE * 4); // expanded state, 64 bytes
 	private boolean initialised = false;
 
 	/*
@@ -80,8 +82,8 @@ public class Salsa20Engine
 
 		ParametersWithIV ivParams = (ParametersWithIV)params;
 
-		byte[] iv = ivParams.getIV();
-		if(iv == null || iv.length != getNonceSize())
+		ByteArray iv = ivParams.getIV();
+		if(iv == null || iv.length() != getNonceSize())
 		{
 			throw new IllegalArgumentException(getAlgorithmName() + " requires exactly " + getNonceSize() + " bytes of IV");
 		}
@@ -135,7 +137,7 @@ public class Salsa20Engine
 			throw new MaxBytesExceededException("2^70 byte limit per IV; Change IV");
 		}
 
-		byte out = (byte)(keyStream[index] ^ in);
+		byte out = (byte)(keyStream.get(index) ^ in);
 		index = (index + 1) & 63;
 
 		if(index == 0)
@@ -155,25 +157,25 @@ public class Salsa20Engine
 
 		if(hi > 0)
 		{
-			engineState[9] += hi;
+			engineState.add(9, hi);
 		}
 
-		int oldState = engineState[8];
+		int oldState = engineState.get(8);
 
-		engineState[8] += lo;
+		engineState.add(8, lo);
 
-		if(oldState != 0 && engineState[8] < oldState)
+		if(oldState != 0 && engineState.get(8) < oldState)
 		{
-			engineState[9]++;
+			engineState.increment(9);
 		}
 	}
 
 
 	protected void advanceCounter()
 	{
-		if(++engineState[8] == 0)
+		if(engineState.incrementAndGet(8) == 0)
 		{
-			++engineState[9];
+			engineState.increment(9);
 		}
 	}
 
@@ -185,9 +187,9 @@ public class Salsa20Engine
 
 		if(hi != 0)
 		{
-			if((engineState[9] & 0xffffffffL) >= (hi & 0xffffffffL))
+			if((engineState.get(9) & 0xffffffffL) >= (hi & 0xffffffffL))
 			{
-				engineState[9] -= hi;
+				engineState.subtract(9, hi);
 			}
 			else
 			{
@@ -195,16 +197,16 @@ public class Salsa20Engine
 			}
 		}
 
-		if((engineState[8] & 0xffffffffL) >= (lo & 0xffffffffL))
+		if((engineState.get(8) & 0xffffffffL) >= (lo & 0xffffffffL))
 		{
-			engineState[8] -= lo;
+			engineState.subtract(8, lo);
 		}
 		else
 		{
-			if(engineState[9] != 0)
+			if(engineState.get(9) != 0)
 			{
-				--engineState[9];
-				engineState[8] -= lo;
+				engineState.decrement(9);
+				engineState.subtract(8, lo);
 			}
 			else
 			{
@@ -216,14 +218,14 @@ public class Salsa20Engine
 
 	protected void retreatCounter()
 	{
-		if(engineState[8] == 0 && engineState[9] == 0)
+		if(engineState.get(8) == 0 && engineState.get(9) == 0)
 		{
 			throw new IllegalStateException("attempt to reduce counter past zero.");
 		}
 
-		if(--engineState[8] == -1)
+		if(engineState.decrementAndGet(8) == -1)
 		{
-			--engineState[9];
+			engineState.decrement(9);
 		}
 	}
 
@@ -252,7 +254,7 @@ public class Salsa20Engine
 
 		for(int i = 0; i < len; i++)
 		{
-			out[i + outOff] = (byte)(keyStream[index] ^ in[i + inOff]);
+			out[i + outOff] = (byte)(keyStream.get(index) ^ in[i + inOff]);
 			index = (index + 1) & 63;
 
 			if(index == 0)
@@ -346,34 +348,35 @@ public class Salsa20Engine
 
 	protected long getCounter()
 	{
-		return ((long)engineState[9] << 32) | (engineState[8] & 0xffffffffL);
+		return ((long)engineState.get(9) << 32) | (engineState.get(8) & 0xffffffffL);
 	}
 
 
 	protected void resetCounter()
 	{
-		engineState[8] = engineState[9] = 0;
+		engineState.set(8, 0);
+		engineState.set(9, 0);
 	}
 
 
-	protected void setKey(byte[] keyBytes, byte[] ivBytes)
+	protected void setKey(ByteArray keyBytes, ByteArray ivBytes)
 	{
 		if(keyBytes != null)
 		{
-			if((keyBytes.length != 16) && (keyBytes.length != 32))
+			if((keyBytes.length() != 16) && (keyBytes.length() != 32))
 			{
 				throw new IllegalArgumentException(getAlgorithmName() + " requires 128 bit or 256 bit key");
 			}
 
-			int tsOff = (keyBytes.length - 16) / 4;
-			engineState[0] = TAU_SIGMA[tsOff];
-			engineState[5] = TAU_SIGMA[tsOff + 1];
-			engineState[10] = TAU_SIGMA[tsOff + 2];
-			engineState[15] = TAU_SIGMA[tsOff + 3];
+			int tsOff = (keyBytes.length() - 16) / 4;
+			engineState.set(0, TAU_SIGMA[tsOff]);
+			engineState.set(5, TAU_SIGMA[tsOff + 1]);
+			engineState.set(10, TAU_SIGMA[tsOff + 2]);
+			engineState.set(15, TAU_SIGMA[tsOff + 3]);
 
 			// Key
 			Utils.littleEndianToInt(keyBytes, 0, engineState, 1, 4);
-			Utils.littleEndianToInt(keyBytes, keyBytes.length - 16, engineState, 11, 4);
+			Utils.littleEndianToInt(keyBytes, keyBytes.length() - 16, engineState, 11, 4);
 		}
 
 		// IV
@@ -381,7 +384,7 @@ public class Salsa20Engine
 	}
 
 
-	protected void generateKeyStream(byte[] output)
+	protected void generateKeyStream(ByteArray output)
 	{
 		salsaCore(rounds, engineState, x);
 		Utils.intToLittleEndian(x, output, 0);
@@ -393,13 +396,13 @@ public class Salsa20Engine
 	 *
 	 * @param   input   input data
 	 */
-	public static void salsaCore(int rounds, int[] input, int[] x)
+	public static void salsaCore(int rounds, IntArray input, IntArray x)
 	{
-		if(input.length != 16)
+		if(input.length() != 16)
 		{
 			throw new IllegalArgumentException();
 		}
-		if(x.length != 16)
+		if(x.length() != 16)
 		{
 			throw new IllegalArgumentException();
 		}
@@ -408,22 +411,22 @@ public class Salsa20Engine
 			throw new IllegalArgumentException("Number of rounds must be even");
 		}
 
-		int x00 = input[0];
-		int x01 = input[1];
-		int x02 = input[2];
-		int x03 = input[3];
-		int x04 = input[4];
-		int x05 = input[5];
-		int x06 = input[6];
-		int x07 = input[7];
-		int x08 = input[8];
-		int x09 = input[9];
-		int x10 = input[10];
-		int x11 = input[11];
-		int x12 = input[12];
-		int x13 = input[13];
-		int x14 = input[14];
-		int x15 = input[15];
+		int x00 = input.get(0);
+		int x01 = input.get(1);
+		int x02 = input.get(2);
+		int x03 = input.get(3);
+		int x04 = input.get(4);
+		int x05 = input.get(5);
+		int x06 = input.get(6);
+		int x07 = input.get(7);
+		int x08 = input.get(8);
+		int x09 = input.get(9);
+		int x10 = input.get(10);
+		int x11 = input.get(11);
+		int x12 = input.get(12);
+		int x13 = input.get(13);
+		int x14 = input.get(14);
+		int x15 = input.get(15);
 
 		for(int i = rounds; i > 0; i -= 2)
 		{
@@ -462,22 +465,22 @@ public class Salsa20Engine
 			x15 ^= Integer.rotateLeft(x14 + x13, 18);
 		}
 
-		x[0] = x00 + input[0];
-		x[1] = x01 + input[1];
-		x[2] = x02 + input[2];
-		x[3] = x03 + input[3];
-		x[4] = x04 + input[4];
-		x[5] = x05 + input[5];
-		x[6] = x06 + input[6];
-		x[7] = x07 + input[7];
-		x[8] = x08 + input[8];
-		x[9] = x09 + input[9];
-		x[10] = x10 + input[10];
-		x[11] = x11 + input[11];
-		x[12] = x12 + input[12];
-		x[13] = x13 + input[13];
-		x[14] = x14 + input[14];
-		x[15] = x15 + input[15];
+		x.set(0, x00 + input.get(0));
+		x.set(1, x01 + input.get(1));
+		x.set(2, x02 + input.get(2));
+		x.set(3, x03 + input.get(3));
+		x.set(4, x04 + input.get(4));
+		x.set(5, x05 + input.get(5));
+		x.set(6, x06 + input.get(6));
+		x.set(7, x07 + input.get(7));
+		x.set(8, x08 + input.get(8));
+		x.set(9, x09 + input.get(9));
+		x.set(10, x10 + input.get(10));
+		x.set(11, x11 + input.get(11));
+		x.set(12, x12 + input.get(12));
+		x.set(13, x13 + input.get(13));
+		x.set(14, x14 + input.get(14));
+		x.set(15, x15 + input.get(15));
 	}
 
 

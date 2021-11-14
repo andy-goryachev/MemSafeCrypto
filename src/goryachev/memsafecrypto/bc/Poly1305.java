@@ -1,4 +1,5 @@
 package goryachev.memsafecrypto.bc;
+import goryachev.memsafecrypto.ByteArray;
 import goryachev.memsafecrypto.ICryptoZeroable;
 
 
@@ -78,7 +79,7 @@ public class Poly1305
 	 */
 	public void init(CipherParameters params) throws IllegalArgumentException
 	{
-		byte[] nonce = null;
+		ByteArray nonce = null;
 
 		if(cipher != null)
 		{
@@ -105,13 +106,13 @@ public class Poly1305
 	}
 
 
-	private void setKey(final byte[] key, final byte[] nonce)
+	private void setKey(ByteArray key, ByteArray nonce)
 	{
-		if(key.length != 32)
+		if(key.length() != 32)
 		{
 			throw new IllegalArgumentException("Poly1305 key must be 256 bits.");
 		}
-		if(cipher != null && (nonce == null || nonce.length != BLOCK_SIZE))
+		if(cipher != null && (nonce == null || nonce.length() != BLOCK_SIZE))
 		{
 			throw new IllegalArgumentException("Poly1305 requires a 128 bit IV.");
 		}
@@ -135,7 +136,7 @@ public class Poly1305
 		s3 = r3 * 5;
 		s4 = r4 * 5;
 
-		final byte[] kBytes;
+		final ByteArray kBytes;
 		final int kOff;
 
 		if(cipher == null)
@@ -146,7 +147,7 @@ public class Poly1305
 		else
 		{
 			// Compute encrypted nonce
-			kBytes = new byte[BLOCK_SIZE];
+			kBytes = new ByteArray(BLOCK_SIZE);
 			kOff = 0;
 
 			cipher.init(true, new KeyParameter(key, BLOCK_SIZE, BLOCK_SIZE));

@@ -1,12 +1,12 @@
 package goryachev.memsafecrypto.bc;
+import goryachev.memsafecrypto.ByteArray;
 import goryachev.memsafecrypto.ICryptoZeroable;
 
 
 public class KeyParameter
 	implements CipherParameters, ICryptoZeroable
 {
-	// TODO read-only ByteArray
-	private byte[] key;
+	private final ByteArray key;
 	
 
 	public KeyParameter(byte[] key)
@@ -17,13 +17,23 @@ public class KeyParameter
 
 	public KeyParameter(byte[] key, int keyOff, int keyLen)
 	{
-		this.key = new byte[keyLen];
-
-		System.arraycopy(key, keyOff, this.key, 0, keyLen);
+		this.key = ByteArray.readOnly(key, keyOff, keyLen); 
+	}
+	
+	
+	public KeyParameter(ByteArray key)
+	{
+		this.key = key.toReadOnly();
+	}
+	
+	
+	public KeyParameter(ByteArray key, int keyOff, int keyLen)
+	{
+		this.key = key.toReadOnly(keyOff, keyLen);
 	}
 
 
-	public byte[] getKey()
+	public ByteArray getKey()
 	{
 		return key;
 	}
@@ -31,6 +41,6 @@ public class KeyParameter
 	
 	public void zero()
 	{
-		// TODO
+		key.zero();
 	}
 }
