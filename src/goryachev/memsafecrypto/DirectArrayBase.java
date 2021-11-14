@@ -10,7 +10,8 @@ public class DirectArrayBase
 	implements ICryptoZeroable
 {
 	protected final ByteBuffer buffer;
-	
+	private boolean readonly;
+
 	
 	public DirectArrayBase(int capacity)
 	{
@@ -32,6 +33,12 @@ public class DirectArrayBase
 	}
 	
 	
+	public void setReadOnly()
+	{
+		readonly = true;
+	}
+
+
 	protected void copyBytes(int index, DirectArrayBase src, int srcOffset, int srcLength)
 	{
 		// TODO validate input
@@ -47,6 +54,15 @@ public class DirectArrayBase
 	protected int sizeInBytes()
 	{
 		return buffer.capacity();
+	}
+	
+	
+	protected void checkWriteable()
+	{
+		if(readonly)
+		{
+			throw new UnsupportedOperationException("this buffer is read-only");
+		}
 	}
 	
 

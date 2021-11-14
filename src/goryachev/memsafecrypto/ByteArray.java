@@ -1,18 +1,13 @@
 // Copyright © 2021 Andy Goryachev <andy@goryachev.com>
 package goryachev.memsafecrypto;
-import java.nio.ByteBuffer;
 
 
 /**
- * DirectByteBuffer Wrapper.
+ * Zeroable byte[] equivalent based on DirectByteBuffer.
  */
 public final class ByteArray
 	extends DirectArrayBase
 {
-	// TODO move to base?
-	private boolean readonly;
-	
-	
 	public ByteArray(int capacity)
 	{
 		super(capacity);
@@ -31,12 +26,6 @@ public final class ByteArray
 	}
 	
 	
-	public void setReadOnly()
-	{
-		readonly = true;
-	}
-
-	
 	public byte get(int index)
 	{
 		return buffer.get(index);
@@ -45,10 +34,7 @@ public final class ByteArray
 	
 	public void set(int index, byte value)
 	{
-		if(readonly)
-		{
-			throw new Error("read-only");
-		}
+		checkWriteable();
 		
 		buffer.put(index, value);
 	}
@@ -56,10 +42,7 @@ public final class ByteArray
 	
 	public void set(int index, byte[] src, int offset, int len)
 	{
-		if(readonly)
-		{
-			throw new Error("read-only");
-		}
+		checkWriteable();
 		
 		buffer.position(index);
 		buffer.put(src, offset, len);

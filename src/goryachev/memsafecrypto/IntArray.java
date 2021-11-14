@@ -3,7 +3,7 @@ package goryachev.memsafecrypto;
 
 
 /**
- * Int Array.
+ * Zeroable int[] equivalend based on DirectByteBuffer.
  */
 public class IntArray
 	extends DirectArrayBase
@@ -25,6 +25,8 @@ public class IntArray
 
 	public void add(int index, int value)
 	{
+		checkWriteable();
+
 		int ix = index * BYTES_PER_INT;
 		int v = buffer.getInt(ix);
 		v += value;
@@ -34,6 +36,8 @@ public class IntArray
 	
 	public void subtract(int index, int value)
 	{
+		checkWriteable();
+		
 		int ix = index * BYTES_PER_INT;
 		int v = buffer.getInt(ix);
 		v -= value;
@@ -43,6 +47,8 @@ public class IntArray
 	
 	public void increment(int index)
 	{
+		checkWriteable();
+
 		int ix = index * BYTES_PER_INT;
 		int v = buffer.getInt(ix);
 		v++;
@@ -52,6 +58,8 @@ public class IntArray
 	
 	public int incrementAndGet(int index)
 	{
+		checkWriteable();
+		
 		int ix = index * BYTES_PER_INT;
 		int v = buffer.getInt(ix);
 		v++;
@@ -62,6 +70,8 @@ public class IntArray
 	
 	public void decrement(int index)
 	{
+		checkWriteable();
+		
 		int ix = index * BYTES_PER_INT;
 		int v = buffer.getInt(ix);
 		v--;
@@ -71,6 +81,8 @@ public class IntArray
 	
 	public int decrementAndGet(int index)
 	{
+		checkWriteable();
+		
 		int ix = index * BYTES_PER_INT;
 		int v = buffer.getInt(ix);
 		v--;
@@ -88,6 +100,8 @@ public class IntArray
 	
 	public void set(int index, int value)
 	{
+		checkWriteable();
+		
 		int ix = index * BYTES_PER_INT;
 		buffer.putInt(ix, value);
 	}
