@@ -1,5 +1,5 @@
 // Copyright © 2021 Andy Goryachev <andy@goryachev.com>
-package goryachev.memsafecrypto.bc.xsalsa20poly1305.copy;
+package goryachev.memsafecrypto.bc.xsalsa20poly1305;
 import goryachev.crypto.Crypto;
 import org.bouncycastle.crypto.engines.XSalsa20Engine;
 import org.bouncycastle.crypto.macs.Poly1305;
@@ -30,7 +30,7 @@ public class XSalsaTools
 	/** clears the digest by initializing it with an all-zero key */
 	public static void zero(Poly1305 x)
 	{
-		byte[] k = new byte[NONCE_LENGTH_BYTES];
+		byte[] k = new byte[KEY_LENGTH_BYTES];
 		x.init(new KeyParameter(k));
 	}
 	

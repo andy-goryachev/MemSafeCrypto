@@ -5,7 +5,9 @@ import goryachev.memsafecrypto.ICryptoZeroable;
 public class KeyParameter
 	implements CipherParameters, ICryptoZeroable
 {
+	// TODO read-only ByteArray
 	private byte[] key;
+	
 
 	public KeyParameter(byte[] key)
 	{
