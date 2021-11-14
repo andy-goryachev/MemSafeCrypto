@@ -24,4 +24,4 @@ https://github.com/bcgit/bc-java
 ## License
 
 The project is licensed under Apache 2.0 license, which I believe is compatible with the BouncyCastle license 
-LICENSE.html
+[src/goryachev/memsafecrypto/bc/LICENSE.html](LICENSE.html).
