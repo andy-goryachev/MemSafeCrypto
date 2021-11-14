@@ -7,6 +7,8 @@ import goryachev.common.util.D;
 import goryachev.memsafecrypto.bc.xsalsa20poly1305.XSalsaTools;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Random;
 
 
@@ -21,7 +23,51 @@ public class TestXSalsa20Engine
 	}
 	
 	
+	/*
+	TestXSalsa20Engine.testEncryptionSpeed:35 total bytes: 100,000,000
+	TestXSalsa20Engine.testEncryptionSpeed:58 BC encryption: 1.40
+	TestXSalsa20Engine.testEncryptionSpeed:59 MemSafe encryption: 1.15
+	
+	is my implementation really faster?
+	*/
 	@Test
+	public void testEncryptionSpeed() throws Exception
+	{
+		int count = 10;
+		int size = 10_000_000;
+		
+		long timeBC = 0;
+		long timeMemSafe = 0;
+		
+		D.printf("total bytes: %,d", (size * count)); 
+		
+		for(int i=0; i<count; i++)
+		{
+			byte[] key = rnd(XSalsaTools.KEY_LENGTH_BYTES);
+			byte[] nonce = rnd(XSalsaTools.NONCE_LENGTH_BYTES);
+			byte[] data = rnd(size);
+			
+			long start = System.nanoTime();
+			NullOutputStream os1 = new NullOutputStream();
+			goryachev.crypto.xsalsa20poly1305.XSalsa20Poly1305EncryptStream out1 = new goryachev.crypto.xsalsa20poly1305.XSalsa20Poly1305EncryptStream(key, nonce, os1);
+			out1.write(data);
+			out1.close();
+			timeBC += (System.nanoTime() - start);
+			
+			start = System.nanoTime();
+			NullOutputStream os2 = new NullOutputStream();
+			goryachev.memsafecrypto.bc.xsalsa20poly1305.XSalsa20Poly1305EncryptStream out2 = new goryachev.memsafecrypto.bc.xsalsa20poly1305.XSalsa20Poly1305EncryptStream(key, nonce, os2);
+			out2.write(data);
+			out2.close();
+			timeMemSafe += (System.nanoTime() - start);
+		}
+		
+		D.printf("BC encryption: %.2f", timeBC / 1_000_000_000.0);
+		D.printf("MemSafe encryption: %.2f", timeMemSafe / 1_000_000_000.0);
+	}
+	
+	
+//	@Test
 	public void testEncrypt() throws Exception
 	{
 		int count = 500;
@@ -33,50 +79,35 @@ public class TestXSalsa20Engine
 			byte[] nonce = rnd(XSalsaTools.NONCE_LENGTH_BYTES);
 			byte[] data = rnd(size);
 			
-			long start = System.nanoTime();
 			ByteArrayOutputStream os1 = new ByteArrayOutputStream(size);
 			goryachev.crypto.xsalsa20poly1305.XSalsa20Poly1305EncryptStream out1 = new goryachev.crypto.xsalsa20poly1305.XSalsa20Poly1305EncryptStream(key, nonce, os1);
 			out1.write(data);
 			out1.close();
 			byte[] b1 = os1.toByteArray();
-			time(start, "encrypt BC");
 			
-			start = System.nanoTime();
 			ByteArrayOutputStream os2 = new ByteArrayOutputStream(size);
 			goryachev.memsafecrypto.bc.xsalsa20poly1305.XSalsa20Poly1305EncryptStream out2 = new goryachev.memsafecrypto.bc.xsalsa20poly1305.XSalsa20Poly1305EncryptStream(key, nonce, os2);
 			out2.write(data);
 			out2.close();
 			byte[] b2 = os2.toByteArray();
-			time(start, "encrypt MemSafeCrypto");
 			
 			TF.eq(b1, b2);
 			
-			start = System.nanoTime();
 			ByteArrayInputStream is1 = new ByteArrayInputStream(b1);
 			goryachev.crypto.xsalsa20poly1305.XSalsa20Poly1305DecryptStream in1 = new goryachev.crypto.xsalsa20poly1305.XSalsa20Poly1305DecryptStream(key, nonce, b1.length, is1);
 			byte[] cb1 = new byte[size]; 
 			CKit.readFully(in1, cb1);
 			in1.close();
-			time(start, "decrypt BC");
 			
-			start = System.nanoTime();
 			ByteArrayInputStream is2 = new ByteArrayInputStream(b1);
 			goryachev.memsafecrypto.bc.xsalsa20poly1305.XSalsa20Poly1305DecryptStream in2 = new goryachev.memsafecrypto.bc.xsalsa20poly1305.XSalsa20Poly1305DecryptStream(key, nonce, b2.length, is2);
 			byte[] cb2 = new byte[size]; 
 			CKit.readFully(in2, cb2);
 			in2.close();
-			time(start, "decrypt MemSafeCrypto");
 			
 			TF.eq(cb1, cb2);
 			TF.eq(cb1, data);
 		}
-	}
-	
-	
-	public static void time(long start, String text)
-	{
-		long elapsed = System.nanoTime() - start;
-		//D.print("%s elapsed=%.2f", text, elapsed / 1_000_000_000.0);
 	}
 	
 	
@@ -85,5 +116,21 @@ public class TestXSalsa20Engine
 		byte[] b = new byte[size];
 		new Random().nextBytes(b);
 		return b;
+	}
+	
+	
+	//
+	
+	
+	protected static class NullOutputStream extends OutputStream
+	{
+		public void write(int b) throws IOException
+		{
+		}
+		
+		
+		public void write(byte[] b, int off, int len) throws IOException
+		{
+		}
 	}
 }
