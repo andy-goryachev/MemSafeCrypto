@@ -18,6 +18,8 @@ A subset of BouncyCastle crypto primitives refactored to use DirectByteBuffer.
 
 ## Original Code
 
+This project is based on BouncyCastle release 1.69.
+
 https://github.com/bcgit/bc-java
 
 
