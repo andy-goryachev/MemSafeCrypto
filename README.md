@@ -5,8 +5,9 @@ A subset of BouncyCastle crypto primitives refactored to use DirectByteBuffer.
 
 ## Summary of Changes
 
-- introducted IZeroable interface
+- introducted ICryptoZeroable interface
 - replaced byte[] and int[] with ByteArray and IntArray correspondingly
+- modified BouncyCastle classes to use ByteArray and IntArray instead or primitive arrays
 
 
 ## Supported primitives
@@ -18,7 +19,7 @@ A subset of BouncyCastle crypto primitives refactored to use DirectByteBuffer.
 
 ## Original Code
 
-This project is based on BouncyCastle release 1.69.
+This project is based on BouncyCastle release 1.69:
 
 https://github.com/bcgit/bc-java
 
