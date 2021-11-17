@@ -2,7 +2,10 @@
 package goryachev.memsafecrypto.bc.xsalsa20poly1305;
 import goryachev.common.util.CKit;
 import goryachev.crypto.Crypto;
-import goryachev.memsafecrypto.bc.*;
+import goryachev.memsafecrypto.bc.KeyParameter;
+import goryachev.memsafecrypto.bc.ParametersWithIV;
+import goryachev.memsafecrypto.bc.Poly1305;
+import goryachev.memsafecrypto.bc.XSalsa20Engine;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
