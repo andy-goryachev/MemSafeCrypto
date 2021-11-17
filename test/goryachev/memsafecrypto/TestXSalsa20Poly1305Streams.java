@@ -7,15 +7,13 @@ import goryachev.common.util.D;
 import goryachev.memsafecrypto.bc.salsa.XSalsaTools;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Random;
 
 
 /**
- * Tests XSalsa20Engine.
+ * Tests XSalsa20Poly1305 Streams.
  */
-public class TestXSalsa20Engine
+public class TestXSalsa20Poly1305Streams
 {
 	public static void main(String[] args)
 	{
@@ -43,19 +41,19 @@ public class TestXSalsa20Engine
 		
 		for(int i=0; i<count; i++)
 		{
-			byte[] key = rnd(XSalsaTools.KEY_LENGTH_BYTES);
-			byte[] nonce = rnd(XSalsaTools.NONCE_LENGTH_BYTES);
-			byte[] data = rnd(size);
+			byte[] key = TestTools.rnd(XSalsaTools.KEY_LENGTH_BYTES);
+			byte[] nonce = TestTools.rnd(XSalsaTools.NONCE_LENGTH_BYTES);
+			byte[] data = TestTools.rnd(size);
 			
 			long start = System.nanoTime();
-			NullOutputStream os1 = new NullOutputStream();
+			OutputStream os1 = TestTools.nullOutputStream();
 			goryachev.crypto.xsalsa20poly1305.XSalsa20Poly1305EncryptStream out1 = new goryachev.crypto.xsalsa20poly1305.XSalsa20Poly1305EncryptStream(key, nonce, os1);
 			out1.write(data);
 			out1.close();
 			timeBC += (System.nanoTime() - start);
 			
 			start = System.nanoTime();
-			NullOutputStream os2 = new NullOutputStream();
+			OutputStream os2 = TestTools.nullOutputStream();
 			goryachev.memsafecrypto.bc.salsa.XSalsa20Poly1305EncryptStream out2 = new goryachev.memsafecrypto.bc.salsa.XSalsa20Poly1305EncryptStream(key, nonce, os2);
 			out2.write(data);
 			out2.close();
@@ -75,9 +73,9 @@ public class TestXSalsa20Engine
 		
 		for(int i=0; i<count; i++)
 		{
-			byte[] key = rnd(XSalsaTools.KEY_LENGTH_BYTES);
-			byte[] nonce = rnd(XSalsaTools.NONCE_LENGTH_BYTES);
-			byte[] data = rnd(size);
+			byte[] key = TestTools.rnd(XSalsaTools.KEY_LENGTH_BYTES);
+			byte[] nonce = TestTools.rnd(XSalsaTools.NONCE_LENGTH_BYTES);
+			byte[] data = TestTools.rnd(size);
 			
 			ByteArrayOutputStream os1 = new ByteArrayOutputStream(size);
 			goryachev.crypto.xsalsa20poly1305.XSalsa20Poly1305EncryptStream out1 = new goryachev.crypto.xsalsa20poly1305.XSalsa20Poly1305EncryptStream(key, nonce, os1);
@@ -107,30 +105,6 @@ public class TestXSalsa20Engine
 			
 			TF.eq(cb1, cb2);
 			TF.eq(cb1, data);
-		}
-	}
-	
-	
-	public static byte[] rnd(int size)
-	{
-		byte[] b = new byte[size];
-		new Random().nextBytes(b);
-		return b;
-	}
-	
-	
-	//
-	
-	
-	protected static class NullOutputStream extends OutputStream
-	{
-		public void write(int b) throws IOException
-		{
-		}
-		
-		
-		public void write(byte[] b, int off, int len) throws IOException
-		{
 		}
 	}
 }

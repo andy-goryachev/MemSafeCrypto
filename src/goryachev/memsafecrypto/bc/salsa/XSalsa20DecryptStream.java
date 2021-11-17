@@ -4,17 +4,15 @@ import goryachev.common.util.CKit;
 import goryachev.crypto.Crypto;
 import goryachev.memsafecrypto.bc.KeyParameter;
 import goryachev.memsafecrypto.bc.ParametersWithIV;
-import goryachev.memsafecrypto.bc.Poly1305;
 import goryachev.memsafecrypto.bc.XSalsa20Engine;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.MessageDigest;
 
 
 /**
- * Decrypting Stream Based on XSalsa20/Poly1305 Scheme.
+ * Decrypting Stream Based on XSalsa20 Engine.
  */
-public class XSalsa20Poly1305DecryptStream
+public class XSalsa20DecryptStream
 	extends InputStream
 {
 	public static final int BUFFER_SIZE = 4096;
@@ -25,10 +23,9 @@ public class XSalsa20Poly1305DecryptStream
 	private int index;
 	private int available;
 	private XSalsa20Engine xsalsa20 = new XSalsa20Engine();
-	private Poly1305 poly1305 = new Poly1305();
 
 
-	public XSalsa20Poly1305DecryptStream(byte[] key, byte[] nonce, long cipherTextLength, InputStream in)
+	public XSalsa20DecryptStream(byte[] key, byte[] nonce, long cipherTextLength, InputStream in)
 	{
 		if(key.length != XSalsaTools.KEY_LENGTH_BYTES)
 		{
@@ -36,7 +33,7 @@ public class XSalsa20Poly1305DecryptStream
 		}
 
 		this.in = in;
-		this.toRead = cipherTextLength - poly1305.getMacSize();
+		this.toRead = cipherTextLength;
 		this.out = new byte[BUFFER_SIZE];
 		this.buf = new byte[BUFFER_SIZE];
 		
@@ -49,26 +46,6 @@ public class XSalsa20Poly1305DecryptStream
 		finally
 		{
 			Crypto.zero(keyParameter);
-		}
-		
-		byte[] subkey = new byte[XSalsaTools.KEY_LENGTH_BYTES];
-		try
-		{
-			xsalsa20.processBytes(subkey, 0, subkey.length, subkey, 0);
-			
-			KeyParameter kp = new KeyParameter(subkey);
-			try
-			{
-				poly1305.init(kp);
-			}
-			finally
-			{
-				Crypto.zero(kp);
-			}
-		}
-		finally
-		{
-			Crypto.zero(subkey);
 		}
 	}
 	
@@ -141,7 +118,6 @@ public class XSalsa20Poly1305DecryptStream
 					}
 					else if(rd > 0)
 					{
-						poly1305.update(buf, 0, rd);
 						xsalsa20.processBytes(buf, 0, rd, out, 0);
 						available += rd;
 						toRead -= rd;
@@ -157,19 +133,6 @@ public class XSalsa20Poly1305DecryptStream
 					if(toRead != 0)
 					{
 						throw new Error("toRead=" + toRead);
-					}
-					
-					// compute mac
-					byte[] mac = new byte[poly1305.getMacSize()];
-					poly1305.doFinal(mac, 0);
-					
-					// read mac from input
-					byte[] mac2 = new byte[poly1305.getMacSize()];
-					CKit.readFully(in, mac2);
-					
-					if(!MessageDigest.isEqual(mac, mac2))
-					{
-						throw new IOException("MAC mismatch");
 					}
 
 					return;
@@ -190,7 +153,6 @@ public class XSalsa20Poly1305DecryptStream
 	public void close() throws IOException
 	{
 		Crypto.zero(xsalsa20);
-		Crypto.zero(poly1305);
 		
 		CKit.close(in);
 		Crypto.zero(buf);

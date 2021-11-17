@@ -5,24 +5,22 @@ import goryachev.crypto.Crypto;
 import java.io.IOException;
 import java.io.OutputStream;
 import org.bouncycastle.crypto.engines.XSalsa20Engine;
-import org.bouncycastle.crypto.macs.Poly1305;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
 
 
 /**
- * Encrypting Stream Based on XSalsa20/Poly1305 Scheme.
+ * Encrypting Stream Based on XSalsa20 Engine.
  */
-public class XSalsa20Poly1305EncryptStream
+public class XSalsa20EncryptStream
 	extends OutputStream
 {
 	private XSalsa20Engine xsalsa20 = new XSalsa20Engine();
-	private Poly1305 poly1305 = new Poly1305();
 	private OutputStream os;
 	private byte[] out;
 
 
-	public XSalsa20Poly1305EncryptStream(byte[] key, byte[] nonce, OutputStream os)
+	public XSalsa20EncryptStream(byte[] key, byte[] nonce, OutputStream os)
 	{
 		if(key.length != XSalsaTools.KEY_LENGTH_BYTES)
 		{
@@ -42,26 +40,6 @@ public class XSalsa20Poly1305EncryptStream
 		{
 			Crypto.zero(keyParameter);
 		}
-		
-		byte[] subkey = new byte[XSalsaTools.KEY_LENGTH_BYTES];
-		try
-		{
-			xsalsa20.processBytes(subkey, 0, XSalsaTools.KEY_LENGTH_BYTES, subkey, 0);
-			
-			KeyParameter kp = new KeyParameter(subkey);
-			try
-			{
-				poly1305.init(kp);
-			}
-			finally
-			{
-				Crypto.zero(kp);
-			}
-		}
-		finally
-		{
-			Crypto.zero(subkey);
-		}
 	}
 	
 
@@ -69,7 +47,6 @@ public class XSalsa20Poly1305EncryptStream
 	{
 		out[0] = (byte)b;
 		xsalsa20.processBytes(out, 0, 1, out, 1);
-		poly1305.update(out, 1, 1);
 		os.write(out, 1, 1);
 	}
 
@@ -81,7 +58,6 @@ public class XSalsa20Poly1305EncryptStream
 		{
 			int sz = Math.min(len, out.length);
 			xsalsa20.processBytes(b, off + pos, sz, out, 0);
-			poly1305.update(out, 0, sz);
 			os.write(out, 0, sz);
 			
 			len -= sz;
@@ -94,33 +70,15 @@ public class XSalsa20Poly1305EncryptStream
 	{
 		try
 		{
-			poly1305.doFinal(out, 0);
-			os.write(out, 0, poly1305.getMacSize());
-		}
-		catch(IOException e)
-		{
-			throw e;
-		}
-		catch(Exception e)
-		{
-			throw new IOException(e);
+			CKit.close(os);
 		}
 		finally
 		{
-			try
-			{
-				CKit.close(os);
-			}
-			finally
-			{
-				XSalsaTools.zero(xsalsa20);
-				XSalsaTools.zero(poly1305);
-				Crypto.zero(out);
-				
-				xsalsa20 = null;
-				poly1305 = null;
-				os = null;
-			}			
-		}
+			XSalsaTools.zero(xsalsa20);
+			Crypto.zero(out);
+			
+			xsalsa20 = null;
+			os = null;
+		}			
 	}
 }
