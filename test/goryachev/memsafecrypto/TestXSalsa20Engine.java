@@ -4,7 +4,7 @@ import goryachev.common.test.TF;
 import goryachev.common.test.Test;
 import goryachev.common.util.CKit;
 import goryachev.common.util.D;
-import goryachev.memsafecrypto.bc.xsalsa20poly1305.XSalsaTools;
+import goryachev.memsafecrypto.bc.salsa.XSalsaTools;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -56,7 +56,7 @@ public class TestXSalsa20Engine
 			
 			start = System.nanoTime();
 			NullOutputStream os2 = new NullOutputStream();
-			goryachev.memsafecrypto.bc.xsalsa20poly1305.XSalsa20Poly1305EncryptStream out2 = new goryachev.memsafecrypto.bc.xsalsa20poly1305.XSalsa20Poly1305EncryptStream(key, nonce, os2);
+			goryachev.memsafecrypto.bc.salsa.XSalsa20Poly1305EncryptStream out2 = new goryachev.memsafecrypto.bc.salsa.XSalsa20Poly1305EncryptStream(key, nonce, os2);
 			out2.write(data);
 			out2.close();
 			timeMemSafe += (System.nanoTime() - start);
@@ -86,7 +86,7 @@ public class TestXSalsa20Engine
 			byte[] b1 = os1.toByteArray();
 			
 			ByteArrayOutputStream os2 = new ByteArrayOutputStream(size);
-			goryachev.memsafecrypto.bc.xsalsa20poly1305.XSalsa20Poly1305EncryptStream out2 = new goryachev.memsafecrypto.bc.xsalsa20poly1305.XSalsa20Poly1305EncryptStream(key, nonce, os2);
+			goryachev.memsafecrypto.bc.salsa.XSalsa20Poly1305EncryptStream out2 = new goryachev.memsafecrypto.bc.salsa.XSalsa20Poly1305EncryptStream(key, nonce, os2);
 			out2.write(data);
 			out2.close();
 			byte[] b2 = os2.toByteArray();
@@ -100,7 +100,7 @@ public class TestXSalsa20Engine
 			in1.close();
 			
 			ByteArrayInputStream is2 = new ByteArrayInputStream(b1);
-			goryachev.memsafecrypto.bc.xsalsa20poly1305.XSalsa20Poly1305DecryptStream in2 = new goryachev.memsafecrypto.bc.xsalsa20poly1305.XSalsa20Poly1305DecryptStream(key, nonce, b2.length, is2);
+			goryachev.memsafecrypto.bc.salsa.XSalsa20Poly1305DecryptStream in2 = new goryachev.memsafecrypto.bc.salsa.XSalsa20Poly1305DecryptStream(key, nonce, b2.length, is2);
 			byte[] cb2 = new byte[size]; 
 			CKit.readFully(in2, cb2);
 			in2.close();

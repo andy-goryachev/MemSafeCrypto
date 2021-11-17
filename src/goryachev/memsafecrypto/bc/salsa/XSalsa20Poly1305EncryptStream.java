@@ -1,5 +1,5 @@
 // Copyright © 2011-2021 Andy Goryachev <andy@goryachev.com>
-package goryachev.memsafecrypto.bc.xsalsa20poly1305;
+package goryachev.memsafecrypto.bc.salsa;
 import goryachev.common.util.CKit;
 import goryachev.crypto.Crypto;
 import java.io.IOException;
