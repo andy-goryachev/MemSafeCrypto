@@ -1,4 +1,5 @@
 package goryachev.memsafecrypto.bc;
+import goryachev.memsafecrypto.CByteArray;
 
 
 /**
@@ -46,7 +47,7 @@ public interface StreamCipher
 	 * @return the number of bytes produced - should always be len.
 	 * @exception DataLengthException if the output buffer is too small.
 	 */
-	public int processBytes(byte[] in, int inOff, int len, byte[] out, int outOff) throws DataLengthException;
+	public int processBytes(CByteArray in, int inOff, int len, CByteArray out, int outOff) throws DataLengthException;
 
 
 	/**

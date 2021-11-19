@@ -6,8 +6,8 @@ A subset of BouncyCastle crypto primitives, refactored to use DirectByteBuffer.
 ## Summary of Changes
 
 - introducted ICryptoZeroable interface
-- replaced byte[] and int[] with ByteArray and IntArray correspondingly
-- modified BouncyCastle classes to use ByteArray and IntArray instead or primitive arrays
+- replaced byte[] and int[] with CByteArray and CIntArray correspondingly
+- modified BouncyCastle classes to use CByteArray and CIntArray instead or primitive arrays
 
 
 ## Supported primitives

@@ -2,6 +2,7 @@
 package goryachev.memsafecrypto.bc.salsa;
 import goryachev.common.util.CKit;
 import goryachev.crypto.Crypto;
+import goryachev.memsafecrypto.CByteArray;
 import goryachev.memsafecrypto.bc.KeyParameter;
 import goryachev.memsafecrypto.bc.ParametersWithIV;
 import goryachev.memsafecrypto.bc.XSalsa20Engine;
@@ -19,22 +20,22 @@ public class XSalsa20DecryptStream
 	private InputStream in;
 	private long toRead;
 	private byte[] buf;
-	private byte[] out;
+	private CByteArray out;
 	private int index;
 	private int available;
 	private XSalsa20Engine xsalsa20 = new XSalsa20Engine();
 
 
-	public XSalsa20DecryptStream(byte[] key, byte[] nonce, long cipherTextLength, InputStream in)
+	public XSalsa20DecryptStream(CByteArray key, CByteArray nonce, long cipherTextLength, InputStream in)
 	{
-		if(key.length != XSalsaTools.KEY_LENGTH_BYTES)
+		if(key.length() != XSalsaTools.KEY_LENGTH_BYTES)
 		{
 			throw new IllegalArgumentException("key must be " + XSalsaTools.KEY_LENGTH_BYTES * 8 + " bits");
 		}
 
 		this.in = in;
 		this.toRead = cipherTextLength;
-		this.out = new byte[BUFFER_SIZE];
+		this.out = new CByteArray(BUFFER_SIZE);
 		this.buf = new byte[BUFFER_SIZE];
 		
 		KeyParameter keyParameter = new KeyParameter(key);
@@ -62,7 +63,7 @@ public class XSalsa20DecryptStream
 			}
 		}
 
-		int b = out[index++] & 0xff;
+		int b = out.get(index++) & 0xff;
 		available--;
 
 		return b;

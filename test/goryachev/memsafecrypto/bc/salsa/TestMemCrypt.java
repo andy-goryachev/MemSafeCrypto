@@ -2,6 +2,7 @@
 package goryachev.memsafecrypto.bc.salsa;
 import goryachev.common.test.TF;
 import goryachev.common.test.Test;
+import goryachev.memsafecrypto.CByteArray;
 import goryachev.memsafecrypto.MemCrypt;
 import java.util.Random;
 
@@ -34,12 +35,17 @@ public class TestMemCrypt
 	}
 	
 	
-	protected void t(byte[] b) throws Exception
+	protected void t(byte[] input) throws Exception
 	{
-		byte[] en = MemCrypt.encrypt(b);
-		byte[] de = MemCrypt.decrypt(en);
-		TF.eq(de, b);
-		TF.list(b);
-		TF.list(de);
+		CByteArray in = CByteArray.readOnly(input);
+		CByteArray encrypted = MemCrypt.encrypt(in);
+		CByteArray decrypted = MemCrypt.decrypt(encrypted);
+		
+		byte[] decryptedBytes = decrypted.toByteArray();
+		
+		TF.eq(decrypted.toByteArray(), input);
+		
+		TF.list(input);
+		TF.list(decryptedBytes);
 	}
 }

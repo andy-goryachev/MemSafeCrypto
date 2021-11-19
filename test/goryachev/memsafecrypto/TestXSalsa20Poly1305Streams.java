@@ -41,19 +41,19 @@ public class TestXSalsa20Poly1305Streams
 		
 		for(int i=0; i<count; i++)
 		{
-			byte[] key = TestTools.rnd(XSalsaTools.KEY_LENGTH_BYTES);
-			byte[] nonce = TestTools.rnd(XSalsaTools.NONCE_LENGTH_BYTES);
-			byte[] data = TestTools.rnd(size);
+			byte[] key = TestUtils.rnd(XSalsaTools.KEY_LENGTH_BYTES);
+			byte[] nonce = TestUtils.rnd(XSalsaTools.NONCE_LENGTH_BYTES);
+			byte[] data = TestUtils.rnd(size);
 			
 			long start = System.nanoTime();
-			OutputStream os1 = TestTools.nullOutputStream();
+			OutputStream os1 = TestUtils.nullOutputStream();
 			goryachev.crypto.xsalsa20poly1305.XSalsa20Poly1305EncryptStream out1 = new goryachev.crypto.xsalsa20poly1305.XSalsa20Poly1305EncryptStream(key, nonce, os1);
 			out1.write(data);
 			out1.close();
 			timeBC += (System.nanoTime() - start);
 			
 			start = System.nanoTime();
-			OutputStream os2 = TestTools.nullOutputStream();
+			OutputStream os2 = TestUtils.nullOutputStream();
 			goryachev.memsafecrypto.bc.salsa.XSalsa20Poly1305EncryptStream out2 = new goryachev.memsafecrypto.bc.salsa.XSalsa20Poly1305EncryptStream(key, nonce, os2);
 			out2.write(data);
 			out2.close();
@@ -65,7 +65,7 @@ public class TestXSalsa20Poly1305Streams
 	}
 	
 	
-//	@Test
+	@Test
 	public void testEncrypt() throws Exception
 	{
 		int count = 500;
@@ -73,9 +73,9 @@ public class TestXSalsa20Poly1305Streams
 		
 		for(int i=0; i<count; i++)
 		{
-			byte[] key = TestTools.rnd(XSalsaTools.KEY_LENGTH_BYTES);
-			byte[] nonce = TestTools.rnd(XSalsaTools.NONCE_LENGTH_BYTES);
-			byte[] data = TestTools.rnd(size);
+			byte[] key = TestUtils.rnd(XSalsaTools.KEY_LENGTH_BYTES);
+			byte[] nonce = TestUtils.rnd(XSalsaTools.NONCE_LENGTH_BYTES);
+			byte[] data = TestUtils.rnd(size);
 			
 			ByteArrayOutputStream os1 = new ByteArrayOutputStream(size);
 			goryachev.crypto.xsalsa20poly1305.XSalsa20Poly1305EncryptStream out1 = new goryachev.crypto.xsalsa20poly1305.XSalsa20Poly1305EncryptStream(key, nonce, os1);

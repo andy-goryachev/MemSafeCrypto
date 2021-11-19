@@ -1,5 +1,5 @@
 package goryachev.memsafecrypto.bc;
-import goryachev.memsafecrypto.ByteArray;
+import goryachev.memsafecrypto.CByteArray;
 
 
 /**
@@ -48,7 +48,7 @@ public interface BlockCipher
 	 * @exception IllegalStateException if the cipher isn't initialised.
 	 * @return the number of bytes processed and produced.
 	 */
-	public int processBlock(ByteArray in, int inOff, ByteArray out, int outOff) throws DataLengthException, IllegalStateException;
+	public int processBlock(CByteArray in, int inOff, CByteArray out, int outOff) throws DataLengthException, IllegalStateException;
 
 
 	/**

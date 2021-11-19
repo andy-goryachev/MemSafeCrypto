@@ -1,0 +1,142 @@
+// Copyright © 2011-2021 Andy Goryachev <andy@goryachev.com>
+package goryachev.memsafecrypto;
+import goryachev.crypto.Crypto;
+
+
+/**
+ * This class provides additional level of security by storing only the encrypted value in memory.
+ * To avoid also keeping the key in memory, the key is generated each time from information
+ * that stays constant during JVM session per hashCode() contract.
+ */
+abstract class OpaqueMemObject
+{
+	private CByteArray encrypted;
+	
+	
+	protected OpaqueMemObject()
+	{
+	}
+	
+	
+	protected OpaqueMemObject(OpaqueMemObject x)
+	{
+		encrypted = clone(x.encrypted);
+	}
+	
+	
+	protected OpaqueMemObject(CByteArray b)
+	{
+		setBytes(b);
+	}
+	
+	
+	protected void setFrom(OpaqueMemObject x)
+	{
+		if(x == null)
+		{
+			encrypted = null;
+		}
+		else
+		{
+			if(x.getClass() == getClass())
+			{
+				encrypted = clone(x.encrypted);
+			}
+			else
+			{
+				encrypted = null;
+			}
+		}
+	}
+	
+	
+	private static CByteArray clone(CByteArray b)
+	{
+		return (b == null) ? null : new CByteArray(b);
+	}
+	
+	
+	public final boolean isNull()
+	{
+		return (encrypted == null);
+	}
+	
+	
+	protected final void setBytes(CByteArray value)
+	{
+		if(value == null)
+		{
+			encrypted = null;
+		}
+		else
+		{
+			try
+			{
+				encrypted = MemCrypt.encrypt(value);
+			}
+			catch(Exception e)
+			{
+				// should not happen
+				throw new Error(e);
+			}
+		}
+	}
+	
+	
+	protected final void setBytes(CByteArray value, int off, int len)
+	{
+		try
+		{
+			encrypted = MemCrypt.encrypt(value);
+		}
+		catch(Exception e)
+		{
+			// should not happen
+			throw new Error(e);
+		}
+	}
+	
+	
+	public final String toString()
+	{
+		return String.valueOf('*');
+	}
+	
+	
+	/**
+	 * Returns decrypted byte array representing the stored object.
+	 */
+	public final CByteArray getBytes()
+	{
+		if(encrypted == null)
+		{
+			return null;
+		}
+		else
+		{
+			try
+			{
+				CByteArray b = MemCrypt.decrypt(encrypted);
+				return b;
+			}
+			catch(Exception e)
+			{
+				// should not happen
+				throw new Error(e);
+			}
+		}
+	}
+	
+	
+	public boolean isEmpty()
+	{
+		return encrypted == null;
+	}
+	
+	
+	public final void clear()
+	{
+		Crypto.zero(encrypted);
+		encrypted = null;
+	}
+}

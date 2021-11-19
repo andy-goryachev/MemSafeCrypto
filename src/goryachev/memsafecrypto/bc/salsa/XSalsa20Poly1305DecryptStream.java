@@ -2,6 +2,8 @@
 package goryachev.memsafecrypto.bc.salsa;
 import goryachev.common.util.CKit;
 import goryachev.crypto.Crypto;
+import goryachev.memsafecrypto.CByteArray;
+import goryachev.memsafecrypto.CryptoTools;
 import goryachev.memsafecrypto.bc.KeyParameter;
 import goryachev.memsafecrypto.bc.ParametersWithIV;
 import goryachev.memsafecrypto.bc.Poly1305;
@@ -21,7 +23,7 @@ public class XSalsa20Poly1305DecryptStream
 	private InputStream in;
 	private long toRead;
 	private byte[] buf;
-	private byte[] out;
+	private CByteArray out;
 	private int index;
 	private int available;
 	private XSalsa20Engine xsalsa20 = new XSalsa20Engine();
@@ -37,7 +39,7 @@ public class XSalsa20Poly1305DecryptStream
 
 		this.in = in;
 		this.toRead = cipherTextLength - poly1305.getMacSize();
-		this.out = new byte[BUFFER_SIZE];
+		this.out = new CByteArray(BUFFER_SIZE);
 		this.buf = new byte[BUFFER_SIZE];
 		
 		KeyParameter keyParameter = new KeyParameter(key);
@@ -51,10 +53,10 @@ public class XSalsa20Poly1305DecryptStream
 			Crypto.zero(keyParameter);
 		}
 		
-		byte[] subkey = new byte[XSalsaTools.KEY_LENGTH_BYTES];
+		CByteArray subkey = new CByteArray(XSalsaTools.KEY_LENGTH_BYTES);
 		try
 		{
-			xsalsa20.processBytes(subkey, 0, subkey.length, subkey, 0);
+			xsalsa20.processBytes(subkey, 0, subkey.length(), subkey, 0);
 			
 			KeyParameter kp = new KeyParameter(subkey);
 			try
@@ -85,14 +87,14 @@ public class XSalsa20Poly1305DecryptStream
 			}
 		}
 
-		int b = out[index++] & 0xff;
+		int b = out.get(index++) & 0xff;
 		available--;
 
 		return b;
 	}
 
 
-	public int read(byte b[], int off, int len) throws IOException
+	public int read(byte[] b, int off, int len) throws IOException
 	{
 		if(available == 0)
 		{
@@ -106,7 +108,7 @@ public class XSalsa20Poly1305DecryptStream
 
 		int sz = Math.min(available, len);
 
-		System.arraycopy(out, index, b, off, sz);
+		CryptoTools.arraycopy(out, index, b, off, sz);
 
 		index += sz;
 		available -= sz;

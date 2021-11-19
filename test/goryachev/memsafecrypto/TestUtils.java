@@ -6,15 +6,23 @@ import java.util.Random;
 
 
 /**
- * Test Tools.
+ * Test Utilities.
  */
-public class TestTools
+public class TestUtils
 {
 	public static byte[] rnd(int size)
 	{
 		byte[] b = new byte[size];
 		new Random().nextBytes(b);
 		return b;
+	}
+	
+	
+	public static CByteArray rndByteArray(int size)
+	{
+		byte[] b = new byte[size];
+		new Random().nextBytes(b);
+		return CByteArray.readOnly(b);
 	}
 	
 	

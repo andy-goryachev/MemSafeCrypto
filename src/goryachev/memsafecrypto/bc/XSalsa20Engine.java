@@ -1,6 +1,6 @@
 package goryachev.memsafecrypto.bc;
-import goryachev.memsafecrypto.ByteArray;
-import goryachev.memsafecrypto.IntArray;
+import goryachev.memsafecrypto.CByteArray;
+import goryachev.memsafecrypto.CIntArray;
 
 
 /**
@@ -29,7 +29,7 @@ public class XSalsa20Engine
 	 * and use that with the remaining 64 bits of nonce to initialize a standard Salsa20 engine state.
 	 */
 	@Override
-	protected void setKey(ByteArray keyBytes, ByteArray ivBytes)
+	protected void setKey(CByteArray keyBytes, CByteArray ivBytes)
 	{
 		if(keyBytes == null)
 		{
@@ -48,7 +48,7 @@ public class XSalsa20Engine
 		Utils.littleEndianToInt(ivBytes, 8, engineState, 8, 2);
 
 		// Process engine state to generate Salsa20 key
-		IntArray hsalsa20Out = new IntArray(engineState.length());
+		CIntArray hsalsa20Out = new CIntArray(engineState.length());
 		salsaCore(20, engineState, hsalsa20Out);
 
 		// Set new key, removing addition in last round of salsaCore

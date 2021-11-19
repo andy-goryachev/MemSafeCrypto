@@ -1,7 +1,7 @@
 package goryachev.memsafecrypto.bc;
-import goryachev.memsafecrypto.ByteArray;
+import goryachev.memsafecrypto.CByteArray;
 import goryachev.memsafecrypto.ICryptoZeroable;
-import goryachev.memsafecrypto.IntArray;
+import goryachev.memsafecrypto.CIntArray;
 
 
 /**
@@ -24,9 +24,9 @@ public class Salsa20Engine
 	 * during encryption and decryption
 	 */
 	private int index = 0;
-	protected IntArray engineState = new IntArray(STATE_SIZE); // state
-	protected IntArray x = new IntArray(STATE_SIZE); // internal buffer
-	private ByteArray keyStream = new ByteArray(STATE_SIZE * 4); // expanded state, 64 bytes
+	protected CIntArray engineState = new CIntArray(STATE_SIZE); // state
+	protected CIntArray x = new CIntArray(STATE_SIZE); // internal buffer
+	private CByteArray keyStream = new CByteArray(STATE_SIZE * 4); // expanded state, 64 bytes
 	private boolean initialised = false;
 
 	/*
@@ -82,7 +82,7 @@ public class Salsa20Engine
 
 		ParametersWithIV ivParams = (ParametersWithIV)params;
 
-		ByteArray iv = ivParams.getIV();
+		CByteArray iv = ivParams.getIV();
 		if(iv == null || iv.length() != getNonceSize())
 		{
 			throw new IllegalArgumentException(getAlgorithmName() + " requires exactly " + getNonceSize() + " bytes of IV");
@@ -228,9 +228,9 @@ public class Salsa20Engine
 			engineState.decrement(9);
 		}
 	}
-
-
-	public int processBytes(byte[] in, int inOff, int len, byte[] out, int outOff)
+	
+	
+	public int processBytes(byte[] in, int inOff, int len, CByteArray out, int outOff)
 	{
 		if(!initialised)
 		{
@@ -242,7 +242,45 @@ public class Salsa20Engine
 			throw new DataLengthException("input buffer too short");
 		}
 
-		if((outOff + len) > out.length)
+		if((outOff + len) > out.length())
+		{
+			throw new OutputLengthException("output buffer too short");
+		}
+
+		if(limitExceeded(len))
+		{
+			throw new MaxBytesExceededException("2^70 byte limit per IV would be exceeded; Change IV");
+		}
+
+		for(int i=0; i<len; i++)
+		{
+			out.set(i + outOff, (byte)(keyStream.get(index) ^ in[i + inOff]));
+			index = (index + 1) & 63;
+
+			if(index == 0)
+			{
+				advanceCounter();
+				generateKeyStream(keyStream);
+			}
+		}
+
+		return len;
+	}
+
+
+	public int processBytes(CByteArray in, int inOff, int len, CByteArray out, int outOff)
+	{
+		if(!initialised)
+		{
+			throw new IllegalStateException(getAlgorithmName() + " not initialised");
+		}
+
+		if((inOff + len) > in.length())
+		{
+			throw new DataLengthException("input buffer too short");
+		}
+
+		if((outOff + len) > out.length())
 		{
 			throw new OutputLengthException("output buffer too short");
 		}
@@ -254,7 +292,7 @@ public class Salsa20Engine
 
 		for(int i = 0; i < len; i++)
 		{
-			out[i + outOff] = (byte)(keyStream.get(index) ^ in[i + inOff]);
+			out.set(i + outOff, (byte)(keyStream.get(index) ^ in.get(i + inOff)));
 			index = (index + 1) & 63;
 
 			if(index == 0)
@@ -359,7 +397,7 @@ public class Salsa20Engine
 	}
 
 
-	protected void setKey(ByteArray keyBytes, ByteArray ivBytes)
+	protected void setKey(CByteArray keyBytes, CByteArray ivBytes)
 	{
 		if(keyBytes != null)
 		{
@@ -384,7 +422,7 @@ public class Salsa20Engine
 	}
 
 
-	protected void generateKeyStream(ByteArray output)
+	protected void generateKeyStream(CByteArray output)
 	{
 		salsaCore(rounds, engineState, x);
 		Utils.intToLittleEndian(x, output, 0);
@@ -396,7 +434,7 @@ public class Salsa20Engine
 	 *
 	 * @param   input   input data
 	 */
-	public static void salsaCore(int rounds, IntArray input, IntArray x)
+	public static void salsaCore(int rounds, CIntArray input, CIntArray x)
 	{
 		if(input.length() != 16)
 		{

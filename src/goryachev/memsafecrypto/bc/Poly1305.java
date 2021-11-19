@@ -1,5 +1,5 @@
 package goryachev.memsafecrypto.bc;
-import goryachev.memsafecrypto.ByteArray;
+import goryachev.memsafecrypto.CByteArray;
 import goryachev.memsafecrypto.ICryptoZeroable;
 
 
@@ -79,7 +79,7 @@ public class Poly1305
 	 */
 	public void init(CipherParameters params) throws IllegalArgumentException
 	{
-		ByteArray nonce = null;
+		CByteArray nonce = null;
 
 		if(cipher != null)
 		{
@@ -106,7 +106,7 @@ public class Poly1305
 	}
 
 
-	private void setKey(ByteArray key, ByteArray nonce)
+	private void setKey(CByteArray key, CByteArray nonce)
 	{
 		if(key.length() != 32)
 		{
@@ -136,7 +136,7 @@ public class Poly1305
 		s3 = r3 * 5;
 		s4 = r4 * 5;
 
-		final ByteArray kBytes;
+		final CByteArray kBytes;
 		final int kOff;
 
 		if(cipher == null)
@@ -147,7 +147,7 @@ public class Poly1305
 		else
 		{
 			// Compute encrypted nonce
-			kBytes = new ByteArray(BLOCK_SIZE);
+			kBytes = new CByteArray(BLOCK_SIZE);
 			kOff = 0;
 
 			cipher.init(true, new KeyParameter(key, BLOCK_SIZE, BLOCK_SIZE));

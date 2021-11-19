@@ -5,13 +5,13 @@ package goryachev.memsafecrypto;
 /**
  * Zeroable int[] equivalend based on DirectByteBuffer.
  */
-public class IntArray
+public class CIntArray
 	extends DirectArrayBase
 {
 	private static final int BYTES_PER_INT = 4;
 	
 	
-	public IntArray(int capacity)
+	public CIntArray(int capacity)
 	{
 		super(capacity * BYTES_PER_INT);
 	}

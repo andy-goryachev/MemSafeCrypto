@@ -27,45 +27,17 @@ public final class MemCrypt
 	private static final int staticEntropy4 = initStaticEntropy();
 
 	
-//	public static final byte[] encrypt(ByteArray data) throws Exception
-//	{
-//		int encryptedLength = data.length() + XSalsaTools.NONCE_LENGTH_BYTES;
-//		ByteArrayOutputStream out = new ByteArrayOutputStream(encryptedLength);
-//
-//		byte[] nonce = new byte[XSalsaTools.NONCE_LENGTH_BYTES];
-//		new SecureRandom().nextBytes(nonce);
-//		
-//		out.write(nonce);
-//		
-//		// TODO ByteArray
-//		byte[] key = generateKey();
-//		try
-//		{
-//			XSalsa20EncryptStream os = new XSalsa20EncryptStream(key, nonce, out);
-//			os.write(data);
-//			os.close();
-//		}
-//		finally
-//		{
-//			Crypto.zero(key);
-//		}
-//		
-//		return out.toByteArray();
-//	}
-	
-	
-	public static final byte[] encrypt(byte[] data) throws Exception
+	public static final CByteArray encrypt(CByteArray data) throws Exception
 	{
-		int encryptedLength = data.length + XSalsaTools.NONCE_LENGTH_BYTES;
-		ByteArrayOutputStream out = new ByteArrayOutputStream(encryptedLength);
+		int encryptedLength = data.length() + XSalsaTools.NONCE_LENGTH_BYTES;
+		CByteArray out = new CByteArray(encryptedLength);
 
-		byte[] nonce = new byte[XSalsaTools.NONCE_LENGTH_BYTES];
-		new SecureRandom().nextBytes(nonce);
+		CByteArray nonce = new CByteArray(XSalsaTools.NONCE_LENGTH_BYTES);
+		CryptoTools.nextBytes(new SecureRandom(), nonce);
 		
 		out.write(nonce);
 		
-		// TODO ByteArray
-		byte[] key = generateKey();
+		CByteArray key = generateKey();
 		try
 		{
 			XSalsa20EncryptStream os = new XSalsa20EncryptStream(key, nonce, out);
@@ -77,27 +49,26 @@ public final class MemCrypt
 			Crypto.zero(key);
 		}
 		
-		return out.toByteArray();
+		return out;
 	}
 	
-
-	public static final byte[] decrypt(byte[] data) throws Exception
+	
+	public static final CByteArray decrypt(CByteArray data) throws Exception
 	{
-		int decryptedLength = data.length - XSalsaTools.NONCE_LENGTH_BYTES;
+		int decryptedLength = data.length() - XSalsaTools.NONCE_LENGTH_BYTES;
 		
-		ByteArrayInputStream in = new ByteArrayInputStream(data);
+		CByteArrayInputStream in = new CByteArrayInputStream(data);
 
-		byte[] nonce = new byte[XSalsaTools.NONCE_LENGTH_BYTES];
-		CKit.readFully(in, nonce);
+		CByteArray nonce = new CByteArray(XSalsaTools.NONCE_LENGTH_BYTES);
+		CryptoTools.readFully(in, nonce);
 		
-		byte[] out = new byte[decryptedLength];
+		CByteArray out = new CByteArray(decryptedLength);
 		
-		// TODO ByteArray
-		byte[] key = generateKey();
+		CByteArray key = generateKey();
 		try
 		{
-			XSalsa20DecryptStream is = new XSalsa20DecryptStream(key, nonce, data.length, in);
-			CKit.readFully(is, out);
+			XSalsa20DecryptStream is = new XSalsa20DecryptStream(key, nonce, data.length(), in);
+			CryptoTools.readFully(is, out);
 			is.close();
 		}
 		finally
@@ -105,13 +76,12 @@ public final class MemCrypt
 			Crypto.zero(key);
 		}
 		
-		// TODO ByteArray
 		return out;
 	}
 	
 	
 	/** it is expected this key will not change for duration of the program */
-	private static final byte[] generateKey() throws Exception
+	private static final CByteArray generateKey() throws Exception
 	{
 		Blake2bDigest d = new Blake2bDigest(XSalsaTools.KEY_LENGTH_BYTES * 8);
 		
@@ -126,7 +96,9 @@ public final class MemCrypt
 		// TODO byte array
 		byte[] b = new byte[d.getDigestSize()];
 		d.doFinal(b, 0);
-		return b;
+		
+		// FIX
+		return CByteArray.readOnly(b);
 	}
 
 

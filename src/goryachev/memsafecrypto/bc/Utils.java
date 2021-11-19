@@ -1,8 +1,8 @@
 // Copyright © 2021 Andy Goryachev <andy@goryachev.com>
 package goryachev.memsafecrypto.bc;
 
-import goryachev.memsafecrypto.ByteArray;
-import goryachev.memsafecrypto.IntArray;
+import goryachev.memsafecrypto.CByteArray;
+import goryachev.memsafecrypto.CIntArray;
 
 /**
  * Utility methods.
@@ -46,7 +46,7 @@ public final class Utils
 	}
 	
 	
-	public static int littleEndianToInt(ByteArray b, int off)
+	public static int littleEndianToInt(CByteArray b, int off)
 	{
 		int n = b.get(off) & 0xff;
 		n |= (b.get(++off) & 0xff) << 8;
@@ -66,7 +66,7 @@ public final class Utils
 	}
 	
 	
-	public static void littleEndianToInt(ByteArray bs, int bOff, IntArray ns, int nOff, int count)
+	public static void littleEndianToInt(CByteArray bs, int bOff, CIntArray ns, int nOff, int count)
 	{
 		for(int i = 0; i < count; ++i)
 		{
@@ -97,7 +97,7 @@ public final class Utils
 	}
 	
 	
-	public static void intToLittleEndian(int n, ByteArray bs, int off)
+	public static void intToLittleEndian(int n, CByteArray bs, int off)
 	{
 		bs.set(off, (byte)(n));
 		bs.set(++off, (byte)(n >>> 8));
@@ -116,7 +116,7 @@ public final class Utils
 	}
 	
 	
-	public static void intToLittleEndian(IntArray ns, ByteArray b, int off)
+	public static void intToLittleEndian(CIntArray ns, CByteArray b, int off)
 	{
 		for(int i = 0; i < ns.length(); ++i)
 		{

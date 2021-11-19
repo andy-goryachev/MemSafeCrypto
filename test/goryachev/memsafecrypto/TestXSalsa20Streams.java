@@ -27,11 +27,11 @@ public class TestXSalsa20Streams
 		
 		for(int i=0; i<count; i++)
 		{
-			byte[] key = TestTools.rnd(XSalsaTools.KEY_LENGTH_BYTES);
-			byte[] nonce = TestTools.rnd(XSalsaTools.NONCE_LENGTH_BYTES);
-			byte[] data = TestTools.rnd(size);
+			CByteArray key = TestUtils.rndByteArray(XSalsaTools.KEY_LENGTH_BYTES);
+			CByteArray nonce = TestUtils.rndByteArray(XSalsaTools.NONCE_LENGTH_BYTES);
+			CByteArray data = TestUtils.rndByteArray(size);
 			
-			ByteArrayOutputStream os = new ByteArrayOutputStream(size);
+			CByteArray os = new CByteArray(size);
 			goryachev.memsafecrypto.bc.salsa.XSalsa20EncryptStream out = new goryachev.memsafecrypto.bc.salsa.XSalsa20EncryptStream(key, nonce, os);
 			out.write(data);
 			out.close();

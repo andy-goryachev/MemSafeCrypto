@@ -8,7 +8,7 @@ import org.bouncycastle.crypto.params.ParametersWithIV;
 
 
 /**
- * XSalsa20poly1306 Tools.
+ * XSalsa20Poly1306 Tools.
  */
 public class XSalsaTools
 {
