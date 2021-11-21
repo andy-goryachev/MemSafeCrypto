@@ -1,5 +1,5 @@
 // Copyright © 2021 Andy Goryachev <andy@goryachev.com>
-package goryachev.memsafecrypto.bc.salsa;
+package goryachev.memsafecrypto.salsa;
 import goryachev.crypto.Crypto;
 import org.bouncycastle.crypto.engines.XSalsa20Engine;
 import org.bouncycastle.crypto.macs.Poly1305;

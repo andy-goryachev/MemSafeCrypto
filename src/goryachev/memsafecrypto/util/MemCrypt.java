@@ -4,9 +4,9 @@ import goryachev.crypto.Crypto;
 import goryachev.memsafecrypto.CByteArray;
 import goryachev.memsafecrypto.CByteArrayInputStream;
 import goryachev.memsafecrypto.bc.Blake2bDigest;
-import goryachev.memsafecrypto.bc.salsa.XSalsa20DecryptStream;
-import goryachev.memsafecrypto.bc.salsa.XSalsa20EncryptStream;
-import goryachev.memsafecrypto.bc.salsa.XSalsaTools;
+import goryachev.memsafecrypto.salsa.XSalsa20DecryptStream;
+import goryachev.memsafecrypto.salsa.XSalsa20EncryptStream;
+import goryachev.memsafecrypto.salsa.XSalsaTools;
 import java.security.SecureRandom;
 
 

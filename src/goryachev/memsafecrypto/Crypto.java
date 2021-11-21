@@ -7,6 +7,6 @@ import java.security.SecureRandom;
 /**
  * Crypto Tools.
  */
-public class CryptoTools
+public final class Crypto
 {
 }

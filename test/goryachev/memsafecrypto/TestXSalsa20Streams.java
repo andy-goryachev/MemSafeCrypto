@@ -3,7 +3,7 @@ package goryachev.memsafecrypto;
 import goryachev.common.test.TF;
 import goryachev.common.test.Test;
 import goryachev.common.util.CKit;
-import goryachev.memsafecrypto.bc.salsa.XSalsaTools;
+import goryachev.memsafecrypto.salsa.XSalsaTools;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
@@ -32,13 +32,13 @@ public class TestXSalsa20Streams
 			CByteArray data = TestUtils.rndByteArray(size);
 			
 			CByteArray os = new CByteArray(size);
-			goryachev.memsafecrypto.bc.salsa.XSalsa20EncryptStream out = new goryachev.memsafecrypto.bc.salsa.XSalsa20EncryptStream(key, nonce, os);
+			goryachev.memsafecrypto.salsa.XSalsa20EncryptStream out = new goryachev.memsafecrypto.salsa.XSalsa20EncryptStream(key, nonce, os);
 			out.write(data);
 			out.close();
 			byte[] encrypted = os.toByteArray();
 			
 			ByteArrayInputStream is = new ByteArrayInputStream(encrypted);
-			goryachev.memsafecrypto.bc.salsa.XSalsa20DecryptStream in = new goryachev.memsafecrypto.bc.salsa.XSalsa20DecryptStream(key, nonce, encrypted.length, is);
+			goryachev.memsafecrypto.salsa.XSalsa20DecryptStream in = new goryachev.memsafecrypto.salsa.XSalsa20DecryptStream(key, nonce, encrypted.length, is);
 			byte[] decrypted = new byte[size]; 
 			CKit.readFully(in, decrypted);
 			in.close();
