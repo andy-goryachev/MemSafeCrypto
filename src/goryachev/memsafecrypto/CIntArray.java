@@ -105,4 +105,42 @@ public class CIntArray
 		int ix = index * BYTES_PER_INT;
 		buffer.putInt(ix, value);
 	}
+	
+	
+	public void fill(int value)
+	{
+		checkWriteable();
+		
+		int len = length();
+		for(int i=0; i<len; i++)
+		{
+			int ix = i * BYTES_PER_INT;
+			buffer.putInt(ix, value);
+		}
+	}
+
+
+	public void copy(int toOffset, int[] src, int srcOffset, int length)
+	{
+		checkWriteable();
+		
+		for(int i=0; i<length; i++)
+		{
+			int v = src[i + srcOffset];
+			int ix = (i + toOffset) * BYTES_PER_INT;
+			buffer.putInt(ix, v);
+		}
+	}
+	
+	
+	public int[] toArray()
+	{
+		int len = length();
+		int[] rv = new int[len];
+		for(int i=0; i<len; i++)
+		{
+			rv[i] = get(i);
+		}
+		return rv;
+	}
 }

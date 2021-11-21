@@ -283,9 +283,9 @@ public class Blake2bDigest
 	private void initializeInternalState()
 	{
 		// initialize v:
-		System.arraycopy(chainValue, 0, internalState, 0, chainValue.length);
-		System.arraycopy(blake2b_IV, 0, internalState, chainValue.length, 4);
-		
+		Utils.arraycopy(chainValue, 0, internalState, 0, chainValue.length);
+		Utils.arraycopy(blake2b_IV, 0, internalState, chainValue.length, 4);
+
 		internalState.set(12, t0 ^ blake2b_IV[4]);
 		internalState.set(13, t1 ^ blake2b_IV[5]);
 		internalState.set(14, f0 ^ blake2b_IV[6]);
@@ -480,7 +480,7 @@ public class Blake2bDigest
 		}
 
 		// update chain values:
-		for(int offset = 0; offset < chainValue.length; offset++)
+		for(int offset=0; offset<chainValue.length; offset++)
 		{
 			chainValue[offset] = chainValue[offset] ^ internalState.get(offset) ^ internalState.get(offset + 8);
 		}

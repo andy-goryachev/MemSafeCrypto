@@ -507,7 +507,7 @@ public class Dump
 			}
 			else if(isPrimitive(x.getClass()))
 			{
-				sb.a(CKit.getSimpleName(x)).a("=").a(x);
+				sb.a(simpleName(x)).a("=").a(x);
 			}
 			else if(x instanceof Enum)
 			{

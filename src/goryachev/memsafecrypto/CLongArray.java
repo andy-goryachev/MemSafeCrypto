@@ -94,7 +94,7 @@ public class CLongArray
 	public long get(int index)
 	{
 		int ix = index * BYTES_PER_LONG;
-		return buffer.getInt(ix);
+		return buffer.getLong(ix);
 	}
 	
 	
@@ -114,7 +114,33 @@ public class CLongArray
 		int sz = length();
 		for(int i=0; i<sz; i++)
 		{
-			set(i, value);
+			int ix = i * BYTES_PER_LONG;
+			buffer.putLong(ix, value);
 		}
+	}
+
+
+	public void copy(int toOffset, long[] src, int srcOffset, int length)
+	{
+		checkWriteable();
+		
+		for(int i=0; i<length; i++)
+		{
+			long v = src[i + srcOffset];
+			int ix = (i + toOffset) * BYTES_PER_LONG;
+			buffer.putLong(ix, v);
+		}
+	}
+	
+	
+	public long[] toArray()
+	{
+		int len = length();
+		long[] rv = new long[len];
+		for(int i=0; i<len; i++)
+		{
+			rv[i] = get(i);
+		}
+		return rv;
 	}
 }

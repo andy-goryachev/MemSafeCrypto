@@ -3,6 +3,7 @@ package goryachev.memsafecrypto.bc;
 
 import goryachev.memsafecrypto.CByteArray;
 import goryachev.memsafecrypto.CIntArray;
+import goryachev.memsafecrypto.CLongArray;
 
 /**
  * Utility methods.
@@ -146,5 +147,11 @@ public final class Utils
 	{
 		intToLittleEndian((int)(n & 0xffffffffL), bs, off);
 		intToLittleEndian((int)(n >>> 32), bs, off + 4);
+	}
+
+
+	public static void arraycopy(long[] src, int srcPos, CLongArray dest, int destPos, int length)
+	{
+		dest.copy(destPos, src, srcPos, length);
 	}
 }
