@@ -1,8 +1,8 @@
 // Copyright © 2011-2021 Andy Goryachev <andy@goryachev.com>
 package goryachev.memsafecrypto.salsa;
 import goryachev.common.util.CKit;
-import goryachev.crypto.Crypto;
 import goryachev.memsafecrypto.CByteArray;
+import goryachev.memsafecrypto.Crypto;
 import goryachev.memsafecrypto.bc.KeyParameter;
 import goryachev.memsafecrypto.bc.ParametersWithIV;
 import goryachev.memsafecrypto.bc.Poly1305;
@@ -22,6 +22,7 @@ public class XSalsa20Poly1305DecryptStream
 	public static final int BUFFER_SIZE = 4096;
 	private InputStream in;
 	private long toRead;
+	// FIX CByteArray
 	private byte[] buf;
 	private CByteArray out;
 	private int index;
@@ -50,7 +51,7 @@ public class XSalsa20Poly1305DecryptStream
 		}
 		finally
 		{
-			Crypto.zero(keyParameter);
+			keyParameter.zero();
 		}
 		
 		CByteArray subkey = new CByteArray(XSalsaTools.KEY_LENGTH_BYTES);
@@ -65,12 +66,12 @@ public class XSalsa20Poly1305DecryptStream
 			}
 			finally
 			{
-				Crypto.zero(kp);
+				kp.zero();
 			}
 		}
 		finally
 		{
-			Crypto.zero(subkey);
+			subkey.zero();
 		}
 	}
 	

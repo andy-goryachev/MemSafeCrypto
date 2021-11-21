@@ -70,7 +70,10 @@ public class DirectArrayBase
 	public void zero()
 	{
 		int sz = sizeInBytes();
-		byte[] b = new byte[sz];
-		buffer.put(b, 0, sz);
+		byte zero = (byte)0;
+		for(int i=0; i<sz; i++)
+		{
+			buffer.put(i, zero);
+		}
 	}
 }

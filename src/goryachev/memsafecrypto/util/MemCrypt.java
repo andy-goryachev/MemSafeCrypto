@@ -1,6 +1,5 @@
 // Copyright © 2011-2021 Andy Goryachev <andy@goryachev.com>
 package goryachev.memsafecrypto.util;
-import goryachev.crypto.Crypto;
 import goryachev.memsafecrypto.CByteArray;
 import goryachev.memsafecrypto.bc.Blake2bDigest;
 import goryachev.memsafecrypto.salsa.XSalsa20Decryptor;
@@ -50,7 +49,7 @@ public final class MemCrypt
 		}
 		finally
 		{
-			Crypto.zero(key);
+			key.zero();
 		}
 		
 		return out;
@@ -62,14 +61,14 @@ public final class MemCrypt
 		int decryptedLength = data.length() - XSalsaTools.NONCE_LENGTH_BYTES;
 		
 		CByteArray nonce = new CByteArray(XSalsaTools.NONCE_LENGTH_BYTES);
-		CUtils.readFully(data, nonce);
+		nonce.copy(0, data, 0, nonce.length());
 		
 		CByteArray out = new CByteArray(decryptedLength);
 		
 		CByteArray key = generateKey();
 		try
 		{
-			XSalsa20Decryptor dec = new XSalsa20Decryptor(key, nonce, data);
+			XSalsa20Decryptor dec = new XSalsa20Decryptor(key, nonce, XSalsaTools.NONCE_LENGTH_BYTES, decryptedLength, data);
 			try
 			{
 				dec.decrypt(out);
@@ -81,7 +80,7 @@ public final class MemCrypt
 		}
 		finally
 		{
-			Crypto.zero(key);
+			key.zero();
 		}
 		
 		return out;

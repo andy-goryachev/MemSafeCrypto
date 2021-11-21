@@ -211,17 +211,6 @@ public final class CUtils
 		}
 	}
 	
-	
-	public static void readFully(CByteArray in, CByteArray out)
-	{
-		int len = out.length();
-		for(int i=0; i<len; i++)
-		{
-			byte b = in.read();
-			out.set(i, b);
-		}
-	}
-	
 
 	public static void nextBytes(SecureRandom rnd, CByteArray buf)
 	{

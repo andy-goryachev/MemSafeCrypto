@@ -1,12 +1,10 @@
 // Copyright © 2011-2021 Andy Goryachev <andy@goryachev.com>
 package goryachev.memsafecrypto.salsa;
-import goryachev.crypto.Crypto;
 import goryachev.memsafecrypto.CByteArray;
 import goryachev.memsafecrypto.ICryptoZeroable;
 import goryachev.memsafecrypto.bc.KeyParameter;
 import goryachev.memsafecrypto.bc.ParametersWithIV;
 import goryachev.memsafecrypto.bc.XSalsa20Engine;
-import java.io.IOException;
 
 
 /**
@@ -17,10 +15,12 @@ public class XSalsa20Decryptor
 {
 	public static final int BUFFER_SIZE = 4096;
 	private CByteArray in;
+	private int offset;
+	private int length;
 	private XSalsa20Engine xsalsa20 = new XSalsa20Engine();
 
 
-	public XSalsa20Decryptor(CByteArray key, CByteArray nonce, CByteArray in)
+	public XSalsa20Decryptor(CByteArray key, CByteArray nonce, int offset, int length, CByteArray in)
 	{
 		if(key.length() != XSalsaTools.KEY_LENGTH_BYTES)
 		{
@@ -28,6 +28,8 @@ public class XSalsa20Decryptor
 		}
 
 		this.in = in;
+		this.offset = offset;
+		this.length = length;
 		
 		KeyParameter keyParameter = new KeyParameter(key);
 		try
@@ -37,19 +39,19 @@ public class XSalsa20Decryptor
 		}
 		finally
 		{
-			Crypto.zero(keyParameter);
+			keyParameter.zero();
 		}
 	}
 	
 
 	public void decrypt(CByteArray out) throws Exception
 	{
-		xsalsa20.processBytes(in, 0, in.length(), out, 0);
+		xsalsa20.processBytes(in, offset, length, out, 0);
 	}
 	
 
 	public void zero()
 	{
-		Crypto.zero(xsalsa20);
+		xsalsa20.zero();
 	}
 }

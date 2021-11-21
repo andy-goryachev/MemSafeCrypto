@@ -24,9 +24,9 @@ public class TestXSalsa20Streams
 		
 		for(int i=0; i<count; i++)
 		{
-			CByteArray key = TestUtils.rndByteArray(XSalsaTools.KEY_LENGTH_BYTES);
-			CByteArray nonce = TestUtils.rndByteArray(XSalsaTools.NONCE_LENGTH_BYTES);
-			CByteArray data = TestUtils.rndByteArray(size);
+			CByteArray key = TUtils.rndByteArray(XSalsaTools.KEY_LENGTH_BYTES);
+			CByteArray nonce = TUtils.rndByteArray(XSalsaTools.NONCE_LENGTH_BYTES);
+			CByteArray data = TUtils.rndByteArray(size);
 			
 			CByteArray os = new CByteArray(size);
 			goryachev.memsafecrypto.salsa.XSalsa20EncryptStream out = new goryachev.memsafecrypto.salsa.XSalsa20EncryptStream(key, nonce, os);
@@ -35,7 +35,7 @@ public class TestXSalsa20Streams
 			
 			CByteArray encrypted = os.toReadOnly();
 			
-			goryachev.memsafecrypto.salsa.XSalsa20Decryptor in = new goryachev.memsafecrypto.salsa.XSalsa20Decryptor(key, nonce, encrypted);
+			goryachev.memsafecrypto.salsa.XSalsa20Decryptor in = new goryachev.memsafecrypto.salsa.XSalsa20Decryptor(key, nonce, 0, encrypted.length(), encrypted);
 			CByteArray decrypted = new CByteArray(size); 
 			in.decrypt(decrypted);
 			in.zero();

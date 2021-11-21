@@ -8,7 +8,7 @@ import java.util.Random;
 /**
  * Test Utilities.
  */
-public class TestUtils
+public class TUtils
 {
 	public static byte[] rnd(int size)
 	{

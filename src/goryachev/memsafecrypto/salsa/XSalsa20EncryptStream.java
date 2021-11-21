@@ -1,8 +1,7 @@
 // Copyright © 2011-2021 Andy Goryachev <andy@goryachev.com>
 package goryachev.memsafecrypto.salsa;
-import goryachev.common.util.CKit;
-import goryachev.crypto.Crypto;
 import goryachev.memsafecrypto.CByteArray;
+import goryachev.memsafecrypto.Crypto;
 import goryachev.memsafecrypto.bc.KeyParameter;
 import goryachev.memsafecrypto.bc.ParametersWithIV;
 import goryachev.memsafecrypto.bc.XSalsa20Engine;
@@ -39,7 +38,7 @@ public class XSalsa20EncryptStream
 		}
 		finally
 		{
-			Crypto.zero(keyParameter);
+			keyParameter.zero();
 		}
 	}
 	

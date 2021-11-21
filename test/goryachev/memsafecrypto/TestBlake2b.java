@@ -22,7 +22,7 @@ public class TestBlake2b
 		
 		for(int len=0; len<maxLen; len++)
 		{
-			byte[] data = TestUtils.rnd(len);
+			byte[] data = TUtils.rnd(len);
 			CByteArray data2 = CByteArray.readOnly(data);
 			
 			for(int bits=8; bits<=512; bits += 8)
