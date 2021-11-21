@@ -33,6 +33,12 @@ public final class CByteArray
 	}
 	
 	
+	public byte read()
+	{
+		return buffer.get();
+	}
+	
+	
 	public void set(int index, byte value)
 	{
 		checkWriteable();

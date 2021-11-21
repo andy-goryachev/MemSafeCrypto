@@ -2,10 +2,7 @@
 package goryachev.memsafecrypto;
 import goryachev.common.test.TF;
 import goryachev.common.test.Test;
-import goryachev.common.util.CKit;
 import goryachev.memsafecrypto.salsa.XSalsaTools;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 
 
 /**
@@ -23,7 +20,7 @@ public class TestXSalsa20Streams
 	public void testEncrypt() throws Exception
 	{
 		int count = 500;
-		int size = 1_000_000;
+		int size = 10_000;
 		
 		for(int i=0; i<count; i++)
 		{
@@ -35,15 +32,15 @@ public class TestXSalsa20Streams
 			goryachev.memsafecrypto.salsa.XSalsa20EncryptStream out = new goryachev.memsafecrypto.salsa.XSalsa20EncryptStream(key, nonce, os);
 			out.write(data);
 			out.close();
-			byte[] encrypted = os.toByteArray();
 			
-			ByteArrayInputStream is = new ByteArrayInputStream(encrypted);
-			goryachev.memsafecrypto.salsa.XSalsa20DecryptStream in = new goryachev.memsafecrypto.salsa.XSalsa20DecryptStream(key, nonce, encrypted.length, is);
-			byte[] decrypted = new byte[size]; 
-			CKit.readFully(in, decrypted);
-			in.close();
+			CByteArray encrypted = os.toReadOnly();
 			
-			TF.eq(decrypted, data);
+			goryachev.memsafecrypto.salsa.XSalsa20Decryptor in = new goryachev.memsafecrypto.salsa.XSalsa20Decryptor(key, nonce, encrypted);
+			CByteArray decrypted = new CByteArray(size); 
+			in.decrypt(decrypted);
+			in.zero();
+			
+			TF.eq(decrypted.toByteArray(), data.toByteArray());
 		}
 	}
 }

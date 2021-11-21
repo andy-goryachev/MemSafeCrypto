@@ -2,9 +2,8 @@
 package goryachev.memsafecrypto.util;
 import goryachev.crypto.Crypto;
 import goryachev.memsafecrypto.CByteArray;
-import goryachev.memsafecrypto.CByteArrayInputStream;
 import goryachev.memsafecrypto.bc.Blake2bDigest;
-import goryachev.memsafecrypto.salsa.XSalsa20DecryptStream;
+import goryachev.memsafecrypto.salsa.XSalsa20Decryptor;
 import goryachev.memsafecrypto.salsa.XSalsa20EncryptStream;
 import goryachev.memsafecrypto.salsa.XSalsaTools;
 import java.security.SecureRandom;
@@ -40,8 +39,14 @@ public final class MemCrypt
 		try
 		{
 			XSalsa20EncryptStream os = new XSalsa20EncryptStream(key, nonce, out);
-			os.write(data);
-			os.close();
+			try
+			{
+				os.write(data);
+			}
+			finally
+			{
+				os.close();
+			}
 		}
 		finally
 		{
@@ -56,20 +61,23 @@ public final class MemCrypt
 	{
 		int decryptedLength = data.length() - XSalsaTools.NONCE_LENGTH_BYTES;
 		
-		// FIX remove
-		CByteArrayInputStream in = new CByteArrayInputStream(data);
-
 		CByteArray nonce = new CByteArray(XSalsaTools.NONCE_LENGTH_BYTES);
-		CUtils.readFully(in, nonce);
+		CUtils.readFully(data, nonce);
 		
 		CByteArray out = new CByteArray(decryptedLength);
 		
 		CByteArray key = generateKey();
 		try
 		{
-			XSalsa20DecryptStream is = new XSalsa20DecryptStream(key, nonce, data.length(), in);
-			CUtils.readFully(is, out);
-			is.close();
+			XSalsa20Decryptor dec = new XSalsa20Decryptor(key, nonce, data);
+			try
+			{
+				dec.decrypt(out);
+			}
+			finally
+			{
+				dec.zero();
+			}
 		}
 		finally
 		{
