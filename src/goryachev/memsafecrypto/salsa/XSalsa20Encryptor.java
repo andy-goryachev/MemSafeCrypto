@@ -41,9 +41,9 @@ public class XSalsa20Encryptor
 	}
 	
 	
-	public void encrypt(CByteArray out)
+	public void encrypt(CByteArray out, int offset, int length)
 	{
-		xsalsa20.processBytes(input, 0, out.length(), out, 0);
+		xsalsa20.processBytes(input, 0, length, out, offset);
 	}
 
 

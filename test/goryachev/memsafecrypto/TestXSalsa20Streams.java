@@ -30,7 +30,7 @@ public class TestXSalsa20Streams
 			
 			CByteArray os = new CByteArray(size);
 			goryachev.memsafecrypto.salsa.XSalsa20Encryptor out = new goryachev.memsafecrypto.salsa.XSalsa20Encryptor(key, nonce, data);
-			out.encrypt(os);
+			out.encrypt(os, 0, data.length());
 			out.zero();
 			
 			CByteArray encrypted = os.toReadOnly();

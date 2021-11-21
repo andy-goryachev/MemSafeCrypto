@@ -40,7 +40,7 @@ public final class MemCrypt
 			XSalsa20Encryptor enc = new XSalsa20Encryptor(key, nonce, data);
 			try
 			{
-				enc.encrypt(out);
+				enc.encrypt(out, XSalsaTools.NONCE_LENGTH_BYTES, data.length());
 			}
 			finally
 			{
@@ -100,12 +100,10 @@ public final class MemCrypt
 		update(d, String.class.hashCode());
 		update(d, MemCrypt.class.hashCode());
 		
-		// TODO byte array
-		byte[] b = new byte[d.getDigestSize()];
+		CByteArray b = new CByteArray(d.getDigestSize());
 		d.doFinal(b, 0);
-		
-		// FIX
-		return CByteArray.readOnly(b);
+		b.setReadOnly();
+		return b;
 	}
 
 
