@@ -1,4 +1,5 @@
 package goryachev.memsafecrypto.bc;
+import goryachev.memsafecrypto.CLongArray;
 import java.util.Arrays;
 
 
@@ -100,10 +101,8 @@ public class Blake2bDigest
 	// Position of last inserted byte:
 	private int bufferPos = 0;// a value from 0 up to 128
 
-	private long[] internalState = new long[16]; // In the Blake2b paper it is
-	// called: v
-	private long[] chainValue = null; // state vector, in the Blake2b paper it
-	// is called: h
+	private final CLongArray internalState = new CLongArray(16); // In the Blake2b paper it is called: v
+	private long[] chainValue = null; // state vector, in the Blake2b paper it is called: h
 
 	private long t0 = 0L; // holds last significant bits, counter (counts bytes)
 	private long t1 = 0L; // counter: Length up to 2^128 are supported
@@ -198,13 +197,14 @@ public class Blake2bDigest
 	 */
 	public Blake2bDigest(byte[] key, int digestLength, byte[] salt, byte[] personalization)
 	{
-
 		buffer = new byte[BLOCK_LENGTH_BYTES];
+		
 		if(digestLength < 1 || digestLength > 64)
 		{
 			throw new IllegalArgumentException("Invalid digest length (required: 1 - 64)");
 		}
 		this.digestLength = digestLength;
+		
 		if(salt != null)
 		{
 			if(salt.length != 16)
@@ -214,6 +214,7 @@ public class Blake2bDigest
 			this.salt = new byte[16];
 			System.arraycopy(salt, 0, this.salt, 0, salt.length);
 		}
+		
 		if(personalization != null)
 		{
 			if(personalization.length != 16)
@@ -223,6 +224,7 @@ public class Blake2bDigest
 			this.personalization = new byte[16];
 			System.arraycopy(personalization, 0, this.personalization, 0, personalization.length);
 		}
+		
 		if(key != null)
 		{
 			this.key = new byte[key.length];
@@ -236,6 +238,7 @@ public class Blake2bDigest
 			System.arraycopy(key, 0, buffer, 0, key.length);
 			bufferPos = BLOCK_LENGTH_BYTES; // zero padding
 		}
+		
 		init();
 	}
 
@@ -282,10 +285,11 @@ public class Blake2bDigest
 		// initialize v:
 		System.arraycopy(chainValue, 0, internalState, 0, chainValue.length);
 		System.arraycopy(blake2b_IV, 0, internalState, chainValue.length, 4);
-		internalState[12] = t0 ^ blake2b_IV[4];
-		internalState[13] = t1 ^ blake2b_IV[5];
-		internalState[14] = f0 ^ blake2b_IV[6];
-		internalState[15] = blake2b_IV[7];// ^ f1 with f1 = 0
+		
+		internalState.set(12, t0 ^ blake2b_IV[4]);
+		internalState.set(13, t1 ^ blake2b_IV[5]);
+		internalState.set(14, f0 ^ blake2b_IV[6]);
+		internalState.set(15, blake2b_IV[7]); // ^ f1 with f1 = 0
 	}
 
 
@@ -301,10 +305,12 @@ public class Blake2bDigest
 		// process the buffer if full else add to buffer:
 		remainingLength = BLOCK_LENGTH_BYTES - bufferPos;
 		if(remainingLength == 0)
-		{ // full buffer
+		{
+			// full buffer
 			t0 += BLOCK_LENGTH_BYTES;
 			if(t0 == 0)
-			{ // if message > 2^64
+			{
+				// if message > 2^64
 				t1++;
 			}
 			compress(buffer, 0);
@@ -330,7 +336,6 @@ public class Blake2bDigest
 	 */
 	public void update(byte[] message, int offset, int len)
 	{
-
 		if(message == null || len == 0)
 		{
 			return;
@@ -339,8 +344,8 @@ public class Blake2bDigest
 		int remainingLength = 0; // left bytes of buffer
 
 		if(bufferPos != 0)
-		{ // commenced, incomplete buffer
-
+		{
+			// commenced, incomplete buffer
 			// complete the buffer:
 			remainingLength = BLOCK_LENGTH_BYTES - bufferPos;
 			if(remainingLength < len)
@@ -348,7 +353,8 @@ public class Blake2bDigest
 				System.arraycopy(message, offset, buffer, bufferPos, remainingLength);
 				t0 += BLOCK_LENGTH_BYTES;
 				if(t0 == 0)
-				{ // if message > 2^64
+				{
+					// if message > 2^64
 					t1++;
 				}
 				compress(buffer, 0);
@@ -367,7 +373,8 @@ public class Blake2bDigest
 		int messagePos;
 		int blockWiseLastPos = offset + len - BLOCK_LENGTH_BYTES;
 		for(messagePos = offset + remainingLength; messagePos < blockWiseLastPos; messagePos += BLOCK_LENGTH_BYTES)
-		{ // block wise 128 bytes
+		{
+			// block wise 128 bytes
 			// without buffer:
 			t0 += BLOCK_LENGTH_BYTES;
 			if(t0 == 0)
@@ -401,7 +408,7 @@ public class Blake2bDigest
 		}
 		compress(buffer, 0);
 		Arrays.fill(buffer, (byte)0);// Holds eventually the key if input is null
-		Arrays.fill(internalState, 0L);
+		internalState.fill(0L);
 
 		for(int i = 0; i < chainValue.length && (i * 8 < digestLength); i++)
 		{
@@ -475,21 +482,21 @@ public class Blake2bDigest
 		// update chain values:
 		for(int offset = 0; offset < chainValue.length; offset++)
 		{
-			chainValue[offset] = chainValue[offset] ^ internalState[offset] ^ internalState[offset + 8];
+			chainValue[offset] = chainValue[offset] ^ internalState.get(offset) ^ internalState.get(offset + 8);
 		}
 	}
 
 
 	private void G(long m1, long m2, int posA, int posB, int posC, int posD)
 	{
-		internalState[posA] = internalState[posA] + internalState[posB] + m1;
-		internalState[posD] = Long.rotateRight(internalState[posD] ^ internalState[posA], 32);
-		internalState[posC] = internalState[posC] + internalState[posD];
-		internalState[posB] = Long.rotateRight(internalState[posB] ^ internalState[posC], 24); // replaces 25 of BLAKE
-		internalState[posA] = internalState[posA] + internalState[posB] + m2;
-		internalState[posD] = Long.rotateRight(internalState[posD] ^ internalState[posA], 16);
-		internalState[posC] = internalState[posC] + internalState[posD];
-		internalState[posB] = Long.rotateRight(internalState[posB] ^ internalState[posC], 63); // replaces 11 of BLAKE
+		internalState.set(posA, internalState.get(posA) + internalState.get(posB) + m1);
+		internalState.set(posD, Long.rotateRight(internalState.get(posD) ^ internalState.get(posA), 32));
+		internalState.set(posC, internalState.get(posC) + internalState.get(posD));
+		internalState.set(posB, Long.rotateRight(internalState.get(posB) ^ internalState.get(posC), 24)); // replaces 25 of BLAKE
+		internalState.set(posA, internalState.get(posA) + internalState.get(posB) + m2);
+		internalState.set(posD, Long.rotateRight(internalState.get(posD) ^ internalState.get(posA), 16));
+		internalState.set(posC, internalState.get(posC) + internalState.get(posD));
+		internalState.set(posB, Long.rotateRight(internalState.get(posB) ^ internalState.get(posC), 63)); // replaces 11 of BLAKE
 	}
 
 

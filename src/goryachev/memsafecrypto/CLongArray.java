@@ -105,4 +105,16 @@ public class CLongArray
 		int ix = index * BYTES_PER_LONG;
 		buffer.putLong(ix, value);
 	}
+	
+	
+	public void fill(long value)
+	{
+		checkWriteable();
+		
+		int sz = length();
+		for(int i=0; i<sz; i++)
+		{
+			set(i, value);
+		}
+	}
 }
