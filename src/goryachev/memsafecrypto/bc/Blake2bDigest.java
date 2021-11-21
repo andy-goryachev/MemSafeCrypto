@@ -391,6 +391,70 @@ public class Blake2bDigest
 		Utils.arraycopy(message, messagePos, buffer, 0, offset + len - messagePos);
 		bufferPos += offset + len - messagePos;
 	}
+	
+	
+	/**
+	 * update the message digest with a block of bytes.
+	 *
+	 * @param message the byte array containing the data.
+	 * @param offset  the offset into the byte array where the data starts.
+	 * @param len     the length of the data.
+	 */
+	public void update(CByteArray message, int offset, int len)
+	{
+		if(message == null || len == 0)
+		{
+			return;
+		}
+
+		int remainingLength = 0; // left bytes of buffer
+
+		if(bufferPos != 0)
+		{
+			// commenced, incomplete buffer
+			// complete the buffer:
+			remainingLength = BLOCK_LENGTH_BYTES - bufferPos;
+			if(remainingLength < len)
+			{
+				// full buffer + at least 1 byte
+				Utils.arraycopy(message, offset, buffer, bufferPos, remainingLength);
+				t0 += BLOCK_LENGTH_BYTES;
+				if(t0 == 0)
+				{
+					// if message > 2^64
+					t1++;
+				}
+				compress(buffer, 0);
+				bufferPos = 0;
+				buffer.fill((byte)0); // clear buffer
+			}
+			else
+			{
+				Utils.arraycopy(message, offset, buffer, bufferPos, len);
+				bufferPos += len;
+				return;
+			}
+		}
+
+		// process blocks except last block (also if last block is full)
+		int messagePos;
+		int blockWiseLastPos = offset + len - BLOCK_LENGTH_BYTES;
+		for(messagePos = offset + remainingLength; messagePos < blockWiseLastPos; messagePos += BLOCK_LENGTH_BYTES)
+		{
+			// block wise 128 bytes
+			// without buffer:
+			t0 += BLOCK_LENGTH_BYTES;
+			if(t0 == 0)
+			{
+				t1++;
+			}
+			compress(message, messagePos);
+		}
+
+		// fill the buffer with left bytes, this might be a full block
+		Utils.arraycopy(message, messagePos, buffer, 0, offset + len - messagePos);
+		bufferPos += offset + len - messagePos;
+	}
 
 
 	/**

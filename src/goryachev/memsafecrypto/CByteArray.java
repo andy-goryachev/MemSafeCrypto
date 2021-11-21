@@ -138,6 +138,18 @@ public final class CByteArray
 		}
 	}
 	
+
+	public void copy(int destPos, CByteArray src, int srcPos, int length)
+	{
+		checkWriteable();
+		
+		for(int i=0; i<length; i++)
+		{
+			byte v = src.get(i + srcPos);
+			buffer.put(i + destPos, v);
+		}
+	}
+	
 	
 	public byte[] toByteArray()
 	{

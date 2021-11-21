@@ -186,4 +186,10 @@ public final class Utils
 	{
 		dest.copy(destPos, src, srcPos, length);
 	}
+
+
+	public static void arraycopy(CByteArray src, int srcPos, CByteArray dest, int destPos, int length)
+	{
+		dest.copy(destPos, src, srcPos, length);
+	}
 }

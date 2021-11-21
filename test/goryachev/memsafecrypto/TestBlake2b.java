@@ -18,31 +18,38 @@ public class TestBlake2b
 	@Test
 	public void testEncrypt() throws Exception
 	{
-		int maxLen = 2_000;
+		int maxLen = 1_111;
 		
 		for(int len=0; len<maxLen; len++)
 		{
-			byte[] buf = TestUtils.rnd(len);
+			byte[] data = TestUtils.rnd(len);
+			CByteArray data2 = CByteArray.readOnly(data);
 			
 			for(int bits=8; bits<=512; bits += 8)
 			{
+				org.bouncycastle.crypto.digests.Blake2bDigest bc = new org.bouncycastle.crypto.digests.Blake2bDigest(bits);
+				bc.update(data, 0, data.length);
+				byte[] expected = new byte[bits/8];
+				bc.doFinal(expected, 0);
+
 				goryachev.memsafecrypto.bc.Blake2bDigest b1 = new goryachev.memsafecrypto.bc.Blake2bDigest(bits);
-				b1.update(buf, 0, buf.length);
-				byte[] d1 = new byte[bits/8];
-				b1.doFinal(d1, 0);
+				b1.update(data, 0, data.length);
+				byte[] r1 = new byte[bits/8];
+				b1.doFinal(r1, 0);
 				
-				org.bouncycastle.crypto.digests.Blake2bDigest b2 = new org.bouncycastle.crypto.digests.Blake2bDigest(bits);
-				b2.update(buf, 0, buf.length);
-				byte[] d2 = new byte[bits/8];
-				b2.doFinal(d2, 0);
+				goryachev.memsafecrypto.bc.Blake2bDigest b2 = new goryachev.memsafecrypto.bc.Blake2bDigest(bits);
+				b2.update(data, 0, data.length);
+				CByteArray r2 = new CByteArray(bits/8);
+				b2.doFinal(r2, 0);
 				
 				goryachev.memsafecrypto.bc.Blake2bDigest b3 = new goryachev.memsafecrypto.bc.Blake2bDigest(bits);
-				b3.update(buf, 0, buf.length);
-				CByteArray d3 = new CByteArray(bits/8);
-				b3.doFinal(d3, 0);
+				b3.update(data2, 0, data2.length());
+				CByteArray r3 = new CByteArray(bits/8);
+				b3.doFinal(r3, 0);
 				
-				TF.eq(d1, d2);
-				TF.eq(d3.toByteArray(), d2);
+				TF.eq(r1, expected);
+				TF.eq(r2.toByteArray(), expected);
+				TF.eq(r3.toByteArray(), expected);
 			}
 		}
 	}
