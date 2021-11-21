@@ -36,7 +36,13 @@ public class TestBlake2b
 				byte[] d2 = new byte[bits/8];
 				b2.doFinal(d2, 0);
 				
+				goryachev.memsafecrypto.bc.Blake2bDigest b3 = new goryachev.memsafecrypto.bc.Blake2bDigest(bits);
+				b3.update(buf, 0, buf.length);
+				CByteArray d3 = new CByteArray(bits/8);
+				b3.doFinal(d3, 0);
+				
 				TF.eq(d1, d2);
+				TF.eq(d3.toByteArray(), d2);
 			}
 		}
 	}

@@ -433,6 +433,48 @@ public class Blake2bDigest
 
 		return digestLength;
 	}
+	
+	
+	/**
+	 * close the digest, producing the final digest value. The doFinal
+	 * call leaves the digest reset.
+	 * Key, salt and personal string remain.
+	 *
+	 * @param out       the array the digest is to be copied into.
+	 * @param outOffset the offset into the out array the digest is to start at.
+	 */
+	public int doFinal(CByteArray out, int outOffset)
+	{
+		f0 = 0xFFFFFFFFFFFFFFFFL;
+		t0 += bufferPos;
+		if(bufferPos > 0 && t0 == 0)
+		{
+			t1++;
+		}
+		compress(buffer, 0);
+		buffer.fill((byte)0); // Holds eventually the key if input is null
+		internalState.fill(0L);
+
+		for(int i = 0; i < chainValue.length() && (i * 8 < digestLength); i++)
+		{
+			byte[] bytes = Utils.longToLittleEndian(chainValue.get(i));
+
+			if(i * 8 < digestLength - 8)
+			{
+				Utils.arraycopy(bytes, 0, out, outOffset + i * 8, 8);
+			}
+			else
+			{
+				Utils.arraycopy(bytes, 0, out, outOffset + i * 8, digestLength - (i * 8));
+			}
+		}
+
+		chainValue.fill(0L);
+
+		reset();
+
+		return digestLength;
+	}
 
 
 	/**
