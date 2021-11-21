@@ -1,6 +1,7 @@
 package goryachev.memsafecrypto.bc;
 import goryachev.memsafecrypto.CByteArray;
 import goryachev.memsafecrypto.ICryptoZeroable;
+import goryachev.memsafecrypto.util.CUtils;
 
 
 /**
@@ -118,10 +119,10 @@ public class Poly1305
 		}
 
 		// Extract r portion of key (and "clamp" the values)
-		int t0 = Utils.littleEndianToInt(key, 0);
-		int t1 = Utils.littleEndianToInt(key, 4);
-		int t2 = Utils.littleEndianToInt(key, 8);
-		int t3 = Utils.littleEndianToInt(key, 12);
+		int t0 = CUtils.littleEndianToInt(key, 0);
+		int t1 = CUtils.littleEndianToInt(key, 4);
+		int t2 = CUtils.littleEndianToInt(key, 8);
+		int t3 = CUtils.littleEndianToInt(key, 12);
 
 		// NOTE: The masks perform the key "clamping" implicitly
 		r0 = t0 & 0x03FFFFFF;
@@ -154,10 +155,10 @@ public class Poly1305
 			cipher.processBlock(nonce, 0, kBytes, 0);
 		}
 
-		k0 = Utils.littleEndianToInt(kBytes, kOff + 0);
-		k1 = Utils.littleEndianToInt(kBytes, kOff + 4);
-		k2 = Utils.littleEndianToInt(kBytes, kOff + 8);
-		k3 = Utils.littleEndianToInt(kBytes, kOff + 12);
+		k0 = CUtils.littleEndianToInt(kBytes, kOff + 0);
+		k1 = CUtils.littleEndianToInt(kBytes, kOff + 4);
+		k2 = CUtils.littleEndianToInt(kBytes, kOff + 8);
+		k3 = CUtils.littleEndianToInt(kBytes, kOff + 12);
 	}
 
 
@@ -210,10 +211,10 @@ public class Poly1305
 			}
 		}
 
-		final long t0 = 0xffffffffL & Utils.littleEndianToInt(currentBlock, 0);
-		final long t1 = 0xffffffffL & Utils.littleEndianToInt(currentBlock, 4);
-		final long t2 = 0xffffffffL & Utils.littleEndianToInt(currentBlock, 8);
-		final long t3 = 0xffffffffL & Utils.littleEndianToInt(currentBlock, 12);
+		final long t0 = 0xffffffffL & CUtils.littleEndianToInt(currentBlock, 0);
+		final long t1 = 0xffffffffL & CUtils.littleEndianToInt(currentBlock, 4);
+		final long t2 = 0xffffffffL & CUtils.littleEndianToInt(currentBlock, 8);
+		final long t3 = 0xffffffffL & CUtils.littleEndianToInt(currentBlock, 12);
 
 		h0 += t0 & 0x3ffffff;
 		h1 += (((t1 << 32) | t0) >>> 26) & 0x3ffffff;
@@ -302,13 +303,13 @@ public class Poly1305
 		f2 = (((h2 >>> 12) | (h3 << 14)) & 0xffffffffl) + (0xffffffffL & k2);
 		f3 = (((h3 >>> 18) | (h4 << 8)) & 0xffffffffl) + (0xffffffffL & k3);
 
-		Utils.intToLittleEndian((int)f0, out, outOff);
+		CUtils.intToLittleEndian((int)f0, out, outOff);
 		f1 += (f0 >>> 32);
-		Utils.intToLittleEndian((int)f1, out, outOff + 4);
+		CUtils.intToLittleEndian((int)f1, out, outOff + 4);
 		f2 += (f1 >>> 32);
-		Utils.intToLittleEndian((int)f2, out, outOff + 8);
+		CUtils.intToLittleEndian((int)f2, out, outOff + 8);
 		f3 += (f2 >>> 32);
-		Utils.intToLittleEndian((int)f3, out, outOff + 12);
+		CUtils.intToLittleEndian((int)f3, out, outOff + 12);
 
 		reset();
 		return BLOCK_SIZE;

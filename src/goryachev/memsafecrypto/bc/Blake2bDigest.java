@@ -1,6 +1,7 @@
 package goryachev.memsafecrypto.bc;
 import goryachev.memsafecrypto.CByteArray;
 import goryachev.memsafecrypto.CLongArray;
+import goryachev.memsafecrypto.util.CUtils;
 import java.util.Arrays;
 
 
@@ -122,13 +123,13 @@ public class Blake2bDigest
 	public Blake2bDigest(Blake2bDigest digest)
 	{
 		this.bufferPos = digest.bufferPos;
-		this.buffer = Utils.clone(digest.buffer);
+		this.buffer = CUtils.clone(digest.buffer);
 		this.keyLength = digest.keyLength;
-		this.key = Utils.clone(digest.key);
+		this.key = CUtils.clone(digest.key);
 		this.digestLength = digest.digestLength;
-		this.chainValue = Utils.clone(digest.chainValue);
-		this.personalization = Utils.clone(digest.personalization);
-		this.salt = Utils.clone(digest.salt);
+		this.chainValue = CUtils.clone(digest.chainValue);
+		this.personalization = CUtils.clone(digest.personalization);
+		this.salt = CUtils.clone(digest.salt);
 		this.t0 = digest.t0;
 		this.t1 = digest.t1;
 		this.f0 = digest.f0;
@@ -266,8 +267,8 @@ public class Blake2bDigest
 			chainValue.set(5, blake2b_IV[5]);
 			if(salt != null)
 			{
-				chainValue.xor(4, Utils.littleEndianToLong(salt, 0));
-				chainValue.xor(5, Utils.littleEndianToLong(salt, 8));
+				chainValue.xor(4, CUtils.littleEndianToLong(salt, 0));
+				chainValue.xor(5, CUtils.littleEndianToLong(salt, 8));
 			}
 
 			chainValue.set(6, blake2b_IV[6]);
@@ -275,8 +276,8 @@ public class Blake2bDigest
 			
 			if(personalization != null)
 			{
-				chainValue.xor(6, Utils.littleEndianToLong(personalization, 0));
-				chainValue.xor(7, Utils.littleEndianToLong(personalization, 8));
+				chainValue.xor(6, CUtils.littleEndianToLong(personalization, 0));
+				chainValue.xor(7, CUtils.littleEndianToLong(personalization, 8));
 			}
 		}
 	}
@@ -285,8 +286,8 @@ public class Blake2bDigest
 	private void initializeInternalState()
 	{
 		// initialize v:
-		Utils.arraycopy(chainValue, 0, internalState, 0, chainValue.length());
-		Utils.arraycopy(blake2b_IV, 0, internalState, chainValue.length(), 4);
+		CUtils.arraycopy(chainValue, 0, internalState, 0, chainValue.length());
+		CUtils.arraycopy(blake2b_IV, 0, internalState, chainValue.length(), 4);
 
 		internalState.set(12, t0 ^ blake2b_IV[4]);
 		internalState.set(13, t1 ^ blake2b_IV[5]);
@@ -388,7 +389,7 @@ public class Blake2bDigest
 		}
 
 		// fill the buffer with left bytes, this might be a full block
-		Utils.arraycopy(message, messagePos, buffer, 0, offset + len - messagePos);
+		CUtils.arraycopy(message, messagePos, buffer, 0, offset + len - messagePos);
 		bufferPos += offset + len - messagePos;
 	}
 	
@@ -417,7 +418,7 @@ public class Blake2bDigest
 			if(remainingLength < len)
 			{
 				// full buffer + at least 1 byte
-				Utils.arraycopy(message, offset, buffer, bufferPos, remainingLength);
+				CUtils.arraycopy(message, offset, buffer, bufferPos, remainingLength);
 				t0 += BLOCK_LENGTH_BYTES;
 				if(t0 == 0)
 				{
@@ -430,7 +431,7 @@ public class Blake2bDigest
 			}
 			else
 			{
-				Utils.arraycopy(message, offset, buffer, bufferPos, len);
+				CUtils.arraycopy(message, offset, buffer, bufferPos, len);
 				bufferPos += len;
 				return;
 			}
@@ -452,7 +453,7 @@ public class Blake2bDigest
 		}
 
 		// fill the buffer with left bytes, this might be a full block
-		Utils.arraycopy(message, messagePos, buffer, 0, offset + len - messagePos);
+		CUtils.arraycopy(message, messagePos, buffer, 0, offset + len - messagePos);
 		bufferPos += offset + len - messagePos;
 	}
 
@@ -479,7 +480,7 @@ public class Blake2bDigest
 
 		for(int i = 0; i < chainValue.length() && (i * 8 < digestLength); i++)
 		{
-			byte[] bytes = Utils.longToLittleEndian(chainValue.get(i));
+			byte[] bytes = CUtils.longToLittleEndian(chainValue.get(i));
 
 			if(i * 8 < digestLength - 8)
 			{
@@ -521,15 +522,15 @@ public class Blake2bDigest
 
 		for(int i = 0; i < chainValue.length() && (i * 8 < digestLength); i++)
 		{
-			byte[] bytes = Utils.longToLittleEndian(chainValue.get(i));
+			byte[] bytes = CUtils.longToLittleEndian(chainValue.get(i));
 
 			if(i * 8 < digestLength - 8)
 			{
-				Utils.arraycopy(bytes, 0, out, outOffset + i * 8, 8);
+				CUtils.arraycopy(bytes, 0, out, outOffset + i * 8, 8);
 			}
 			else
 			{
-				Utils.arraycopy(bytes, 0, out, outOffset + i * 8, digestLength - (i * 8));
+				CUtils.arraycopy(bytes, 0, out, outOffset + i * 8, digestLength - (i * 8));
 			}
 		}
 
@@ -570,7 +571,7 @@ public class Blake2bDigest
 		long[] m = new long[16];
 		for(int j = 0; j < 16; j++)
 		{
-			m[j] = Utils.littleEndianToLong(message, messagePos + j * 8);
+			m[j] = CUtils.littleEndianToLong(message, messagePos + j * 8);
 		}
 
 		for(int round = 0; round < ROUNDS; round++)
@@ -603,7 +604,7 @@ public class Blake2bDigest
 		long[] m = new long[16];
 		for(int j = 0; j < 16; j++)
 		{
-			m[j] = Utils.littleEndianToLong(message, messagePos + j * 8);
+			m[j] = CUtils.littleEndianToLong(message, messagePos + j * 8);
 		}
 
 		for(int round = 0; round < ROUNDS; round++)

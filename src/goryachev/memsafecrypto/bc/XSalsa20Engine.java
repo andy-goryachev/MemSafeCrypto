@@ -1,6 +1,7 @@
 package goryachev.memsafecrypto.bc;
 import goryachev.memsafecrypto.CByteArray;
 import goryachev.memsafecrypto.CIntArray;
+import goryachev.memsafecrypto.util.CUtils;
 
 
 /**
@@ -45,7 +46,7 @@ public class XSalsa20Engine
 		super.setKey(keyBytes, ivBytes);
 
 		// Pack next 64 bits of IV into engine state instead of counter
-		Utils.littleEndianToInt(ivBytes, 8, engineState, 8, 2);
+		CUtils.littleEndianToInt(ivBytes, 8, engineState, 8, 2);
 
 		// Process engine state to generate Salsa20 key
 		CIntArray hsalsa20Out = new CIntArray(engineState.length());
@@ -63,6 +64,6 @@ public class XSalsa20Engine
 		engineState.set(14, hsalsa20Out.get(9) - engineState.get(9));
 
 		// Last 64 bits of input IV
-		Utils.littleEndianToInt(ivBytes, 16, engineState, 6, 2);
+		CUtils.littleEndianToInt(ivBytes, 16, engineState, 6, 2);
 	}
 }

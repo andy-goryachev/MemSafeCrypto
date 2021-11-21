@@ -1,5 +1,5 @@
 // Copyright © 2021 Andy Goryachev <andy@goryachev.com>
-package goryachev.memsafecrypto.bc;
+package goryachev.memsafecrypto.util;
 import goryachev.memsafecrypto.CByteArray;
 import goryachev.memsafecrypto.CIntArray;
 import goryachev.memsafecrypto.CLongArray;
@@ -8,7 +8,7 @@ import goryachev.memsafecrypto.CLongArray;
 /**
  * Utility methods.
  */
-public final class Utils
+public final class CUtils
 {
 	public static byte[] clone(byte[] data)
 	{
