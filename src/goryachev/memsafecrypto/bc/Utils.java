@@ -20,6 +20,12 @@ public final class Utils
 	{
 		return null == data ? null : new CLongArray(data);
 	}
+	
+	
+	public static CByteArray clone(CByteArray data)
+	{
+		return null == data ? null : new CByteArray(data);
+	}
 
 
 	public static long[] clone(long[] data)
@@ -139,6 +145,14 @@ public final class Utils
 		int hi = littleEndianToInt(bs, off + 4);
 		return ((hi & 0xffffffffL) << 32) | (lo & 0xffffffffL);
 	}
+	
+	
+	public static long littleEndianToLong(CByteArray bs, int off)
+	{
+		int lo = littleEndianToInt(bs, off);
+		int hi = littleEndianToInt(bs, off + 4);
+		return ((hi & 0xffffffffL) << 32) | (lo & 0xffffffffL);
+	}
 
 
 	public static byte[] longToLittleEndian(long n)
@@ -163,6 +177,12 @@ public final class Utils
 	
 	
 	public static void arraycopy(CLongArray src, int srcPos, CLongArray dest, int destPos, int length)
+	{
+		dest.copy(destPos, src, srcPos, length);
+	}
+
+
+	public static void arraycopy(byte[] src, int srcPos, CByteArray dest, int destPos, int length)
 	{
 		dest.copy(destPos, src, srcPos, length);
 	}

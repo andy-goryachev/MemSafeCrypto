@@ -115,11 +115,35 @@ public final class CByteArray
 	}
 	
 	
+	public void fill(byte value)
+	{
+		checkWriteable();
+		
+		int len = length();
+		for(int i=0; i<len; i++)
+		{
+			buffer.put(i, value);
+		}
+	}
+	
+	
+	public void copy(int destPos, byte[] src, int srcPos, int length)
+	{
+		checkWriteable();
+		
+		for(int i=0; i<length; i++)
+		{
+			byte v = src[i + srcPos];
+			buffer.put(i + destPos, v);
+		}
+	}
+	
+	
 	public byte[] toByteArray()
 	{
-		int sz = length();
-		byte[] rv = new byte[sz];
-		for(int i=0; i<sz; i++)
+		int len = length();
+		byte[] rv = new byte[len];
+		for(int i=0; i<len; i++)
 		{
 			byte b = buffer.get(i);
 			rv[i] = b;

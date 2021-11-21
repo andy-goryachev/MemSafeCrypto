@@ -1,4 +1,5 @@
 package goryachev.memsafecrypto.bc;
+import goryachev.memsafecrypto.CByteArray;
 import goryachev.memsafecrypto.CLongArray;
 import java.util.Arrays;
 
@@ -97,7 +98,7 @@ public class Blake2bDigest
 	// whenever this buffer overflows, it will be processed
 	// in the compress() function.
 	// For performance issues, long messages will not use this buffer.
-	private byte[] buffer = null;// new byte[BLOCK_LENGTH_BYTES];
+	private CByteArray buffer = null;
 	// Position of last inserted byte:
 	private int bufferPos = 0;// a value from 0 up to 128
 
@@ -146,7 +147,7 @@ public class Blake2bDigest
 			throw new IllegalArgumentException("BLAKE2b digest bit length must be a multiple of 8 and not greater than 512");
 		}
 
-		buffer = new byte[BLOCK_LENGTH_BYTES];
+		buffer = new CByteArray(BLOCK_LENGTH_BYTES);
 		keyLength = 0;
 		this.digestLength = digestSize / 8;
 		init();
@@ -164,7 +165,7 @@ public class Blake2bDigest
 	 */
 	public Blake2bDigest(byte[] key)
 	{
-		buffer = new byte[BLOCK_LENGTH_BYTES];
+		buffer = new CByteArray(BLOCK_LENGTH_BYTES);
 		if(key != null)
 		{
 			this.key = new byte[key.length];
@@ -197,7 +198,7 @@ public class Blake2bDigest
 	 */
 	public Blake2bDigest(byte[] key, int digestLength, byte[] salt, byte[] personalization)
 	{
-		buffer = new byte[BLOCK_LENGTH_BYTES];
+		buffer = new CByteArray(BLOCK_LENGTH_BYTES);
 		
 		if(digestLength < 1 || digestLength > 64)
 		{
@@ -315,13 +316,13 @@ public class Blake2bDigest
 				t1++;
 			}
 			compress(buffer, 0);
-			Arrays.fill(buffer, (byte)0);// clear buffer
-			buffer[0] = b;
+			buffer.fill((byte)0);// clear buffer
+			buffer.set(0, b);
 			bufferPos = 1;
 		}
 		else
 		{
-			buffer[bufferPos] = b;
+			buffer.set(bufferPos, b);
 			bufferPos++;
 			return;
 		}
@@ -350,7 +351,8 @@ public class Blake2bDigest
 			// complete the buffer:
 			remainingLength = BLOCK_LENGTH_BYTES - bufferPos;
 			if(remainingLength < len)
-			{ // full buffer + at least 1 byte
+			{
+				// full buffer + at least 1 byte
 				System.arraycopy(message, offset, buffer, bufferPos, remainingLength);
 				t0 += BLOCK_LENGTH_BYTES;
 				if(t0 == 0)
@@ -360,7 +362,7 @@ public class Blake2bDigest
 				}
 				compress(buffer, 0);
 				bufferPos = 0;
-				Arrays.fill(buffer, (byte)0);// clear buffer
+				buffer.fill((byte)0); // clear buffer
 			}
 			else
 			{
@@ -386,7 +388,7 @@ public class Blake2bDigest
 		}
 
 		// fill the buffer with left bytes, this might be a full block
-		System.arraycopy(message, messagePos, buffer, 0, offset + len - messagePos);
+		Utils.arraycopy(message, messagePos, buffer, 0, offset + len - messagePos);
 		bufferPos += offset + len - messagePos;
 	}
 
@@ -408,7 +410,7 @@ public class Blake2bDigest
 			t1++;
 		}
 		compress(buffer, 0);
-		Arrays.fill(buffer, (byte)0);// Holds eventually the key if input is null
+		buffer.fill((byte)0); // Holds eventually the key if input is null
 		internalState.fill(0L);
 
 		for(int i = 0; i < chainValue.length() && (i * 8 < digestLength); i++)
@@ -445,7 +447,7 @@ public class Blake2bDigest
 		t0 = 0L;
 		t1 = 0L;
 		chainValue = null;
-		Arrays.fill(buffer, (byte)0);
+		buffer.fill((byte)0);
 		if(key != null)
 		{
 			System.arraycopy(key, 0, buffer, 0, key.length);
@@ -456,6 +458,39 @@ public class Blake2bDigest
 
 
 	private void compress(byte[] message, int messagePos)
+	{
+		initializeInternalState();
+
+		long[] m = new long[16];
+		for(int j = 0; j < 16; j++)
+		{
+			m[j] = Utils.littleEndianToLong(message, messagePos + j * 8);
+		}
+
+		for(int round = 0; round < ROUNDS; round++)
+		{
+			// G apply to columns of internalState:m[blake2b_sigma[round][2 *
+			// blockPos]] /+1
+			G(m[blake2b_sigma[round][0]], m[blake2b_sigma[round][1]], 0, 4, 8, 12);
+			G(m[blake2b_sigma[round][2]], m[blake2b_sigma[round][3]], 1, 5, 9, 13);
+			G(m[blake2b_sigma[round][4]], m[blake2b_sigma[round][5]], 2, 6, 10, 14);
+			G(m[blake2b_sigma[round][6]], m[blake2b_sigma[round][7]], 3, 7, 11, 15);
+			// G apply to diagonals of internalState:
+			G(m[blake2b_sigma[round][8]], m[blake2b_sigma[round][9]], 0, 5, 10, 15);
+			G(m[blake2b_sigma[round][10]], m[blake2b_sigma[round][11]], 1, 6, 11, 12);
+			G(m[blake2b_sigma[round][12]], m[blake2b_sigma[round][13]], 2, 7, 8, 13);
+			G(m[blake2b_sigma[round][14]], m[blake2b_sigma[round][15]], 3, 4, 9, 14);
+		}
+
+		// update chain values:
+		for(int offset=0; offset<chainValue.length(); offset++)
+		{
+			chainValue.xor(offset, internalState.get(offset) ^ internalState.get(offset + 8));
+		}
+	}
+	
+	
+	private void compress(CByteArray message, int messagePos)
 	{
 		initializeInternalState();
 
@@ -544,7 +579,7 @@ public class Blake2bDigest
 		if(key != null)
 		{
 			Arrays.fill(key, (byte)0);
-			Arrays.fill(buffer, (byte)0);
+			buffer.fill((byte)0);
 		}
 	}
 
