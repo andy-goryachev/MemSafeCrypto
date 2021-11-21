@@ -1,5 +1,6 @@
 // Copyright © 2021 Andy Goryachev <andy@goryachev.com>
-package goryachev.memsafecrypto;
+package goryachev.memsafecrypto.util;
+import goryachev.memsafecrypto.ICryptoZeroable;
 import java.nio.ByteBuffer;
 
 

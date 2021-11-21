@@ -3,10 +3,12 @@ package goryachev.memsafecrypto.util;
 import goryachev.memsafecrypto.CByteArray;
 import goryachev.memsafecrypto.CIntArray;
 import goryachev.memsafecrypto.CLongArray;
+import java.io.InputStream;
+import java.security.SecureRandom;
 
 
 /**
- * Utility methods.
+ * Various Utility Methods.
  */
 public final class CUtils
 {
@@ -192,4 +194,45 @@ public final class CUtils
 	{
 		dest.copy(destPos, src, srcPos, length);
 	}
+	
+	
+	public static void readFully(InputStream in, CByteArray out) throws Exception
+	{
+		int sz = out.length();
+		for(int i=0; i<sz; i++)
+		{
+			int c = in.read();
+			if(c < 0)
+			{
+				throw new Exception("EOF");
+			}
+			
+			out.write(c);
+		}
+	}
+	
+
+	public static void nextBytes(SecureRandom rnd, CByteArray buf)
+	{
+		// if we leak one byte at a time, would that be ok?
+		byte[] b = new byte[1];
+		int sz = buf.length();
+		
+		for(int i=0; i<sz; i++)
+		{
+			rnd.nextBytes(b);
+			buf.write(b);
+		}
+	}
+
+
+	public static void arraycopy(CByteArray src, int srcPos, byte[] dst, int dstPos, int len)
+	{
+		for(int i=0; i<len; i++)
+		{
+			byte b = src.get(srcPos + i);
+			dst[dstPos + i] = b;
+		}
+	}
+
 }

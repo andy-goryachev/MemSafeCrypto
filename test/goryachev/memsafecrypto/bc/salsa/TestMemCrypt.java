@@ -3,7 +3,7 @@ package goryachev.memsafecrypto.bc.salsa;
 import goryachev.common.test.TF;
 import goryachev.common.test.Test;
 import goryachev.memsafecrypto.CByteArray;
-import goryachev.memsafecrypto.MemCrypt;
+import goryachev.memsafecrypto.util.MemCrypt;
 import java.util.Random;
 
 

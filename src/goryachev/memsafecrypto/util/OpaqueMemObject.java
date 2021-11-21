@@ -1,6 +1,7 @@
 // Copyright © 2011-2021 Andy Goryachev <andy@goryachev.com>
-package goryachev.memsafecrypto;
+package goryachev.memsafecrypto.util;
 import goryachev.crypto.Crypto;
+import goryachev.memsafecrypto.CByteArray;
 
 
 /**

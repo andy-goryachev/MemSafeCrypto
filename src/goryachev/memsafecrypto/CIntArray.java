@@ -1,6 +1,7 @@
 // Copyright © 2021 Andy Goryachev <andy@goryachev.com>
 package goryachev.memsafecrypto;
 
+import goryachev.memsafecrypto.util.DirectArrayBase;
 
 /**
  * Zeroable int[] equivalend based on DirectByteBuffer.

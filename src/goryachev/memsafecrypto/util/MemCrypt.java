@@ -1,13 +1,12 @@
 // Copyright © 2011-2021 Andy Goryachev <andy@goryachev.com>
-package goryachev.memsafecrypto;
-import goryachev.common.util.CKit;
+package goryachev.memsafecrypto.util;
 import goryachev.crypto.Crypto;
+import goryachev.memsafecrypto.CByteArray;
+import goryachev.memsafecrypto.CByteArrayInputStream;
 import goryachev.memsafecrypto.bc.Blake2bDigest;
 import goryachev.memsafecrypto.bc.salsa.XSalsa20DecryptStream;
 import goryachev.memsafecrypto.bc.salsa.XSalsa20EncryptStream;
 import goryachev.memsafecrypto.bc.salsa.XSalsaTools;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.security.SecureRandom;
 
 
@@ -33,7 +32,7 @@ public final class MemCrypt
 		CByteArray out = new CByteArray(encryptedLength);
 
 		CByteArray nonce = new CByteArray(XSalsaTools.NONCE_LENGTH_BYTES);
-		CryptoTools.nextBytes(new SecureRandom(), nonce);
+		CUtils.nextBytes(new SecureRandom(), nonce);
 		
 		out.write(nonce);
 		
@@ -57,10 +56,11 @@ public final class MemCrypt
 	{
 		int decryptedLength = data.length() - XSalsaTools.NONCE_LENGTH_BYTES;
 		
+		// FIX remove
 		CByteArrayInputStream in = new CByteArrayInputStream(data);
 
 		CByteArray nonce = new CByteArray(XSalsaTools.NONCE_LENGTH_BYTES);
-		CryptoTools.readFully(in, nonce);
+		CUtils.readFully(in, nonce);
 		
 		CByteArray out = new CByteArray(decryptedLength);
 		
@@ -68,7 +68,7 @@ public final class MemCrypt
 		try
 		{
 			XSalsa20DecryptStream is = new XSalsa20DecryptStream(key, nonce, data.length(), in);
-			CryptoTools.readFully(is, out);
+			CUtils.readFully(is, out);
 			is.close();
 		}
 		finally

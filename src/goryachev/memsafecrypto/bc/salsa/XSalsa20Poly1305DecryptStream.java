@@ -3,11 +3,11 @@ package goryachev.memsafecrypto.bc.salsa;
 import goryachev.common.util.CKit;
 import goryachev.crypto.Crypto;
 import goryachev.memsafecrypto.CByteArray;
-import goryachev.memsafecrypto.CryptoTools;
 import goryachev.memsafecrypto.bc.KeyParameter;
 import goryachev.memsafecrypto.bc.ParametersWithIV;
 import goryachev.memsafecrypto.bc.Poly1305;
 import goryachev.memsafecrypto.bc.XSalsa20Engine;
+import goryachev.memsafecrypto.util.CUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
@@ -108,7 +108,7 @@ public class XSalsa20Poly1305DecryptStream
 
 		int sz = Math.min(available, len);
 
-		CryptoTools.arraycopy(out, index, b, off, sz);
+		CUtils.arraycopy(out, index, b, off, sz);
 
 		index += sz;
 		available -= sz;
