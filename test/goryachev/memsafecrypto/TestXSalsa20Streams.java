@@ -6,7 +6,7 @@ import goryachev.memsafecrypto.salsa.XSalsaTools;
 
 
 /**
- * Tests XSalsa20 Streams.
+ * Tests XSalsa20 encryptor/decryptor.
  */
 public class TestXSalsa20Streams
 {
@@ -29,9 +29,9 @@ public class TestXSalsa20Streams
 			CByteArray data = TUtils.rndByteArray(size);
 			
 			CByteArray os = new CByteArray(size);
-			goryachev.memsafecrypto.salsa.XSalsa20EncryptStream out = new goryachev.memsafecrypto.salsa.XSalsa20EncryptStream(key, nonce, os);
-			out.write(data);
-			out.close();
+			goryachev.memsafecrypto.salsa.XSalsa20Encryptor out = new goryachev.memsafecrypto.salsa.XSalsa20Encryptor(key, nonce, data);
+			out.encrypt(os);
+			out.zero();
 			
 			CByteArray encrypted = os.toReadOnly();
 			

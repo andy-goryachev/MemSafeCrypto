@@ -3,7 +3,7 @@ package goryachev.memsafecrypto.util;
 import goryachev.memsafecrypto.CByteArray;
 import goryachev.memsafecrypto.bc.Blake2bDigest;
 import goryachev.memsafecrypto.salsa.XSalsa20Decryptor;
-import goryachev.memsafecrypto.salsa.XSalsa20EncryptStream;
+import goryachev.memsafecrypto.salsa.XSalsa20Encryptor;
 import goryachev.memsafecrypto.salsa.XSalsaTools;
 import java.security.SecureRandom;
 
@@ -37,14 +37,14 @@ public final class MemCrypt
 		CByteArray key = generateKey();
 		try
 		{
-			XSalsa20EncryptStream os = new XSalsa20EncryptStream(key, nonce, out);
+			XSalsa20Encryptor enc = new XSalsa20Encryptor(key, nonce, data);
 			try
 			{
-				os.write(data);
+				enc.encrypt(out);
 			}
 			finally
 			{
-				os.close();
+				enc.zero();
 			}
 		}
 		finally
