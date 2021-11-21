@@ -102,7 +102,7 @@ public class Blake2bDigest
 	private int bufferPos = 0;// a value from 0 up to 128
 
 	private final CLongArray internalState = new CLongArray(16); // In the Blake2b paper it is called: v
-	private long[] chainValue = null; // state vector, in the Blake2b paper it is called: h
+	private CLongArray chainValue = null; // state vector, in the Blake2b paper it is called: h
 
 	private long t0 = 0L; // holds last significant bits, counter (counts bytes)
 	private long t1 = 0L; // counter: Length up to 2^128 are supported
@@ -248,33 +248,34 @@ public class Blake2bDigest
 	{
 		if(chainValue == null)
 		{
-			chainValue = new long[8];
+			chainValue = new CLongArray(8);
 
-			chainValue[0] = blake2b_IV[0] ^ (digestLength | (keyLength << 8) | 0x1010000);
+			chainValue.set(0, blake2b_IV[0] ^ (digestLength | (keyLength << 8) | 0x1010000));
 			// 0x1010000 = ((fanout << 16) | (depth << 24) | (leafLength <<
 			// 32));
 			// with fanout = 1; depth = 0; leafLength = 0;
-			chainValue[1] = blake2b_IV[1];// ^ nodeOffset; with nodeOffset = 0;
-			chainValue[2] = blake2b_IV[2];// ^ ( nodeDepth | (innerHashLength <<
+			chainValue.set(1, blake2b_IV[1]); // ^ nodeOffset; with nodeOffset = 0;
+			chainValue.set(2, blake2b_IV[2]); // ^ ( nodeDepth | (innerHashLength <<
 			// 8) );
 			// with nodeDepth = 0; innerHashLength = 0;
 
-			chainValue[3] = blake2b_IV[3];
+			chainValue.set(3, blake2b_IV[3]);
 
-			chainValue[4] = blake2b_IV[4];
-			chainValue[5] = blake2b_IV[5];
+			chainValue.set(4, blake2b_IV[4]);
+			chainValue.set(5, blake2b_IV[5]);
 			if(salt != null)
 			{
-				chainValue[4] ^= Utils.littleEndianToLong(salt, 0);
-				chainValue[5] ^= Utils.littleEndianToLong(salt, 8);
+				chainValue.xor(4, Utils.littleEndianToLong(salt, 0));
+				chainValue.xor(5, Utils.littleEndianToLong(salt, 8));
 			}
 
-			chainValue[6] = blake2b_IV[6];
-			chainValue[7] = blake2b_IV[7];
+			chainValue.set(6, blake2b_IV[6]);
+			chainValue.set(7, blake2b_IV[7]);
+			
 			if(personalization != null)
 			{
-				chainValue[6] ^= Utils.littleEndianToLong(personalization, 0);
-				chainValue[7] ^= Utils.littleEndianToLong(personalization, 8);
+				chainValue.xor(6, Utils.littleEndianToLong(personalization, 0));
+				chainValue.xor(7, Utils.littleEndianToLong(personalization, 8));
 			}
 		}
 	}
@@ -283,8 +284,8 @@ public class Blake2bDigest
 	private void initializeInternalState()
 	{
 		// initialize v:
-		Utils.arraycopy(chainValue, 0, internalState, 0, chainValue.length);
-		Utils.arraycopy(blake2b_IV, 0, internalState, chainValue.length, 4);
+		Utils.arraycopy(chainValue, 0, internalState, 0, chainValue.length());
+		Utils.arraycopy(blake2b_IV, 0, internalState, chainValue.length(), 4);
 
 		internalState.set(12, t0 ^ blake2b_IV[4]);
 		internalState.set(13, t1 ^ blake2b_IV[5]);
@@ -410,9 +411,9 @@ public class Blake2bDigest
 		Arrays.fill(buffer, (byte)0);// Holds eventually the key if input is null
 		internalState.fill(0L);
 
-		for(int i = 0; i < chainValue.length && (i * 8 < digestLength); i++)
+		for(int i = 0; i < chainValue.length() && (i * 8 < digestLength); i++)
 		{
-			byte[] bytes = Utils.longToLittleEndian(chainValue[i]);
+			byte[] bytes = Utils.longToLittleEndian(chainValue.get(i));
 
 			if(i * 8 < digestLength - 8)
 			{
@@ -424,7 +425,7 @@ public class Blake2bDigest
 			}
 		}
 
-		Arrays.fill(chainValue, 0L);
+		chainValue.fill(0L);
 
 		reset();
 
@@ -480,9 +481,9 @@ public class Blake2bDigest
 		}
 
 		// update chain values:
-		for(int offset=0; offset<chainValue.length; offset++)
+		for(int offset=0; offset<chainValue.length(); offset++)
 		{
-			chainValue[offset] = chainValue[offset] ^ internalState.get(offset) ^ internalState.get(offset + 8);
+			chainValue.xor(offset, internalState.get(offset) ^ internalState.get(offset + 8));
 		}
 	}
 

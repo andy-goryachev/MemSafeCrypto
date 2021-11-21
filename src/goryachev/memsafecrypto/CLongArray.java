@@ -17,6 +17,12 @@ public class CLongArray
 	}
 	
 	
+	public CLongArray(CLongArray x)
+	{
+		super(x);
+	}
+	
+	
 	public int length()
 	{
 		return sizeInBytes() / BYTES_PER_LONG;
@@ -41,6 +47,17 @@ public class CLongArray
 		int ix = index * BYTES_PER_LONG;
 		long v = buffer.getLong(ix);
 		v -= value;
+		buffer.putLong(ix, v);
+	}
+	
+	
+	public void xor(int index, long value)
+	{
+		checkWriteable();
+		
+		int ix = index * BYTES_PER_LONG;
+		long v = buffer.getLong(ix);
+		v ^= value;
 		buffer.putLong(ix, v);
 	}
 	
@@ -127,6 +144,19 @@ public class CLongArray
 		for(int i=0; i<length; i++)
 		{
 			long v = src[i + srcOffset];
+			int ix = (i + toOffset) * BYTES_PER_LONG;
+			buffer.putLong(ix, v);
+		}
+	}
+	
+	
+	public void copy(int toOffset, CLongArray src, int srcOffset, int length)
+	{
+		checkWriteable();
+		
+		for(int i=0; i<length; i++)
+		{
+			long v = src.get(i + srcOffset);
 			int ix = (i + toOffset) * BYTES_PER_LONG;
 			buffer.putLong(ix, v);
 		}

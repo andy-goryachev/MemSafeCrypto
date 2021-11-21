@@ -17,6 +17,12 @@ public class CIntArray
 	}
 	
 	
+	public CIntArray(CIntArray x)
+	{
+		super(x);
+	}
+	
+	
 	public int length()
 	{
 		return sizeInBytes() / BYTES_PER_INT;

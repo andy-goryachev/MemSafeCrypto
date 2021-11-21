@@ -1,9 +1,9 @@
 // Copyright © 2021 Andy Goryachev <andy@goryachev.com>
 package goryachev.memsafecrypto.bc;
-
 import goryachev.memsafecrypto.CByteArray;
 import goryachev.memsafecrypto.CIntArray;
 import goryachev.memsafecrypto.CLongArray;
+
 
 /**
  * Utility methods.
@@ -13,6 +13,12 @@ public final class Utils
 	public static byte[] clone(byte[] data)
 	{
 		return null == data ? null : data.clone();
+	}
+	
+	
+	public static CLongArray clone(CLongArray data)
+	{
+		return null == data ? null : new CLongArray(data);
 	}
 
 
@@ -151,6 +157,12 @@ public final class Utils
 
 
 	public static void arraycopy(long[] src, int srcPos, CLongArray dest, int destPos, int length)
+	{
+		dest.copy(destPos, src, srcPos, length);
+	}
+	
+	
+	public static void arraycopy(CLongArray src, int srcPos, CLongArray dest, int destPos, int length)
 	{
 		dest.copy(destPos, src, srcPos, length);
 	}
