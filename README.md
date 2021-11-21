@@ -1,6 +1,7 @@
 # MemSafeCrypto
 
-A subset of BouncyCastle crypto primitives, refactored to use DirectByteBuffer.
+A subset of BouncyCastle crypto primitives, refactored to use DirectByteBuffer
+instead of primitive arrays.
 
 
 ## Summary of Changes
@@ -12,9 +13,10 @@ A subset of BouncyCastle crypto primitives, refactored to use DirectByteBuffer.
 
 ## Supported primitives
 
+- Blake2b
+- Poly1305
 - Salsa20Engine
 - XSalsa20Engine
-- Poly1305
 
 
 ## Original Code
