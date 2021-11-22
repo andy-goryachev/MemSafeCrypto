@@ -2,53 +2,42 @@
 package goryachev.memsafecrypto.salsa;
 import goryachev.memsafecrypto.CByteArray;
 import goryachev.memsafecrypto.Crypto;
-import goryachev.memsafecrypto.ICryptoZeroable;
 import goryachev.memsafecrypto.bc.KeyParameter;
 import goryachev.memsafecrypto.bc.ParametersWithIV;
 import goryachev.memsafecrypto.bc.XSalsa20Engine;
-import java.io.IOException;
 
 
 /**
- * Encrypting Stream Based on XSalsa20 Engine.
+ * A single shot encryptor based on XSalsa20 Engine.
  */
 public class XSalsa20Encryptor
-	implements ICryptoZeroable
 {
-	private XSalsa20Engine xsalsa20 = new XSalsa20Engine();
-	private CByteArray input;
-
-
-	public XSalsa20Encryptor(CByteArray key, CByteArray nonce, CByteArray in)
+	public static void encrypt(CByteArray key, CByteArray nonce, CByteArray input, CByteArray out, int offset, int length)
 	{
 		if(key.length() != XSalsaTools.KEY_LENGTH_BYTES)
 		{
 			throw new IllegalArgumentException("key must be " + XSalsaTools.KEY_LENGTH_BYTES * 8 + " bits");
 		}
 		
-		this.input = in;
-
-		KeyParameter keyParameter = new KeyParameter(key);
+		XSalsa20Engine xsalsa20 = new XSalsa20Engine();
 		try
 		{
-			ParametersWithIV iv = new ParametersWithIV(keyParameter, nonce);
-			xsalsa20.init(true, iv);
+			KeyParameter keyParameter = new KeyParameter(key);
+			try
+			{
+				ParametersWithIV iv = new ParametersWithIV(keyParameter, nonce);
+				xsalsa20.init(true, iv);
+			}
+			finally
+			{
+				keyParameter.zero();
+			}
+			
+			xsalsa20.processBytes(input, 0, length, out, offset);
 		}
 		finally
 		{
-			keyParameter.zero();
+			Crypto.zero(xsalsa20);
 		}
-	}
-	
-	
-	public void encrypt(CByteArray out, int offset, int length)
-	{
-		xsalsa20.processBytes(input, 0, length, out, offset);
-	}
-
-
-	public void zero()
-	{
-		Crypto.zero(xsalsa20);
 	}
 }

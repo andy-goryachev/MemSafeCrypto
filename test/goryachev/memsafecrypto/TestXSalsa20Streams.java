@@ -2,6 +2,8 @@
 package goryachev.memsafecrypto;
 import goryachev.common.test.TF;
 import goryachev.common.test.Test;
+import goryachev.memsafecrypto.salsa.XSalsa20Decryptor;
+import goryachev.memsafecrypto.salsa.XSalsa20Encryptor;
 import goryachev.memsafecrypto.salsa.XSalsaTools;
 
 
@@ -29,16 +31,13 @@ public class TestXSalsa20Streams
 			CByteArray data = TUtils.rndByteArray(size);
 			
 			CByteArray os = new CByteArray(size);
-			goryachev.memsafecrypto.salsa.XSalsa20Encryptor out = new goryachev.memsafecrypto.salsa.XSalsa20Encryptor(key, nonce, data);
-			out.encrypt(os, 0, data.length());
-			out.zero();
+			XSalsa20Encryptor.encrypt(key, nonce, data, os, 0, data.length());
 			
 			CByteArray encrypted = os.toReadOnly();
 			
-			goryachev.memsafecrypto.salsa.XSalsa20Decryptor in = new goryachev.memsafecrypto.salsa.XSalsa20Decryptor(key, nonce, 0, encrypted.length(), encrypted);
 			CByteArray decrypted = new CByteArray(size); 
-			in.decrypt(decrypted);
-			in.zero();
+
+			XSalsa20Decryptor.decrypt(key, nonce, 0, encrypted.length(), encrypted, decrypted);
 			
 			TF.eq(decrypted.toByteArray(), data.toByteArray());
 		}

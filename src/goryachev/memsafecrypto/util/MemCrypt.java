@@ -37,15 +37,7 @@ public final class MemCrypt
 		CByteArray key = generateKey();
 		try
 		{
-			XSalsa20Encryptor enc = new XSalsa20Encryptor(key, nonce, data);
-			try
-			{
-				enc.encrypt(out, XSalsaTools.NONCE_LENGTH_BYTES, data.length());
-			}
-			finally
-			{
-				enc.zero();
-			}
+			XSalsa20Encryptor.encrypt(key, nonce, data, out, XSalsaTools.NONCE_LENGTH_BYTES, data.length());
 		}
 		finally
 		{
@@ -68,15 +60,7 @@ public final class MemCrypt
 		CByteArray key = generateKey();
 		try
 		{
-			XSalsa20Decryptor dec = new XSalsa20Decryptor(key, nonce, XSalsaTools.NONCE_LENGTH_BYTES, decryptedLength, data);
-			try
-			{
-				dec.decrypt(out);
-			}
-			finally
-			{
-				dec.zero();
-			}
+			XSalsa20Decryptor.decrypt(key, nonce, XSalsaTools.NONCE_LENGTH_BYTES, decryptedLength, data, out);
 		}
 		finally
 		{
