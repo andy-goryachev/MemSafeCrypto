@@ -54,7 +54,7 @@ public class TestXSalsa20Poly1305Streams
 			
 			start = System.nanoTime();
 			OutputStream os2 = TUtils.nullOutputStream();
-			goryachev.memsafecrypto.salsa.XSalsa20Poly1305EncryptStream out2 = new goryachev.memsafecrypto.salsa.XSalsa20Poly1305EncryptStream(key, nonce, os2);
+			goryachev.memsafecrypto.salsa.XSalsa20Poly1305EncryptStream out2 = new goryachev.memsafecrypto.salsa.XSalsa20Poly1305EncryptStream(CByteArray.readOnly(key), CByteArray.readOnly(nonce), os2);
 			out2.write(data);
 			out2.close();
 			timeMemSafe += (System.nanoTime() - start);
@@ -84,7 +84,7 @@ public class TestXSalsa20Poly1305Streams
 			byte[] b1 = os1.toByteArray();
 			
 			ByteArrayOutputStream os2 = new ByteArrayOutputStream(size);
-			goryachev.memsafecrypto.salsa.XSalsa20Poly1305EncryptStream out2 = new goryachev.memsafecrypto.salsa.XSalsa20Poly1305EncryptStream(key, nonce, os2);
+			goryachev.memsafecrypto.salsa.XSalsa20Poly1305EncryptStream out2 = new goryachev.memsafecrypto.salsa.XSalsa20Poly1305EncryptStream(CByteArray.readOnly(key), CByteArray.readOnly(nonce), os2);
 			out2.write(data);
 			out2.close();
 			byte[] b2 = os2.toByteArray();

@@ -23,10 +23,9 @@ public class XSalsa20Poly1305EncryptStream
 	private byte[] out;
 
 
-	// FIX CByteArray key
-	public XSalsa20Poly1305EncryptStream(byte[] key, byte[] nonce, OutputStream os)
+	public XSalsa20Poly1305EncryptStream(CByteArray key, CByteArray nonce, OutputStream os)
 	{
-		if(key.length != XSalsaTools.KEY_LENGTH_BYTES)
+		if(key.length() != XSalsaTools.KEY_LENGTH_BYTES)
 		{
 			throw new IllegalArgumentException("key must be " + XSalsaTools.KEY_LENGTH_BYTES * 8 + " bits");
 		}
