@@ -1,10 +1,10 @@
 // Copyright © 2021 Andy Goryachev <andy@goryachev.com>
 package goryachev.memsafecrypto;
-
 import goryachev.memsafecrypto.util.DirectArrayBase;
 
+
 /**
- * Zeroable long[] equivalend based on DirectByteBuffer.
+ * Zeroable long[] equivalent based on DirectByteBuffer.
  */
 public class CLongArray
 	extends DirectArrayBase

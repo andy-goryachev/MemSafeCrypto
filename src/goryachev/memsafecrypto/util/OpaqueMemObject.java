@@ -9,7 +9,7 @@ import goryachev.memsafecrypto.Crypto;
  * To avoid also keeping the key in memory, the key is generated each time from information
  * that stays constant during JVM session per hashCode() contract.
  */
-abstract class OpaqueMemObject
+public abstract class OpaqueMemObject
 {
 	private CByteArray encrypted;
 	
@@ -45,7 +45,7 @@ abstract class OpaqueMemObject
 			}
 			else
 			{
-				encrypted = null;
+				throw new RuntimeException("wrong type : " + x.getClass() + ", expecting " + getClass());
 			}
 		}
 	}
@@ -84,18 +84,18 @@ abstract class OpaqueMemObject
 	}
 	
 	
-	protected final void setBytes(CByteArray value, int off, int len)
-	{
-		try
-		{
-			encrypted = MemCrypt.encrypt(value);
-		}
-		catch(Exception e)
-		{
-			// should not happen
-			throw new Error(e);
-		}
-	}
+//	protected final void setBytes(CByteArray value, int off, int len)
+//	{
+//		try
+//		{
+//			encrypted = MemCrypt.encrypt(value);
+//		}
+//		catch(Exception e)
+//		{
+//			// should not happen
+//			throw new Error(e);
+//		}
+//	}
 	
 	
 	public final String toString()
@@ -107,7 +107,7 @@ abstract class OpaqueMemObject
 	/**
 	 * Returns decrypted byte array representing the stored object.
 	 */
-	public final CByteArray getBytes()
+	public final CByteArray getCBytesArray()
 	{
 		if(encrypted == null)
 		{

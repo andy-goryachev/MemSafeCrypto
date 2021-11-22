@@ -1,5 +1,4 @@
 package goryachev.memsafecrypto.bc;
-import org.bouncycastle.crypto.macs.Poly1305;
 
 
 /**

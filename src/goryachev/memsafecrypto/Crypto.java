@@ -28,7 +28,6 @@ public final class Crypto
 	}
 	
 	
-	@Deprecated // caller should use CByteArray instead
 	public static final void zero(byte[] b)
 	{
 		try
@@ -36,6 +35,22 @@ public final class Crypto
 			if(b != null)
 			{
 				Arrays.fill(b, (byte)0);
+			}
+		}
+		catch(Throwable e)
+		{
+			log.error(e);
+		}
+	}
+	
+	
+	public static final void zero(char[] b)
+	{
+		try
+		{
+			if(b != null)
+			{
+				Arrays.fill(b, '\u0000');
 			}
 		}
 		catch(Throwable e)
