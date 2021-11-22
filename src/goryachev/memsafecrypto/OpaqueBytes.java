@@ -22,7 +22,7 @@ public final class OpaqueBytes
 	
 	public final CByteArray getValue()
 	{
-		return getCBytesArray();
+		return getCByteArray();
 	}
 	
 	

@@ -107,7 +107,7 @@ public abstract class OpaqueMemObject
 	/**
 	 * Returns decrypted byte array representing the stored object.
 	 */
-	public final CByteArray getCBytesArray()
+	public final CByteArray getCByteArray()
 	{
 		if(encrypted == null)
 		{
