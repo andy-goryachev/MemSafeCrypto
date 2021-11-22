@@ -31,6 +31,7 @@ public class XSalsa20Poly1305DecryptStream
 	private Poly1305 poly1305 = new Poly1305();
 
 
+	// FIX CByteArray key
 	public XSalsa20Poly1305DecryptStream(byte[] key, byte[] nonce, long cipherTextLength, InputStream in)
 	{
 		if(key.length != XSalsaTools.KEY_LENGTH_BYTES)

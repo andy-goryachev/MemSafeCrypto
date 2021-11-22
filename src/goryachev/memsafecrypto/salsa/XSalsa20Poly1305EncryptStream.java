@@ -1,13 +1,14 @@
 // Copyright © 2011-2021 Andy Goryachev <andy@goryachev.com>
 package goryachev.memsafecrypto.salsa;
 import goryachev.common.util.CKit;
-import goryachev.crypto.Crypto;
+import goryachev.memsafecrypto.CByteArray;
+import goryachev.memsafecrypto.Crypto;
+import goryachev.memsafecrypto.bc.KeyParameter;
+import goryachev.memsafecrypto.bc.ParametersWithIV;
+import goryachev.memsafecrypto.bc.Poly1305;
+import goryachev.memsafecrypto.bc.XSalsa20Engine;
 import java.io.IOException;
 import java.io.OutputStream;
-import org.bouncycastle.crypto.engines.XSalsa20Engine;
-import org.bouncycastle.crypto.macs.Poly1305;
-import org.bouncycastle.crypto.params.KeyParameter;
-import org.bouncycastle.crypto.params.ParametersWithIV;
 
 
 /**
@@ -22,6 +23,7 @@ public class XSalsa20Poly1305EncryptStream
 	private byte[] out;
 
 
+	// FIX CByteArray key
 	public XSalsa20Poly1305EncryptStream(byte[] key, byte[] nonce, OutputStream os)
 	{
 		if(key.length != XSalsaTools.KEY_LENGTH_BYTES)
@@ -40,10 +42,10 @@ public class XSalsa20Poly1305EncryptStream
 		}
 		finally
 		{
-			Crypto.zero(keyParameter);
+			keyParameter.zero();
 		}
 		
-		byte[] subkey = new byte[XSalsaTools.KEY_LENGTH_BYTES];
+		CByteArray subkey = new CByteArray(XSalsaTools.KEY_LENGTH_BYTES);
 		try
 		{
 			xsalsa20.processBytes(subkey, 0, XSalsaTools.KEY_LENGTH_BYTES, subkey, 0);
@@ -55,12 +57,12 @@ public class XSalsa20Poly1305EncryptStream
 			}
 			finally
 			{
-				Crypto.zero(kp);
+				kp.zero();
 			}
 		}
 		finally
 		{
-			Crypto.zero(subkey);
+			subkey.zero();
 		}
 	}
 	
@@ -113,8 +115,8 @@ public class XSalsa20Poly1305EncryptStream
 			}
 			finally
 			{
-				XSalsaTools.zero(xsalsa20);
-				XSalsaTools.zero(poly1305);
+				xsalsa20.zero();
+				poly1305.zero();
 				Crypto.zero(out);
 				
 				xsalsa20 = null;
