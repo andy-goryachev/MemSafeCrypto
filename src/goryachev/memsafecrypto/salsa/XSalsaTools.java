@@ -1,10 +1,10 @@
 // Copyright © 2021 Andy Goryachev <andy@goryachev.com>
 package goryachev.memsafecrypto.salsa;
 import goryachev.crypto.Crypto;
-import org.bouncycastle.crypto.engines.XSalsa20Engine;
-import org.bouncycastle.crypto.macs.Poly1305;
-import org.bouncycastle.crypto.params.KeyParameter;
-import org.bouncycastle.crypto.params.ParametersWithIV;
+import goryachev.memsafecrypto.bc.KeyParameter;
+import goryachev.memsafecrypto.bc.ParametersWithIV;
+import goryachev.memsafecrypto.bc.Poly1305;
+import goryachev.memsafecrypto.bc.XSalsa20Engine;
 
 
 /**
@@ -18,15 +18,7 @@ public class XSalsaTools
 	public static final int BUFFER_SIZE = 4096;
 	
 	
-	/** clears the engine internals by initializing it with an all-zero key and nonce */
-	public static void zero(XSalsa20Engine x)
-	{
-		byte[] k = new byte[KEY_LENGTH_BYTES];
-		byte[] nonce = new byte[NONCE_LENGTH_BYTES];
-		x.init(false, new ParametersWithIV(new KeyParameter(k), nonce));
-	}
-
-
+	// TODO remove
 	/** clears the digest by initializing it with an all-zero key */
 	public static void zero(Poly1305 x)
 	{
@@ -51,12 +43,12 @@ public class XSalsaTools
 			}
 			finally
 			{
-				Crypto.zero(kp);
+				kp.zero();
 			}
 		}
 		finally
 		{
-			zero(eng);
+			eng.zero();
 		}
 	}
 	
@@ -70,17 +62,17 @@ public class XSalsaTools
 			try
 			{
 				eng.init(true, new ParametersWithIV(kp, nonce, nonceOffset, nonceLength));
-		
+				
 				eng.processBytes(cleartext, 0, cleartext.length, out, outOffset);
 			}
 			finally
 			{
-				Crypto.zero(kp);
+				kp.zero();
 			}
 		}
 		finally
 		{
-			zero(eng);
+			eng.zero();
 		}
 	}
 }
