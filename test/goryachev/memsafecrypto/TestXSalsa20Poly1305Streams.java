@@ -98,7 +98,7 @@ public class TestXSalsa20Poly1305Streams
 			in1.close();
 			
 			ByteArrayInputStream is2 = new ByteArrayInputStream(b1);
-			goryachev.memsafecrypto.salsa.XSalsa20Poly1305DecryptStream in2 = new goryachev.memsafecrypto.salsa.XSalsa20Poly1305DecryptStream(key, nonce, b2.length, is2);
+			goryachev.memsafecrypto.salsa.XSalsa20Poly1305DecryptStream in2 = new goryachev.memsafecrypto.salsa.XSalsa20Poly1305DecryptStream(CByteArray.readOnly(key), CByteArray.readOnly(nonce), b2.length, is2);
 			byte[] cb2 = new byte[size]; 
 			CKit.readFully(in2, cb2);
 			in2.close();
