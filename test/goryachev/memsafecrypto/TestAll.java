@@ -14,6 +14,7 @@ public class TestAll
 		TF.run
 		(
 			TestBlake2b.class,
+			TestCCharArray.class,
 			TestXSalsa20Poly1305Streams.class,
 			TestXSalsa20Streams.class,
 			TestMemCrypt.class
