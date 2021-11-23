@@ -31,6 +31,12 @@ public abstract class OpaqueMemObject
 	}
 	
 	
+	protected CByteArray encrypted()
+	{
+		return encrypted;
+	}
+	
+	
 	protected void setFrom(OpaqueMemObject x)
 	{
 		if(x == null)

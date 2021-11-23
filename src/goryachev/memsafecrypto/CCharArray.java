@@ -9,7 +9,7 @@ import goryachev.memsafecrypto.util.DirectArrayBase;
 public class CCharArray
 	extends DirectArrayBase
 {
-	private static final int BYTES_PER_CHAR = 2;
+	protected static final int BYTES_PER_CHAR = 2;
 	
 	
 	public CCharArray(int capacity)
@@ -21,6 +21,18 @@ public class CCharArray
 	public CCharArray(CCharArray x)
 	{
 		super(x);
+	}
+	
+	
+	public CCharArray(char[] cs)
+	{
+		this(cs.length);
+		
+		for(int i=0; i<cs.length; i++)
+		{
+			char c = cs[i];
+			buffer.putChar(i * BYTES_PER_CHAR, c);
+		}
 	}
 	
 	
@@ -72,7 +84,7 @@ public class CCharArray
 	}
 	
 	
-	public char[] toArray()
+	public char[] toCharArray()
 	{
 		int len = length();
 		char[] rv = new char[len];
@@ -80,6 +92,48 @@ public class CCharArray
 		{
 			rv[i] = get(i);
 		}
+		return rv;
+	}
+
+
+	public CCharArray append(char[] cs)
+	{
+		int len = length();
+		CCharArray rv = new CCharArray(len + cs.length);
+		
+		for(int i=0; i<len; i++)
+		{
+			char c = get(i);
+			rv.set(i, c);
+		}
+		
+		for(int i=0; i<cs.length; i++)
+		{
+			char c = cs[i];
+			rv.set(i + len, c);
+		}
+		
+		return rv;
+	}
+
+
+	public CCharArray deleteLastChar()
+	{
+		int len = length();
+		if(len <= 1)
+		{
+			return new CCharArray(0);
+		}
+		
+		len--;
+		
+		CCharArray rv = new CCharArray(len);
+		for(int i=0; i<len; i++)
+		{
+			char c = get(i);
+			rv.set(i, c);
+		}
+		
 		return rv;
 	}
 }

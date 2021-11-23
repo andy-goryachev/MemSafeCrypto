@@ -122,6 +122,12 @@ public final class CByteArray
 	}
 	
 	
+	public char readChar(int ix)
+	{
+		return buffer.getChar(ix);
+	}
+	
+	
 	public void fill(byte value)
 	{
 		checkWriteable();
@@ -168,5 +174,71 @@ public final class CByteArray
 			rv[i] = b;
 		}
 		return rv;
+	}
+	
+	
+	public static CByteArray charsToBytes(CCharArray a)
+	{
+		if(a == null)
+		{
+			return null;
+		}
+		
+		int sz = a.length();
+		CByteArray b = new CByteArray(sz * CCharArray.BYTES_PER_CHAR);
+		for(int i=0; i<sz; i++)
+		{
+			char c = a.get(i);
+			b.buffer.putChar(i * CCharArray.BYTES_PER_CHAR, c);
+		}
+		return b;
+	}
+	
+	
+	public static CCharArray bytesToChars(CByteArray b)
+	{
+		if(b == null)
+		{
+			return null;
+		}
+		
+		int sz = b.length() / 2;
+		if((sz * 2) != b.length())
+		{
+			throw new IllegalArgumentException("length must be even: " + b.length());
+		}
+		
+		CCharArray a = new CCharArray(sz);
+		for(int i=0; i<sz; i++)
+		{
+			char c = b.buffer.getChar(i * 2);
+			a.set(i, c);
+		}
+		return a;
+	}
+
+
+	public boolean sameContentAs(CByteArray b)
+	{
+		if(b == null)
+		{
+			return false;
+		}
+		
+		int sz = sizeInBytes();
+		if(sz != b.sizeInBytes())
+		{
+			return false;
+		}
+		
+		for(int i=0; i<sz; i++)
+		{
+			byte c = get(i);
+			if(c != b.get(i))
+			{
+				return false;
+			}
+		}
+		return true;
 	}
 }
