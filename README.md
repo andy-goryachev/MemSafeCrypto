@@ -7,8 +7,8 @@ instead of primitive arrays.
 ## Summary of Changes
 
 - introducted ICryptoZeroable interface
-- replaced byte[] and int[] with CByteArray and CIntArray correspondingly
-- modified BouncyCastle classes to use CByteArray and CIntArray instead or primitive arrays
+- created CByteArray, CIntArray, and CLongArray classes based on DirectByteBuffer
+- modified BouncyCastle classes to use new array types
 
 
 ## Supported primitives
