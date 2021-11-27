@@ -1,7 +1,8 @@
 # MemSafeCrypto
 
 A subset of BouncyCastle crypto primitives, refactored to use DirectByteBuffer
-instead of primitive arrays.
+instead of primitive arrays, to avoid leaving sensitive data in memory due to internal
+copying and garbage compactification done by the JVM.
 
 
 ## Summary of Changes
@@ -11,11 +12,13 @@ instead of primitive arrays.
 - modified BouncyCastle classes to use new array types
 
 
-## Supported primitives
+## Supported Primitives
 
 - Blake2b
 - Poly1305
 - Salsa20Engine
+- Scrypt
+- SHA256Digest
 - XSalsa20Engine
 
 
