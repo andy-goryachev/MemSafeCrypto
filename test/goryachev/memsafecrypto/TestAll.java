@@ -2,6 +2,8 @@
 package goryachev.memsafecrypto;
 import goryachev.common.test.TF;
 import goryachev.memsafecrypto.bc.salsa.TestMemCrypt;
+import goryachev.memsafecrypto.bc.salsa.TestXSalsa20Poly1305Streams;
+import goryachev.memsafecrypto.bc.salsa.TestXSalsa20Streams;
 
 
 /**
