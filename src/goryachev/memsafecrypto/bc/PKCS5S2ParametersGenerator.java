@@ -1,12 +1,6 @@
 package goryachev.memsafecrypto.bc;
-import org.bouncycastle.crypto.CipherParameters;
-import org.bouncycastle.crypto.Digest;
-import org.bouncycastle.crypto.Mac;
-import org.bouncycastle.crypto.PBEParametersGenerator;
-import org.bouncycastle.crypto.macs.HMac;
-import org.bouncycastle.crypto.params.KeyParameter;
-import org.bouncycastle.crypto.params.ParametersWithIV;
-import org.bouncycastle.crypto.util.DigestFactory;
+import goryachev.memsafecrypto.CByteArray;
+import goryachev.memsafecrypto.util.CUtils;
 
 
 /**
@@ -21,25 +15,17 @@ public class PKCS5S2ParametersGenerator
 	extends PBEParametersGenerator
 {
 	private Mac hMac;
-	private byte[] state;
-
-	/**
-	 * construct a PKCS5 Scheme 2 Parameters generator.
-	 */
-	public PKCS5S2ParametersGenerator()
-	{
-		this(DigestFactory.createSHA1());
-	}
+	private CByteArray state;
 
 
 	public PKCS5S2ParametersGenerator(Digest digest)
 	{
 		hMac = new HMac(digest);
-		state = new byte[hMac.getMacSize()];
+		state = new CByteArray(hMac.getMacSize());
 	}
 
 
-	private void F(byte[] S, int c, byte[] iBuf, byte[] out, int outOff)
+	private void F(CByteArray S, int c, CByteArray iBuf, CByteArray out, int outOff)
 	{
 		if(c == 0)
 		{
@@ -48,44 +34,45 @@ public class PKCS5S2ParametersGenerator
 
 		if(S != null)
 		{
-			hMac.update(S, 0, S.length);
+			hMac.update(S, 0, S.length());
 		}
 
-		hMac.update(iBuf, 0, iBuf.length);
+		hMac.update(iBuf, 0, iBuf.length());
 		hMac.doFinal(state, 0);
 
-		System.arraycopy(state, 0, out, outOff, state.length);
+		CUtils.arraycopy(state, 0, out, outOff, state.length());
 
-		for(int count = 1; count < c; count++)
+		for(int count=1; count< c; count++)
 		{
-			hMac.update(state, 0, state.length);
+			hMac.update(state, 0, state.length());
 			hMac.doFinal(state, 0);
 
-			for(int j = 0; j != state.length; j++)
+			for(int j=0; j!=state.length(); j++)
 			{
-				out[outOff + j] ^= state[j];
+				out.xor(outOff + j, state.get(j));
 			}
 		}
 	}
 
 
-	private byte[] generateDerivedKey(int dkLen)
+	private CByteArray generateDerivedKey(int dkLen)
 	{
 		int hLen = hMac.getMacSize();
 		int l = (dkLen + hLen - 1) / hLen;
-		byte[] iBuf = new byte[4];
-		byte[] outBytes = new byte[l * hLen];
+		CByteArray iBuf = new CByteArray(4);
+		CByteArray outBytes = new CByteArray(l * hLen);
 		int outPos = 0;
 
 		CipherParameters param = new KeyParameter(password);
 
 		hMac.init(param);
 
-		for(int i = 1; i <= l; i++)
+		for(int i=1; i<=l; i++)
 		{
 			// Increment the value in 'iBuf'
 			int pos = 3;
-			while(++iBuf[pos] == 0)
+			//while(++iBuf[pos] == 0)
+			while(iBuf.incrementAndGet(pos) == 0)
 			{
 				--pos;
 			}
@@ -109,9 +96,15 @@ public class PKCS5S2ParametersGenerator
 	{
 		keySize = keySize / 8;
 
-		byte[] dKey = generateDerivedKey(keySize);
-
-		return new KeyParameter(dKey, 0, keySize);
+		CByteArray dKey = generateDerivedKey(keySize);
+		try
+		{
+			return new KeyParameter(dKey, 0, keySize);
+		}
+		finally
+		{
+			dKey.zero();
+		}
 	}
 
 
@@ -129,9 +122,15 @@ public class PKCS5S2ParametersGenerator
 		keySize = keySize / 8;
 		ivSize = ivSize / 8;
 
-		byte[] dKey = generateDerivedKey(keySize + ivSize);
-
-		return new ParametersWithIV(new KeyParameter(dKey, 0, keySize), dKey, keySize, ivSize);
+		CByteArray dKey = generateDerivedKey(keySize + ivSize);
+		try
+		{
+			return new ParametersWithIV(new KeyParameter(dKey, 0, keySize), dKey, keySize, ivSize);
+		}
+		finally
+		{
+			dKey.zero();
+		}
 	}
 
 

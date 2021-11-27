@@ -1,4 +1,5 @@
 package goryachev.memsafecrypto.bc;
+import goryachev.memsafecrypto.CByteArray;
 
 
 /**
@@ -14,5 +15,5 @@ public interface EncodableDigest
 	 *
 	 * @return an encoding of the digests internal state.
 	 */
-	public byte[] getEncodedState();
+	public CByteArray getEncodedState();
 }

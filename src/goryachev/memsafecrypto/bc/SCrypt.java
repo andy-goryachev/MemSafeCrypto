@@ -1,11 +1,9 @@
 package goryachev.memsafecrypto.bc;
-import org.bouncycastle.crypto.PBEParametersGenerator;
-import org.bouncycastle.crypto.digests.SHA256Digest;
-import org.bouncycastle.crypto.engines.Salsa20Engine;
-import org.bouncycastle.crypto.params.KeyParameter;
-import org.bouncycastle.util.Arrays;
-import org.bouncycastle.util.Integers;
-import org.bouncycastle.util.Pack;
+import goryachev.memsafecrypto.CByteArray;
+import goryachev.memsafecrypto.CIntArray;
+import goryachev.memsafecrypto.Crypto;
+import goryachev.memsafecrypto.util.CUtils;
+import java.util.Arrays;
 
 
 /**
@@ -35,7 +33,7 @@ public class SCrypt
 	 * @param dkLen the length of the key to generate.
 	 * @return the generated key.
 	 */
-	public static byte[] generate(byte[] P, byte[] S, int N, int r, int p, int dkLen)
+	public static CByteArray generate(CByteArray P, CByteArray S, int N, int r, int p, int dkLen)
 	{
 		if(P == null)
 		{
@@ -78,20 +76,20 @@ public class SCrypt
 	}
 
 
-	private static byte[] MFcrypt(byte[] P, byte[] S, int N, int r, int p, int dkLen)
+	private static CByteArray MFcrypt(CByteArray P, CByteArray S, int N, int r, int p, int dkLen)
 	{
 		int MFLenBytes = r * 128;
-		byte[] bytes = SingleIterationPBKDF2(P, S, p * MFLenBytes);
+		CByteArray bytes = SingleIterationPBKDF2(P, S, p * MFLenBytes);
 
-		int[] B = null;
+		CIntArray B = null;
 
 		try
 		{
-			int BLen = bytes.length >>> 2;
-			B = new int[BLen];
+			int BLen = bytes.length() >>> 2;
+			B = new CIntArray(BLen);
 
-			Pack.littleEndianToInt(bytes, 0, B);
-
+			CUtils.littleEndianToInt(bytes, 0, B);
+			
 			/*
 			 * Chunk memory allocations; We choose 'd' so that there will be 2**d chunks, each not
 			 * larger than 32KiB, except that the minimum chunk size is 2 * r * 32.
@@ -110,19 +108,19 @@ public class SCrypt
 				SMix(B, BOff, N, d, r);
 			}
 
-			Pack.intToLittleEndian(B, bytes, 0);
+			CUtils.intToLittleEndian(B, bytes, 0);
 
 			return SingleIterationPBKDF2(P, bytes, dkLen);
 		}
 		finally
 		{
-			Clear(bytes);
-			Clear(B);
+			bytes.zero();
+			Crypto.zero(B);
 		}
 	}
 
 
-	private static byte[] SingleIterationPBKDF2(byte[] P, byte[] S, int dkLen)
+	private static CByteArray SingleIterationPBKDF2(CByteArray P, CByteArray S, int dkLen)
 	{
 		PBEParametersGenerator pGen = new PKCS5S2ParametersGenerator(new SHA256Digest());
 		pGen.init(P, S, 1);
@@ -131,37 +129,37 @@ public class SCrypt
 	}
 
 
-	private static void SMix(int[] B, int BOff, int N, int d, int r)
+	private static void SMix(CIntArray B, int BOff, int N, int d, int r)
 	{
-		int powN = Integers.numberOfTrailingZeros(N);
+		int powN = Integer.numberOfTrailingZeros(N);
 		int blocksPerChunk = N >>> d;
 		int chunkCount = 1 << d, chunkMask = blocksPerChunk - 1, chunkPow = powN - d;
 
 		int BCount = r * 32;
 
-		int[] blockX1 = new int[16];
-		int[] blockX2 = new int[16];
-		int[] blockY = new int[BCount];
+		CIntArray blockX1 = new CIntArray(16);
+		CIntArray blockX2 = new CIntArray(16);
+		CIntArray blockY = new CIntArray(BCount);
 
-		int[] X = new int[BCount];
-		int[][] VV = new int[chunkCount][];
+		CIntArray X = new CIntArray(BCount);
+		CIntArray[] VV = new CIntArray[chunkCount];
 
 		try
 		{
-			System.arraycopy(B, BOff, X, 0, BCount);
+			CUtils.arraycopy(B, BOff, X, 0, BCount);
 
 			for(int c = 0; c < chunkCount; ++c)
 			{
-				int[] V = new int[blocksPerChunk * BCount];
+				CIntArray V = new CIntArray(blocksPerChunk * BCount);
 				VV[c] = V;
 
 				int off = 0;
 				for(int i = 0; i < blocksPerChunk; i += 2)
 				{
-					System.arraycopy(X, 0, V, off, BCount);
+					CUtils.arraycopy(X, 0, V, off, BCount);
 					off += BCount;
 					BlockMix(X, blockX1, blockX2, blockY, r);
-					System.arraycopy(blockY, 0, V, off, BCount);
+					CUtils.arraycopy(blockY, 0, V, off, BCount);
 					off += BCount;
 					BlockMix(blockY, blockX1, blockX2, X, r);
 				}
@@ -170,39 +168,40 @@ public class SCrypt
 			int mask = N - 1;
 			for(int i = 0; i < N; ++i)
 			{
-				int j = X[BCount - 16] & mask;
-				int[] V = VV[j >>> chunkPow];
+				int j = X.get(BCount - 16) & mask;
+				CIntArray V = VV[j >>> chunkPow];
 				int VOff = (j & chunkMask) * BCount;
-				System.arraycopy(V, VOff, blockY, 0, BCount);
+				CUtils.arraycopy(V, VOff, blockY, 0, BCount);
 				Xor(blockY, X, 0, blockY);
 				BlockMix(blockY, blockX1, blockX2, X, r);
 			}
 
-			System.arraycopy(X, 0, B, BOff, BCount);
+			CUtils.arraycopy(X, 0, B, BOff, BCount);
 		}
 		finally
 		{
 			ClearAll(VV);
-			ClearAll(new int[][]
-			{
-				X, blockX1, blockX2, blockY
-			});
+			
+			X.zero();
+			blockX1.zero();
+			blockX2.zero();
+			blockY.zero();
 		}
 	}
 
 
-	private static void BlockMix(int[] B, int[] X1, int[] X2, int[] Y, int r)
+	private static void BlockMix(CIntArray B, CIntArray X1, CIntArray X2, CIntArray Y, int r)
 	{
-		System.arraycopy(B, B.length - 16, X1, 0, 16);
+		CUtils.arraycopy(B, B.length() - 16, X1, 0, 16);
 
-		int BOff = 0, YOff = 0, halfLen = B.length >>> 1;
+		int BOff = 0, YOff = 0, halfLen = B.length() >>> 1;
 
-		for(int i = 2 * r; i > 0; --i)
+		for(int i=2*r; i>0; --i)
 		{
 			Xor(X1, B, BOff, X2);
 
 			Salsa20Engine.salsaCore(8, X2, X1);
-			System.arraycopy(X1, 0, Y, YOff, 16);
+			CUtils.arraycopy(X1, 0, Y, YOff, 16);
 
 			YOff = halfLen + BOff - YOff;
 			BOff += 16;
@@ -210,38 +209,20 @@ public class SCrypt
 	}
 
 
-	private static void Xor(int[] a, int[] b, int bOff, int[] output)
+	private static void Xor(CIntArray a, CIntArray b, int bOff, CIntArray output)
 	{
-		for(int i = output.length - 1; i >= 0; --i)
+		for(int i=output.length()-1; i>=0; --i)
 		{
-			output[i] = a[i] ^ b[bOff + i];
+			output.set(i, a.get(i) ^ b.get(bOff + i));
 		}
 	}
-
-
-	private static void Clear(byte[] array)
+	
+	
+	private static void ClearAll(CIntArray[] arrays)
 	{
-		if(array != null)
+		for(int i=0; i<arrays.length; ++i)
 		{
-			Arrays.fill(array, (byte)0);
-		}
-	}
-
-
-	private static void Clear(int[] array)
-	{
-		if(array != null)
-		{
-			Arrays.fill(array, 0);
-		}
-	}
-
-
-	private static void ClearAll(int[][] arrays)
-	{
-		for(int i = 0; i < arrays.length; ++i)
-		{
-			Clear(arrays[i]);
+			Crypto.zero(arrays[i]);
 		}
 	}
 

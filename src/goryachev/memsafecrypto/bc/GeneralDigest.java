@@ -1,7 +1,6 @@
 package goryachev.memsafecrypto.bc;
-import org.bouncycastle.crypto.ExtendedDigest;
-import org.bouncycastle.util.Memoable;
-import org.bouncycastle.util.Pack;
+import goryachev.memsafecrypto.CByteArray;
+import goryachev.memsafecrypto.util.CUtils;
 
 
 /**
@@ -12,6 +11,8 @@ public abstract class GeneralDigest
 	implements ExtendedDigest, Memoable
 {
 	protected abstract void processWord(byte[] in, int inOff);
+	
+	protected abstract void processWord(CByteArray in, int inOff);
 
 	protected abstract void processLength(long bitLength);
 
@@ -21,7 +22,7 @@ public abstract class GeneralDigest
 	
 	private static final int BYTE_LENGTH = 64;
 
-	private final byte[] xBuf = new byte[4];
+	private final CByteArray xBuf = new CByteArray(4);
 	private int xBufOff;
 	private long byteCount;
 
@@ -46,17 +47,17 @@ public abstract class GeneralDigest
 	}
 
 
-	protected GeneralDigest(byte[] encodedState)
+	protected GeneralDigest(CByteArray encodedState)
 	{
-		System.arraycopy(encodedState, 0, xBuf, 0, xBuf.length);
-		xBufOff = Pack.bigEndianToInt(encodedState, 4);
-		byteCount = Pack.bigEndianToLong(encodedState, 8);
+		CUtils.arraycopy(encodedState, 0, xBuf, 0, xBuf.length());
+		xBufOff = CUtils.bigEndianToInt(encodedState, 4);
+		byteCount = CUtils.bigEndianToLong(encodedState, 8);
 	}
 
 
 	protected void copyIn(GeneralDigest t)
 	{
-		System.arraycopy(t.xBuf, 0, xBuf, 0, t.xBuf.length);
+		CUtils.arraycopy(t.xBuf, 0, xBuf, 0, t.xBuf.length());
 
 		xBufOff = t.xBufOff;
 		byteCount = t.byteCount;
@@ -65,9 +66,9 @@ public abstract class GeneralDigest
 
 	public void update(byte in)
 	{
-		xBuf[xBufOff++] = in;
+		xBuf.set(xBufOff++, in);
 
-		if(xBufOff == xBuf.length)
+		if(xBufOff == xBuf.length())
 		{
 			processWord(xBuf, 0);
 			xBufOff = 0;
@@ -81,15 +82,13 @@ public abstract class GeneralDigest
 	{
 		len = Math.max(0, len);
 
-		//
 		// fill the current word
-		//
 		int i = 0;
 		if(xBufOff != 0)
 		{
 			while(i < len)
 			{
-				xBuf[xBufOff++] = in[inOff + i++];
+				xBuf.set(xBufOff++, in[inOff + i++]);
 				if(xBufOff == 4)
 				{
 					processWord(xBuf, 0);
@@ -99,21 +98,54 @@ public abstract class GeneralDigest
 			}
 		}
 
-		//
 		// process whole words.
-		//
 		int limit = ((len - i) & ~3) + i;
 		for(; i < limit; i += 4)
 		{
 			processWord(in, inOff + i);
 		}
 
-		//
 		// load in the remainder.
-		//
 		while(i < len)
 		{
-			xBuf[xBufOff++] = in[inOff + i++];
+			xBuf.set(xBufOff++, in[inOff + i++]);
+		}
+
+		byteCount += len;
+	}
+	
+	
+	public void update(CByteArray in, int inOff, int len)
+	{
+		len = Math.max(0, len);
+
+		// fill the current word
+		int i = 0;
+		if(xBufOff != 0)
+		{
+			while(i < len)
+			{
+				xBuf.set(xBufOff++, in.get(inOff + i++));
+				if(xBufOff == 4)
+				{
+					processWord(xBuf, 0);
+					xBufOff = 0;
+					break;
+				}
+			}
+		}
+
+		// process whole words.
+		int limit = ((len - i) & ~3) + i;
+		for(; i < limit; i += 4)
+		{
+			processWord(in, inOff + i);
+		}
+
+		// load in the remainder.
+		while(i < len)
+		{
+			xBuf.set(xBufOff++, in.get(inOff + i++));
 		}
 
 		byteCount += len;
@@ -143,20 +175,20 @@ public abstract class GeneralDigest
 	public void reset()
 	{
 		byteCount = 0;
-
 		xBufOff = 0;
-		for(int i = 0; i < xBuf.length; i++)
+		
+		for(int i=0; i<xBuf.length(); i++)
 		{
-			xBuf[i] = 0;
+			xBuf.set(i, (byte)0);
 		}
 	}
 
 
-	protected void populateState(byte[] state)
+	protected void populateState(CByteArray state)
 	{
-		System.arraycopy(xBuf, 0, state, 0, xBufOff);
-		Pack.intToBigEndian(xBufOff, state, 4);
-		Pack.longToBigEndian(byteCount, state, 8);
+		CUtils.arraycopy(xBuf, 0, state, 0, xBufOff);
+		CUtils.intToBigEndian(xBufOff, state, 4);
+		CUtils.longToBigEndian(byteCount, state, 8);
 	}
 
 

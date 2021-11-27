@@ -1,4 +1,5 @@
 package goryachev.memsafecrypto.bc;
+import goryachev.memsafecrypto.CByteArray;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -38,8 +39,8 @@ public abstract class PBEParametersGenerator
 
 	//
 	
-	protected byte[] password;
-	protected byte[] salt;
+	protected CByteArray password;
+	protected CByteArray salt;
 	protected int iterationCount;
 
 	
@@ -58,11 +59,14 @@ public abstract class PBEParametersGenerator
 	 * @param salt the salt to be mixed with the password.
 	 * @param iterationCount the number of iterations the "mixing" function
 	 * is to be applied for.
+	 * 
+	 * This method create a copy of password and salt.  The caller should manage
+	 * zeroing of the arguments passed here.
 	 */
-	public void init(byte[] password, byte[] salt, int iterationCount)
+	public void init(CByteArray password, CByteArray salt, int iterationCount)
 	{
-		this.password = password;
-		this.salt = salt;
+		this.password = CByteArray.readOnly(password);
+		this.salt = CByteArray.readOnly(salt);
 		this.iterationCount = iterationCount;
 	}
 
@@ -72,7 +76,7 @@ public abstract class PBEParametersGenerator
 	 *
 	 * @return the password byte array.
 	 */
-	public byte[] getPassword()
+	public CByteArray getPassword()
 	{
 		return password;
 	}
@@ -83,7 +87,7 @@ public abstract class PBEParametersGenerator
 	 *
 	 * @return the salt byte array.
 	 */
-	public byte[] getSalt()
+	public CByteArray getSalt()
 	{
 		return salt;
 	}
