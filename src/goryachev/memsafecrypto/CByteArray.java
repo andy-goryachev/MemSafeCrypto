@@ -88,6 +88,19 @@ public final class CByteArray
 	}
 	
 	
+	public static CByteArray readOnly(CByteArray src)
+	{
+		if(src == null)
+		{
+			return null;
+		}
+		
+		CByteArray b = new CByteArray(src);
+		b.setReadOnly();
+		return b;
+	}
+	
+	
 	public void write(int b)
 	{
 		checkWriteable();
@@ -240,5 +253,26 @@ public final class CByteArray
 			}
 		}
 		return true;
+	}
+	
+	
+	public void xor(int index, byte value)
+	{
+		checkWriteable();
+		
+		byte v = buffer.get(index);
+		v ^= value;
+		buffer.put(index, v);
+	}
+	
+	
+	public byte incrementAndGet(int index)
+	{
+		checkWriteable();
+		
+		byte v = buffer.get(index);
+		v++;
+		buffer.put(index, v);
+		return v;
 	}
 }

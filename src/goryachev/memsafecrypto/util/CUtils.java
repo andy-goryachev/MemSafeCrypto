@@ -101,6 +101,16 @@ public final class CUtils
 		}
 		return ns;
 	}
+	
+	
+    public static void littleEndianToInt(CByteArray bs, int off, CIntArray ns)
+    {
+        for (int i=0; i<ns.length(); ++i)
+        {
+            ns.set(i, littleEndianToInt(bs, off));
+            off += 4;
+        }
+    }
 
 
 	public static void intToLittleEndian(int n, byte[] bs, int off)
@@ -234,4 +244,57 @@ public final class CUtils
 			dst[dstPos + i] = b;
 		}
 	}
+	
+	
+	public static void arraycopy(CIntArray src, int srcPos, CIntArray dst, int dstPos, int len)
+	{
+		for(int i=0; i<len; i++)
+		{
+			int b = src.get(srcPos + i);
+			dst.set(dstPos + i, b);
+		}
+	}
+	
+	
+    public static void intToBigEndian(int n, byte[] bs, int off)
+    {
+        bs[off] = (byte)(n >>> 24);
+        bs[++off] = (byte)(n >>> 16);
+        bs[++off] = (byte)(n >>> 8);
+        bs[++off] = (byte)(n);
+    }
+	
+	
+	public static void intToBigEndian(int n, CByteArray bs, int off)
+	{
+	    bs.set(off, (byte)(n >>> 24));
+	    bs.set(++off, (byte)(n >>> 16));
+	    bs.set(++off, (byte)(n >>> 8));
+	    bs.set(++off, (byte)(n));
+	}
+	
+	
+    public static int bigEndianToInt(CByteArray bs, int off)
+    {
+        int n = bs.get(off) << 24;
+        n |= (bs.get(++off) & 0xff) << 16;
+        n |= (bs.get(++off) & 0xff) << 8;
+        n |= (bs.get(++off) & 0xff);
+        return n;
+    }
+    
+    
+    public static long bigEndianToLong(CByteArray bs, int off)
+    {
+        int hi = bigEndianToInt(bs, off);
+        int lo = bigEndianToInt(bs, off + 4);
+        return ((hi & 0xffffffffL) << 32) | (lo & 0xffffffffL);
+    }
+    
+    
+    public static void longToBigEndian(long n, CByteArray bs, int off)
+    {
+        intToBigEndian((int)(n >>> 32), bs, off);
+        intToBigEndian((int)(n & 0xffffffffL), bs, off + 4);
+    }
 }

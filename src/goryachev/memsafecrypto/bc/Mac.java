@@ -1,10 +1,13 @@
 package goryachev.memsafecrypto.bc;
+import goryachev.memsafecrypto.CByteArray;
+import goryachev.memsafecrypto.ICryptoZeroable;
 
 
 /**
  * The base interface for implementations of message authentication codes (MACs).
  */
 public interface Mac
+	extends ICryptoZeroable
 {
 	/**
 	 * Initialise the MAC.
@@ -48,7 +51,7 @@ public interface Mac
 	 * @exception IllegalStateException if the MAC is not initialised.
 	 * @exception DataLengthException if there isn't enough data in in.
 	 */
-	public void update(byte[] in, int inOff, int len) throws DataLengthException, IllegalStateException;
+	public void update(CByteArray in, int inOff, int len) throws DataLengthException, IllegalStateException;
 
 
 	/**
@@ -62,7 +65,7 @@ public interface Mac
 	 * @exception DataLengthException if there isn't enough space in out.
 	 * @exception IllegalStateException if the MAC is not initialised.
 	 */
-	public int doFinal(byte[] out, int outOff) throws DataLengthException, IllegalStateException;
+	public int doFinal(CByteArray out, int outOff) throws DataLengthException, IllegalStateException;
 
 
 	/**

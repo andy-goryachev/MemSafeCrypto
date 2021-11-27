@@ -198,6 +198,25 @@ public class Poly1305
 			currentBlockOffset += toCopy;
 		}
 	}
+	
+	
+	public void update(CByteArray in, final int inOff, final int len) throws DataLengthException, IllegalStateException
+	{
+		int copied = 0;
+		while(len > copied)
+		{
+			if(currentBlockOffset == BLOCK_SIZE)
+			{
+				processBlock();
+				currentBlockOffset = 0;
+			}
+
+			int toCopy = Math.min((len - copied), BLOCK_SIZE - currentBlockOffset);
+			System.arraycopy(in, copied + inOff, currentBlock, currentBlockOffset, toCopy);
+			copied += toCopy;
+			currentBlockOffset += toCopy;
+		}
+	}
 
 
 	private void processBlock()
@@ -314,6 +333,74 @@ public class Poly1305
 		reset();
 		return BLOCK_SIZE;
 	}
+	
+	
+	public int doFinal(CByteArray out, final int outOff) throws DataLengthException, IllegalStateException
+	{
+		if(outOff + BLOCK_SIZE > out.length())
+		{
+			throw new OutputLengthException("Output buffer is too short.");
+		}
+
+		if(currentBlockOffset > 0)
+		{
+			// Process padded final block
+			processBlock();
+		}
+
+		h1 += (h0 >>> 26);
+		h0 &= 0x3ffffff;
+		h2 += (h1 >>> 26);
+		h1 &= 0x3ffffff;
+		h3 += (h2 >>> 26);
+		h2 &= 0x3ffffff;
+		h4 += (h3 >>> 26);
+		h3 &= 0x3ffffff;
+		h0 += (h4 >>> 26) * 5;
+		h4 &= 0x3ffffff;
+		h1 += (h0 >>> 26);
+		h0 &= 0x3ffffff;
+
+		int g0, g1, g2, g3, g4, b;
+		g0 = h0 + 5;
+		b = g0 >>> 26;
+		g0 &= 0x3ffffff;
+		g1 = h1 + b;
+		b = g1 >>> 26;
+		g1 &= 0x3ffffff;
+		g2 = h2 + b;
+		b = g2 >>> 26;
+		g2 &= 0x3ffffff;
+		g3 = h3 + b;
+		b = g3 >>> 26;
+		g3 &= 0x3ffffff;
+		g4 = h4 + b - (1 << 26);
+
+		b = (g4 >>> 31) - 1;
+		int nb = ~b;
+		h0 = (h0 & nb) | (g0 & b);
+		h1 = (h1 & nb) | (g1 & b);
+		h2 = (h2 & nb) | (g2 & b);
+		h3 = (h3 & nb) | (g3 & b);
+		h4 = (h4 & nb) | (g4 & b);
+
+		long f0, f1, f2, f3;
+		f0 = (((h0) | (h1 << 26)) & 0xffffffffl) + (0xffffffffL & k0);
+		f1 = (((h1 >>> 6) | (h2 << 20)) & 0xffffffffl) + (0xffffffffL & k1);
+		f2 = (((h2 >>> 12) | (h3 << 14)) & 0xffffffffl) + (0xffffffffL & k2);
+		f3 = (((h3 >>> 18) | (h4 << 8)) & 0xffffffffl) + (0xffffffffL & k3);
+
+		CUtils.intToLittleEndian((int)f0, out, outOff);
+		f1 += (f0 >>> 32);
+		CUtils.intToLittleEndian((int)f1, out, outOff + 4);
+		f2 += (f1 >>> 32);
+		CUtils.intToLittleEndian((int)f2, out, outOff + 8);
+		f3 += (f2 >>> 32);
+		CUtils.intToLittleEndian((int)f3, out, outOff + 12);
+
+		reset();
+		return BLOCK_SIZE;
+	}
 
 
 	public void reset()
@@ -322,16 +409,16 @@ public class Poly1305
 
 		h0 = h1 = h2 = h3 = h4 = 0;
 	}
+	
+	
+	public void zero()
+	{
+		reset();
+	}
 
 
 	private static final long mul32x32_64(int i1, int i2)
 	{
 		return (i1 & 0xFFFFFFFFL) * i2;
-	}
-	
-	
-	public final void zero()
-	{
-		// TODO
 	}
 }

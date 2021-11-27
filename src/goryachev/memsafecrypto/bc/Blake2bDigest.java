@@ -85,6 +85,7 @@ public class Blake2bDigest
 	private byte[] personalization = null;// new byte[16];
 
 	// the key
+	// TODO CByteArray
 	private byte[] key = null;
 
 	// Tree hashing parameters:
@@ -561,6 +562,12 @@ public class Blake2bDigest
 			bufferPos = BLOCK_LENGTH_BYTES; // zero padding
 		}
 		init();
+	}
+	
+	
+	public void zero()
+	{
+		reset();
 	}
 
 

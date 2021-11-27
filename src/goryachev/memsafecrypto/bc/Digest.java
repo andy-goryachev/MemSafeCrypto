@@ -1,10 +1,13 @@
 package goryachev.memsafecrypto.bc;
+import goryachev.memsafecrypto.CByteArray;
+import goryachev.memsafecrypto.ICryptoZeroable;
 
 
 /**
  * interface that a message digest conforms to.
  */
 public interface Digest
+	extends ICryptoZeroable
 {
 	/**
 	 * return the algorithm name
@@ -38,8 +41,18 @@ public interface Digest
 	 * @param len the length of the data.
 	 */
 	public void update(byte[] in, int inOff, int len);
+	
+	
+	/**
+	 * update the message digest with a block of bytes.
+	 *
+	 * @param in the byte array containing the data.
+	 * @param inOff the offset into the byte array where the data starts.
+	 * @param len the length of the data.
+	 */
+	public void update(CByteArray in, int inOff, int len);
 
-
+	
 	/**
 	 * close the digest, producing the final digest value. The doFinal
 	 * call leaves the digest reset.
@@ -48,6 +61,16 @@ public interface Digest
 	 * @param outOff the offset into the out array the digest is to start at.
 	 */
 	public int doFinal(byte[] out, int outOff);
+
+	
+	/**
+	 * close the digest, producing the final digest value. The doFinal
+	 * call leaves the digest reset.
+	 *
+	 * @param out the array the digest is to be copied into.
+	 * @param outOff the offset into the out array the digest is to start at.
+	 */
+	public int doFinal(CByteArray out, int outOff);
 
 
 	/**
