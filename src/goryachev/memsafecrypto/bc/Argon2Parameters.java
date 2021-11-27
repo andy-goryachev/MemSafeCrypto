@@ -32,7 +32,7 @@ public class Argon2Parameters
 	private final CharToByteConverter converter;
 	
 
-	private Argon2Parameters(int type, byte[] salt, byte[] secret, byte[] additional, int iterations, int memory, int lanes, int version, CharToByteConverter converter)
+	protected Argon2Parameters(int type, byte[] salt, byte[] secret, byte[] additional, int iterations, int memory, int lanes, int version, CharToByteConverter converter)
 	{
 		this.salt = Arrays.clone(salt);
 		this.secret = Arrays.clone(secret);

@@ -41,7 +41,7 @@ public class Argon2BytesGenerator
 	private int segmentLength;
 	private int laneLength;
 
-	
+
 	public Argon2BytesGenerator()
 	{
 	}
@@ -443,7 +443,7 @@ public class Argon2BytesGenerator
 	}
 
 
-	private static void roundFunction(Block block, int v0, int v1, int v2, int v3, int v4, int v5, int v6, int v7, int v8, int v9, int v10, int v11, int v12, int v13, int v14, int v15)
+	protected static void roundFunction(Block block, int v0, int v1, int v2, int v3, int v4, int v5, int v6, int v7, int v8, int v9, int v10, int v11, int v12, int v13, int v14, int v15)
 	{
 		final long[] v = block.v;
 
@@ -570,10 +570,14 @@ public class Argon2BytesGenerator
 
 	private long intToLong(int x)
 	{
-		return (long)(x & M32L);
+		return (x & M32L);
 	}
 
-	private static class FillBlock
+
+	//
+
+
+	protected static class FillBlock
 	{
 		Block R = new Block();
 		Block Z = new Block();
@@ -603,7 +607,7 @@ public class Argon2BytesGenerator
 		}
 
 
-		private void fillBlock(Block Y, Block currentBlock)
+		protected void fillBlock(Block Y, Block currentBlock)
 		{
 			Z.copyBlock(Y);
 			applyBlake();
@@ -611,7 +615,7 @@ public class Argon2BytesGenerator
 		}
 
 
-		private void fillBlock(Block X, Block Y, Block currentBlock)
+		protected void fillBlock(Block X, Block Y, Block currentBlock)
 		{
 			R.xor(X, Y);
 			Z.copyBlock(R);
@@ -620,7 +624,7 @@ public class Argon2BytesGenerator
 		}
 
 
-		private void fillBlockWithXor(Block X, Block Y, Block currentBlock)
+		protected void fillBlockWithXor(Block X, Block Y, Block currentBlock)
 		{
 			R.xor(X, Y);
 			Z.copyBlock(R);
@@ -629,14 +633,18 @@ public class Argon2BytesGenerator
 		}
 	}
 
-	private static class Block
+
+	//
+
+
+	protected static class Block
 	{
 		private static final int SIZE = ARGON2_QWORDS_IN_BLOCK;
-
 		/* 128 * 8 Byte QWords */
-		private final long[] v;
+		protected final long[] v;
 
-		private Block()
+
+		protected Block()
 		{
 			v = new long[SIZE];
 		}
@@ -664,13 +672,13 @@ public class Argon2BytesGenerator
 		}
 
 
-		private void copyBlock(Block other)
+		protected void copyBlock(Block other)
 		{
 			System.arraycopy(other.v, 0, v, 0, SIZE);
 		}
 
 
-		private void xor(Block b1, Block b2)
+		protected void xor(Block b1, Block b2)
 		{
 			long[] v0 = v, v1 = b1.v, v2 = b2.v;
 			for(int i = 0; i < SIZE; i++)
@@ -680,7 +688,7 @@ public class Argon2BytesGenerator
 		}
 
 
-		private void xorWith(Block b1)
+		protected void xorWith(Block b1)
 		{
 			long[] v0 = v, v1 = b1.v;
 			for(int i = 0; i < SIZE; i++)
@@ -690,7 +698,7 @@ public class Argon2BytesGenerator
 		}
 
 
-		private void xorWith(Block b1, Block b2)
+		protected void xorWith(Block b1, Block b2)
 		{
 			long[] v0 = v, v1 = b1.v, v2 = b2.v;
 			for(int i = 0; i < SIZE; i++)
@@ -706,15 +714,15 @@ public class Argon2BytesGenerator
 			return this;
 		}
 	}
+	
+	
+	//
+	
 
-	private static class Position
+	protected static class Position
 	{
 		int pass;
 		int lane;
 		int slice;
-
-		Position()
-		{
-		}
 	}
 }
