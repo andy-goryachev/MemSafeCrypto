@@ -75,6 +75,10 @@ public final class CByteArray
 	
 	public static CByteArray readOnly(byte[] src)
 	{
+		if(src == null)
+		{
+			return null;
+		}
 		return readOnly(src, 0, src.length);
 	}
 	
