@@ -1,7 +1,6 @@
 package goryachev.memsafecrypto.bc;
-import org.bouncycastle.crypto.CharToByteConverter;
-import org.bouncycastle.crypto.PasswordConverter;
-import org.bouncycastle.util.Arrays;
+import goryachev.memsafecrypto.CByteArray;
+import goryachev.memsafecrypto.Crypto;
 
 
 public class Argon2Parameters
@@ -19,24 +18,22 @@ public class Argon2Parameters
 	private static final int DEFAULT_TYPE = ARGON2_i;
 	private static final int DEFAULT_VERSION = ARGON2_VERSION_13;
 
-	private final byte[] salt;
-	private final byte[] secret;
-	private final byte[] additional;
-
+	private final CByteArray salt;
+	private final CByteArray secret;
+	private final CByteArray additional;
 	private final int iterations;
 	private final int memory;
 	private final int lanes;
-
 	private final int version;
 	private final int type;
 	private final CharToByteConverter converter;
 	
 
-	protected Argon2Parameters(int type, byte[] salt, byte[] secret, byte[] additional, int iterations, int memory, int lanes, int version, CharToByteConverter converter)
+	protected Argon2Parameters(int type, CByteArray salt, CByteArray secret, CByteArray additional, int iterations, int memory, int lanes, int version, CharToByteConverter converter)
 	{
-		this.salt = Arrays.clone(salt);
-		this.secret = Arrays.clone(secret);
-		this.additional = Arrays.clone(additional);
+		this.salt = CByteArray.readOnly(salt);
+		this.secret = CByteArray.readOnly(secret);
+		this.additional = CByteArray.readOnly(additional);
 		this.iterations = iterations;
 		this.memory = memory;
 		this.lanes = lanes;
@@ -46,21 +43,21 @@ public class Argon2Parameters
 	}
 
 
-	public byte[] getSalt()
+	public CByteArray getSalt()
 	{
-		return Arrays.clone(salt);
+		return CByteArray.readOnly(salt);
 	}
 
 
-	public byte[] getSecret()
+	public CByteArray getSecret()
 	{
-		return Arrays.clone(secret);
+		return CByteArray.readOnly(secret);
 	}
 
 
-	public byte[] getAdditional()
+	public CByteArray getAdditional()
 	{
-		return Arrays.clone(additional);
+		return CByteArray.readOnly(additional);
 	}
 
 
@@ -102,9 +99,9 @@ public class Argon2Parameters
 
 	public void clear()
 	{
-		Arrays.clear(salt);
-		Arrays.clear(secret);
-		Arrays.clear(additional);
+		Crypto.zero(salt);
+		Crypto.zero(secret);
+		Crypto.zero(additional);
 	}
 	
 	
@@ -113,19 +110,17 @@ public class Argon2Parameters
 	
 	public static class Builder
 	{
-		private byte[] salt;
-		private byte[] secret;
-		private byte[] additional;
-
+		private CByteArray salt;
+		private CByteArray secret;
+		private CByteArray additional;
 		private int iterations;
 		private int memory;
 		private int lanes;
-
 		private int version;
 		private final int type;
-
 		private CharToByteConverter converter = PasswordConverter.UTF8;
 
+		
 		public Builder()
 		{
 			this(DEFAULT_TYPE);
@@ -149,23 +144,23 @@ public class Argon2Parameters
 		}
 
 
-		public Builder withSalt(byte[] salt)
+		public Builder withSalt(CByteArray salt)
 		{
-			this.salt = Arrays.clone(salt);
+			this.salt = CByteArray.readOnly(salt);
 			return this;
 		}
 
 
-		public Builder withSecret(byte[] secret)
+		public Builder withSecret(CByteArray secret)
 		{
-			this.secret = Arrays.clone(secret);
+			this.secret = CByteArray.readOnly(secret);
 			return this;
 		}
 
 
-		public Builder withAdditional(byte[] additional)
+		public Builder withAdditional(CByteArray additional)
 		{
-			this.additional = Arrays.clone(additional);
+			this.additional = CByteArray.readOnly(additional);
 			return this;
 		}
 
@@ -213,9 +208,9 @@ public class Argon2Parameters
 
 		public void clear()
 		{
-			Arrays.clear(salt);
-			Arrays.clear(secret);
-			Arrays.clear(additional);
+			Crypto.zero(salt);
+			Crypto.zero(secret);
+			Crypto.zero(additional);
 		}
 	}
 }

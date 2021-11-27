@@ -1,4 +1,6 @@
 package goryachev.memsafecrypto.bc;
+import goryachev.memsafecrypto.CByteArray;
+import goryachev.memsafecrypto.CCharArray;
 
 
 /**
@@ -11,7 +13,7 @@ public interface CharToByteConverter
 	 *
 	 * @return a type name for the conversion.
 	 */
-	String getType();
+	public String getType();
 
 
 	/**
@@ -20,5 +22,5 @@ public interface CharToByteConverter
 	 * @param password the characters to encode.
 	 * @return a byte encoding of password.
 	 */
-	byte[] convert(char[] password);
+	public CByteArray convert(CCharArray password);
 }

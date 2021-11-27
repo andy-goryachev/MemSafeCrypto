@@ -1,8 +1,7 @@
 package goryachev.memsafecrypto.bc;
 import goryachev.memsafecrypto.CByteArray;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import goryachev.memsafecrypto.CCharArray;
+import goryachev.memsafecrypto.util.CUtils;
 
 
 /**
@@ -111,22 +110,22 @@ public abstract class PBEParametersGenerator
 	 * @param password a character array representing the password.
 	 * @return a byte array representing the password.
 	 */
-	public static byte[] PKCS5PasswordToBytes(char[] password)
+	public static CByteArray PKCS5PasswordToBytes(CCharArray password)
 	{
 		if(password != null)
 		{
-			byte[] bytes = new byte[password.length];
+			CByteArray bytes = new CByteArray(password.length());
 
-			for(int i = 0; i != bytes.length; i++)
+			for(int i=0; i<bytes.length(); i++)
 			{
-				bytes[i] = (byte)password[i];
+				bytes.set(i, (byte)password.get(i));
 			}
 
 			return bytes;
 		}
 		else
 		{
-			return new byte[0];
+			return new CByteArray(0);
 		}
 	}
 
@@ -138,91 +137,18 @@ public abstract class PBEParametersGenerator
 	 * @param password a character array representing the password.
 	 * @return a byte array representing the password.
 	 */
-	public static byte[] PKCS5PasswordToUTF8Bytes(char[] password)
+	public static CByteArray PKCS5PasswordToUTF8Bytes(CCharArray password)
 	{
 		if(password != null)
 		{
-			return toUTF8ByteArray(password);
+			return CUtils.toUTF8ByteArray(password);
 		}
 		else
 		{
-			return new byte[0];
+			return new CByteArray(0);
 		}
 	}
 	
-	
-	@Deprecated // FIX remove
-    private static byte[] toUTF8ByteArray(char[] string)
-    {
-        ByteArrayOutputStream bOut = new ByteArrayOutputStream();
-
-        try
-        {
-            toUTF8ByteArray(string, bOut);
-        }
-        catch (IOException e)
-        {
-            throw new IllegalStateException("cannot encode string to byte array!");
-        }
-
-        return bOut.toByteArray();
-	}
-
-
-	@Deprecated // FIX remove or move
-	private static void toUTF8ByteArray(char[] string, OutputStream sOut) throws IOException
-	{
-		char[] c = string;
-		int i = 0;
-
-		while(i < c.length)
-		{
-			char ch = c[i];
-
-			if(ch < 0x0080)
-			{
-				sOut.write(ch);
-			}
-			else if(ch < 0x0800)
-			{
-				sOut.write(0xc0 | (ch >> 6));
-				sOut.write(0x80 | (ch & 0x3f));
-			}
-			// surrogate pair
-			else if(ch >= 0xD800 && ch <= 0xDFFF)
-			{
-				// in error - can only happen, if the Java String class has a
-				// bug.
-				if(i + 1 >= c.length)
-				{
-					throw new IllegalStateException("invalid UTF-16 codepoint");
-				}
-				char W1 = ch;
-				ch = c[++i];
-				char W2 = ch;
-				// in error - can only happen, if the Java String class has a
-				// bug.
-				if(W1 > 0xDBFF)
-				{
-					throw new IllegalStateException("invalid UTF-16 codepoint");
-				}
-				int codePoint = (((W1 & 0x03FF) << 10) | (W2 & 0x03FF)) + 0x10000;
-				sOut.write(0xf0 | (codePoint >> 18));
-				sOut.write(0x80 | ((codePoint >> 12) & 0x3F));
-				sOut.write(0x80 | ((codePoint >> 6) & 0x3F));
-				sOut.write(0x80 | (codePoint & 0x3F));
-			}
-			else
-			{
-				sOut.write(0xe0 | (ch >> 12));
-				sOut.write(0x80 | ((ch >> 6) & 0x3F));
-				sOut.write(0x80 | (ch & 0x3F));
-			}
-
-			i++;
-		}
-	}
-
 
 	/**
 	 * converts a password to a byte array according to the scheme in
@@ -231,24 +157,24 @@ public abstract class PBEParametersGenerator
 	 * @param password a character array representing the password.
 	 * @return a byte array representing the password.
 	 */
-	public static byte[] PKCS12PasswordToBytes(char[] password)
+	public static CByteArray PKCS12PasswordToBytes(CCharArray password)
 	{
-		if(password != null && password.length > 0)
+		if(password != null && password.length() > 0)
 		{
 			// +1 for extra 2 pad bytes.
-			byte[] bytes = new byte[(password.length + 1) * 2];
+			CByteArray bytes = new CByteArray((password.length() + 1) * 2);
 
-			for(int i = 0; i != password.length; i++)
+			for(int i=0; i<password.length(); i++)
 			{
-				bytes[i * 2] = (byte)(password[i] >>> 8);
-				bytes[i * 2 + 1] = (byte)password[i];
+				bytes.set(i * 2, (byte)(password.get(i) >>> 8));
+				bytes.set(i * 2 + 1, (byte)password.get(i));
 			}
 
 			return bytes;
 		}
 		else
 		{
-			return new byte[0];
+			return new CByteArray(0);
 		}
 	}
 }

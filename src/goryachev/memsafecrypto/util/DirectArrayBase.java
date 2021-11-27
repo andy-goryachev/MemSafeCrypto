@@ -58,6 +58,12 @@ public class DirectArrayBase
 	}
 	
 	
+	public int position()
+	{
+		return buffer.position();
+	}
+	
+	
 	protected void checkWriteable()
 	{
 		if(readonly)

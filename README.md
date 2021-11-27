@@ -14,6 +14,7 @@ copying and garbage compactification done by the JVM.
 
 ## Supported Primitives
 
+- Argon2
 - Blake2b
 - Poly1305
 - Salsa20Engine
