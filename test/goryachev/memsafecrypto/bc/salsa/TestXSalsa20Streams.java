@@ -1,7 +1,9 @@
 // Copyright © 2021 Andy Goryachev <andy@goryachev.com>
-package goryachev.memsafecrypto;
+package goryachev.memsafecrypto.bc.salsa;
 import goryachev.common.test.TF;
 import goryachev.common.test.Test;
+import goryachev.memsafecrypto.CByteArray;
+import goryachev.memsafecrypto.TUtils;
 import goryachev.memsafecrypto.salsa.XSalsa20Decryptor;
 import goryachev.memsafecrypto.salsa.XSalsa20Encryptor;
 import goryachev.memsafecrypto.salsa.XSalsaTools;
