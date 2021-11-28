@@ -1,4 +1,5 @@
 package goryachev.memsafecrypto.bc;
+import goryachev.memsafecrypto.CByteArray;
 import goryachev.memsafecrypto.util.CUtils;
 
 
@@ -17,18 +18,18 @@ public class DigestRandomGenerator
 	private long stateCounter;
 	private long seedCounter;
 	private Digest digest;
-	private byte[] state;
-	private byte[] seed;
+	private CByteArray state;
+	private CByteArray seed;
 
 
 	public DigestRandomGenerator(Digest digest)
 	{
 		this.digest = digest;
 
-		this.seed = new byte[digest.getDigestSize()];
+		this.seed = new CByteArray(digest.getDigestSize());
 		this.seedCounter = 1;
 
-		this.state = new byte[digest.getDigestSize()];
+		this.state = new CByteArray(digest.getDigestSize());
 		this.stateCounter = 1;
 	}
 
@@ -76,12 +77,40 @@ public class DigestRandomGenerator
 			int end = start + len;
 			for(int i=start; i<end; i++)
 			{
-				if(stateOff == state.length)
+				if(stateOff == state.length())
 				{
 					generateState();
 					stateOff = 0;
 				}
-				bytes[i] = state[stateOff++];
+				bytes[i] = state.get(stateOff++);
+			}
+		}
+	}
+	
+	
+	public void nextBytes(CByteArray bytes)
+	{
+		nextBytes(bytes, 0, bytes.length());
+	}
+
+
+	public void nextBytes(CByteArray bytes, int start, int len)
+	{
+		synchronized(this)
+		{
+			int stateOff = 0;
+
+			generateState();
+
+			int end = start + len;
+			for(int i=start; i<end; i++)
+			{
+				if(stateOff == state.length())
+				{
+					generateState();
+					stateOff = 0;
+				}
+				bytes.set(i, state.get(stateOff++));
 			}
 		}
 	}
@@ -119,15 +148,21 @@ public class DigestRandomGenerator
 			seed >>>= 8;
 		}
 	}
-
-
+	
+	
 	private void digestUpdate(byte[] inSeed)
 	{
 		digest.update(inSeed, 0, inSeed.length);
 	}
 
 
-	private void digestDoFinal(byte[] result)
+	private void digestUpdate(CByteArray inSeed)
+	{
+		digest.update(inSeed, 0, inSeed.length());
+	}
+
+
+	private void digestDoFinal(CByteArray result)
 	{
 		digest.doFinal(result, 0);
 	}

@@ -1,4 +1,5 @@
 package goryachev.memsafecrypto.bc;
+import goryachev.memsafecrypto.CByteArray;
 
 
 /**
@@ -38,4 +39,22 @@ public interface RandomGenerator
 	 * @param len length of segment to fill.
 	 */
 	public void nextBytes(byte[] bytes, int start, int len);
+	
+	
+	/**
+	 * Fill bytes with random values.
+	 *
+	 * @param bytes byte array to be filled.
+	 */
+	public void nextBytes(CByteArray bytes);
+
+
+	/**
+	 * Fill part of bytes with random values.
+	 *
+	 * @param bytes byte array to be filled.
+	 * @param start index to start filling at.
+	 * @param len length of segment to fill.
+	 */
+	public void nextBytes(CByteArray bytes, int start, int len);
 }
