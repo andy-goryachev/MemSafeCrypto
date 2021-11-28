@@ -11,7 +11,7 @@ public interface RandomGenerator
 	 *
 	 * @param seed a byte array to be mixed into the generator's state.
 	 */
-	void addSeedMaterial(byte[] seed);
+	public void addSeedMaterial(byte[] seed);
 
 
 	/**
@@ -19,7 +19,7 @@ public interface RandomGenerator
 	 *
 	 * @param seed a long value to be mixed into the generator's state.
 	 */
-	void addSeedMaterial(long seed);
+	public void addSeedMaterial(long seed);
 
 
 	/**
@@ -27,7 +27,7 @@ public interface RandomGenerator
 	 *
 	 * @param bytes byte array to be filled.
 	 */
-	void nextBytes(byte[] bytes);
+	public void nextBytes(byte[] bytes);
 
 
 	/**
@@ -37,5 +37,5 @@ public interface RandomGenerator
 	 * @param start index to start filling at.
 	 * @param len length of segment to fill.
 	 */
-	void nextBytes(byte[] bytes, int start, int len);
+	public void nextBytes(byte[] bytes, int start, int len);
 }
