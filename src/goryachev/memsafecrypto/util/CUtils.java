@@ -406,4 +406,11 @@ public final class CUtils
 			i++;
 		}
 	}
+	
+	
+	@Deprecated // replace with CByteArray
+    public static boolean isNullOrEmpty(byte[] array)
+    {
+        return null == array || array.length < 1;
+    }
 }
