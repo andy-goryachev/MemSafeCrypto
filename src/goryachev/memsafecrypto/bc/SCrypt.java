@@ -3,7 +3,6 @@ import goryachev.memsafecrypto.CByteArray;
 import goryachev.memsafecrypto.CIntArray;
 import goryachev.memsafecrypto.Crypto;
 import goryachev.memsafecrypto.util.CUtils;
-import java.util.Arrays;
 
 
 /**
@@ -23,26 +22,26 @@ public class SCrypt
 	/**
 	 * Generate a key using the scrypt key derivation function.
 	 *
-	 * @param P     the bytes of the pass phrase.
-	 * @param S     the salt to use for this invocation.
+	 * @param passphrase - the bytes of the pass phrase.
+	 * @param sale - the salt to use for this invocation.
 	 * @param N     CPU/Memory cost parameter. Must be larger than 1, a power of 2 and less than
 	 *              <code>2^(128 * r / 8)</code>.
 	 * @param r     the block size, must be &gt;= 1.
 	 * @param p     Parallelization parameter. Must be a positive integer less than or equal to
 	 *              <code>Integer.MAX_VALUE / (128 * r * 8)</code>.
-	 * @param dkLen the length of the key to generate.
+	 * @param dkLen the length of the key to generate, in bytes.
 	 * @return the generated key.
 	 */
-	public static CByteArray generate(CByteArray P, CByteArray S, int N, int r, int p, int dkLen)
+	public static CByteArray generate(CByteArray passphrase, CByteArray salt, int N, int r, int p, int dkLen)
 	{
-		if(P == null)
+		if(passphrase == null)
 		{
-			throw new IllegalArgumentException("Passphrase P must be provided.");
+			throw new IllegalArgumentException("Passphrase must be provided.");
 		}
 		
-		if(S == null)
+		if(salt == null)
 		{
-			throw new IllegalArgumentException("Salt S must be provided.");
+			throw new IllegalArgumentException("Salt must be provided.");
 		}
 		
 		if(N <= 1 || !isPowerOf2(N))
@@ -72,7 +71,7 @@ public class SCrypt
 			throw new IllegalArgumentException("Generated key length dkLen must be >= 1.");
 		}
 		
-		return MFcrypt(P, S, N, r, p, dkLen);
+		return MFcrypt(passphrase, salt, N, r, p, dkLen);
 	}
 
 
@@ -122,10 +121,9 @@ public class SCrypt
 
 	private static CByteArray SingleIterationPBKDF2(CByteArray P, CByteArray S, int dkLen)
 	{
-		PBEParametersGenerator pGen = new PKCS5S2ParametersGenerator(new SHA256Digest());
+		PKCS5S2ParametersGenerator pGen = new PKCS5S2ParametersGenerator(new SHA256Digest());
 		pGen.init(P, S, 1);
-		KeyParameter key = (KeyParameter)pGen.generateDerivedMacParameters(dkLen * 8);
-		return key.getKey();
+		return pGen.generateDerivedKey(dkLen);
 	}
 
 

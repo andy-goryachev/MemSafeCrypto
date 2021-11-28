@@ -151,8 +151,8 @@ public class XSalsaRandomAccessFile
 
 	public void close() throws IOException
 	{
-		Crypto.zero(keyParameter.getKey());
-		Crypto.zero(paramIV.getIV());
+		Crypto.zero(keyParameter);
+		Crypto.zero(paramIV);
 		CKit.close(raf);
 	}
 }

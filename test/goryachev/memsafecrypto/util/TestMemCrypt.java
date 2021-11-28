@@ -1,5 +1,5 @@
 // Copyright © 2012-2021 Andy Goryachev <andy@goryachev.com>
-package goryachev.memsafecrypto.bc.salsa;
+package goryachev.memsafecrypto.util;
 import goryachev.common.test.TF;
 import goryachev.common.test.Test;
 import goryachev.memsafecrypto.CByteArray;

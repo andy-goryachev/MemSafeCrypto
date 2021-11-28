@@ -55,33 +55,43 @@ public class PKCS5S2ParametersGenerator
 	}
 
 
-	private CByteArray generateDerivedKey(int dkLen)
+	/** 
+	 * @param dkLen - key length in bytes 
+	 */
+	public CByteArray generateDerivedKey(int dkLen)
 	{
 		int hLen = hMac.getMacSize();
 		int l = (dkLen + hLen - 1) / hLen;
 		CByteArray iBuf = new CByteArray(4);
-		CByteArray outBytes = new CByteArray(l * hLen);
-		int outPos = 0;
-
-		CipherParameters param = new KeyParameter(password);
-
-		hMac.init(param);
-
-		for(int i=1; i<=l; i++)
+		try
 		{
-			// Increment the value in 'iBuf'
-			int pos = 3;
-			//while(++iBuf[pos] == 0)
-			while(iBuf.incrementAndGet(pos) == 0)
+			CByteArray outBytes = new CByteArray(l * hLen);
+			int outPos = 0;
+	
+			CipherParameters param = new KeyParameter(password);
+	
+			hMac.init(param);
+	
+			for(int i=1; i<=l; i++)
 			{
-				--pos;
+				// Increment the value in 'iBuf'
+				int pos = 3;
+				//while(++iBuf[pos] == 0)
+				while(iBuf.incrementAndGet(pos) == 0)
+				{
+					--pos;
+				}
+	
+				F(salt, iterationCount, iBuf, outBytes, outPos);
+				outPos += hLen;
 			}
-
-			F(salt, iterationCount, iBuf, outBytes, outPos);
-			outPos += hLen;
+			
+			return outBytes;
 		}
-
-		return outBytes;
+		finally
+		{
+			iBuf.zero();
+		}
 	}
 
 

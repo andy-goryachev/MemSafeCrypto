@@ -10,17 +10,17 @@ import java.util.Random;
  */
 public class TUtils
 {
-	public static byte[] rnd(int size)
+	public static byte[] rnd(int sizeInBytes)
 	{
-		byte[] b = new byte[size];
+		byte[] b = new byte[sizeInBytes];
 		new Random().nextBytes(b);
 		return b;
 	}
 	
 	
-	public static CByteArray rndByteArray(int size)
+	public static CByteArray rndByteArray(int sizeInBytes)
 	{
-		byte[] b = new byte[size];
+		byte[] b = new byte[sizeInBytes];
 		new Random().nextBytes(b);
 		return CByteArray.readOnly(b);
 	}
