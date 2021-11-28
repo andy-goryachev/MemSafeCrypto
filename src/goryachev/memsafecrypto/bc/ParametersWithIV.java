@@ -1,9 +1,11 @@
 package goryachev.memsafecrypto.bc;
 import goryachev.memsafecrypto.CByteArray;
+import goryachev.memsafecrypto.Crypto;
+import goryachev.memsafecrypto.ICryptoZeroable;
 
 
 public class ParametersWithIV
-	implements CipherParameters
+	implements CipherParameters, ICryptoZeroable
 {
 	private CByteArray iv;
 	private CipherParameters parameters;
@@ -44,5 +46,12 @@ public class ParametersWithIV
 	public CipherParameters getParameters()
 	{
 		return parameters;
+	}
+
+
+	public void zero()
+	{
+		Crypto.zero(parameters);
+		Crypto.zero(iv);
 	}
 }

@@ -104,6 +104,7 @@ public class HMac
 	{
 		digest.reset();
 
+		// FIX zero
 		CByteArray key = ((KeyParameter)params).getKey();
 		int keyLength = key.length();
 

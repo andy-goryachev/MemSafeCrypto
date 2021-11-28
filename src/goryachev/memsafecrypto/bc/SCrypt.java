@@ -3,7 +3,6 @@ import goryachev.memsafecrypto.CByteArray;
 import goryachev.memsafecrypto.CIntArray;
 import goryachev.memsafecrypto.Crypto;
 import goryachev.memsafecrypto.util.CUtils;
-import java.util.Arrays;
 
 
 /**
@@ -122,10 +121,9 @@ public class SCrypt
 
 	private static CByteArray SingleIterationPBKDF2(CByteArray P, CByteArray S, int dkLen)
 	{
-		PBEParametersGenerator pGen = new PKCS5S2ParametersGenerator(new SHA256Digest());
+		PKCS5S2ParametersGenerator pGen = new PKCS5S2ParametersGenerator(new SHA256Digest());
 		pGen.init(P, S, 1);
-		KeyParameter key = (KeyParameter)pGen.generateDerivedMacParameters(dkLen * 8);
-		return key.getKey();
+		return pGen.generateDerivedKey(dkLen);
 	}
 
 
