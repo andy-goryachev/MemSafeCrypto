@@ -35,7 +35,7 @@ public class Argon2BytesGenerator
 
 	private static final long M32L = 0xFFFFFFFFL;
 
-	private static final byte[] ZERO_BYTES = new byte[4];
+	private static final CByteArray ZERO_BYTES = new CByteArray(4);
 
 	private Argon2Parameters parameters;
 	private Block[] memory;
