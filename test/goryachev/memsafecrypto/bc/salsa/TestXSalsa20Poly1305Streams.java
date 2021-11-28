@@ -24,11 +24,9 @@ public class TestXSalsa20Poly1305Streams
 	
 	
 	/*
-	TestXSalsa20Engine.testEncryptionSpeed:35 total bytes: 100,000,000
-	TestXSalsa20Engine.testEncryptionSpeed:58 BC encryption: 1.40
-	TestXSalsa20Engine.testEncryptionSpeed:59 MemSafe encryption: 1.15
-	
-	is my implementation really faster?
+	TestXSalsa20Poly1305Streams.testEncryptionSpeed:42 total bytes: 100,000,000
+	TestXSalsa20Poly1305Streams.testEncryptionSpeed:65 BC encryption: 1.46
+	TestXSalsa20Poly1305Streams.testEncryptionSpeed:66 MemSafe encryption: 1.51
 	*/
 	@Test
 	public void testEncryptionSpeed() throws Exception
