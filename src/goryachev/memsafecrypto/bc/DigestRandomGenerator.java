@@ -42,6 +42,7 @@ public class DigestRandomGenerator
 			{
 				digestUpdate(inSeed);
 			}
+			
 			digestUpdate(seed);
 			digestDoFinal(seed);
 		}
@@ -53,8 +54,8 @@ public class DigestRandomGenerator
 		synchronized(this)
 		{
 			digestAddCounter(rSeed);
+			
 			digestUpdate(seed);
-
 			digestDoFinal(seed);
 		}
 	}

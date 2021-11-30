@@ -79,4 +79,16 @@ public final class CRandomSpi
 		engineNextBytes(b);
 		return b;
 	}
+	
+	
+	public void addSeedMaterial(long x)
+	{
+		generator.addSeedMaterial(x);
+	}
+	
+	
+	public void addSeedMaterial(byte[] x)
+	{
+		generator.addSeedMaterial(x);
+	}
 }
