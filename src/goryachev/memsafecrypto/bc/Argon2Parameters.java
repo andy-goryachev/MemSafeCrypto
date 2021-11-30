@@ -45,19 +45,19 @@ public class Argon2Parameters
 
 	public CByteArray getSalt()
 	{
-		return CByteArray.readOnly(salt);
+		return salt;
 	}
 
 
 	public CByteArray getSecret()
 	{
-		return CByteArray.readOnly(secret);
+		return secret;
 	}
 
 
 	public CByteArray getAdditional()
 	{
-		return CByteArray.readOnly(additional);
+		return additional;
 	}
 
 
@@ -108,6 +108,11 @@ public class Argon2Parameters
 	//
 	
 	
+	/** 
+	 * Builder does not create copies of secret material, only build does that.
+	 * The caller must invoke build() and zero the arguments.  
+	 * The resulting Argon2Parameters will contain copies of the secrets.
+	 */
 	public static class Builder
 	{
 		private CByteArray salt;
@@ -146,21 +151,21 @@ public class Argon2Parameters
 
 		public Builder withSalt(CByteArray salt)
 		{
-			this.salt = CByteArray.readOnly(salt);
+			this.salt = salt;
 			return this;
 		}
 
 
 		public Builder withSecret(CByteArray secret)
 		{
-			this.secret = CByteArray.readOnly(secret);
+			this.secret = secret;
 			return this;
 		}
 
 
 		public Builder withAdditional(CByteArray additional)
 		{
-			this.additional = CByteArray.readOnly(additional);
+			this.additional = additional;
 			return this;
 		}
 

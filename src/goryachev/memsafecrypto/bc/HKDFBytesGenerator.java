@@ -1,11 +1,8 @@
 package goryachev.memsafecrypto.bc;
-import org.bouncycastle.crypto.DataLengthException;
-import org.bouncycastle.crypto.DerivationFunction;
-import org.bouncycastle.crypto.DerivationParameters;
-import org.bouncycastle.crypto.Digest;
-import org.bouncycastle.crypto.macs.HMac;
-import org.bouncycastle.crypto.params.HKDFParameters;
-import org.bouncycastle.crypto.params.KeyParameter;
+import goryachev.memsafecrypto.CByteArray;
+import goryachev.memsafecrypto.Crypto;
+import goryachev.memsafecrypto.ICryptoZeroable;
+import goryachev.memsafecrypto.util.CUtils;
 
 
 /**
@@ -16,12 +13,12 @@ import org.bouncycastle.crypto.params.KeyParameter;
  * than KDF's based on just a hash function.
  */
 public class HKDFBytesGenerator
-	implements DerivationFunction
+	implements DerivationFunction, ICryptoZeroable
 {
 	private HMac hMacHash;
 	private int hashLen;
-	private byte[] info;
-	private byte[] currentT;
+	private CByteArray info;
+	private CByteArray currentT;
 	private int generatedBytes;
 
 	
@@ -58,7 +55,7 @@ public class HKDFBytesGenerator
 		info = params.getInfo();
 
 		generatedBytes = 0;
-		currentT = new byte[hashLen];
+		currentT = new CByteArray(hashLen);
 	}
 
 
@@ -69,7 +66,7 @@ public class HKDFBytesGenerator
 	 * @param ikm  the input keying material
 	 * @return the PRK as KeyParameter
 	 */
-	private KeyParameter extract(byte[] salt, byte[] ikm)
+	private KeyParameter extract(CByteArray salt, CByteArray ikm)
 	{
 		if(salt == null)
 		{
@@ -81,9 +78,9 @@ public class HKDFBytesGenerator
 			hMacHash.init(new KeyParameter(salt));
 		}
 
-		hMacHash.update(ikm, 0, ikm.length);
+		hMacHash.update(ikm, 0, ikm.length());
 
-		byte[] prk = new byte[hashLen];
+		CByteArray prk = new CByteArray(hashLen);
 		hMacHash.doFinal(prk, 0);
 		return new KeyParameter(prk);
 	}
@@ -108,7 +105,7 @@ public class HKDFBytesGenerator
 		{
 			hMacHash.update(currentT, 0, hashLen);
 		}
-		hMacHash.update(info, 0, info.length);
+		hMacHash.update(info, 0, info.length());
 		hMacHash.update((byte)n);
 		hMacHash.doFinal(currentT, 0);
 	}
@@ -120,7 +117,7 @@ public class HKDFBytesGenerator
 	}
 
 
-	public int generateBytes(byte[] out, int outOff, int len) throws DataLengthException, IllegalArgumentException
+	public int generateBytes(CByteArray out, int outOff, int len) throws DataLengthException, IllegalArgumentException
 	{
 		if(generatedBytes + len > 255 * hashLen)
 		{
@@ -137,7 +134,9 @@ public class HKDFBytesGenerator
 		int posInT = generatedBytes % hashLen;
 		int leftInT = hashLen - generatedBytes % hashLen;
 		int toCopy = Math.min(leftInT, toGenerate);
-		System.arraycopy(currentT, posInT, out, outOff, toCopy);
+		
+		CUtils.arraycopy(currentT, posInT, out, outOff, toCopy);
+		
 		generatedBytes += toCopy;
 		toGenerate -= toCopy;
 		outOff += toCopy;
@@ -146,12 +145,21 @@ public class HKDFBytesGenerator
 		{
 			expandNext();
 			toCopy = Math.min(hashLen, toGenerate);
-			System.arraycopy(currentT, 0, out, outOff, toCopy);
+			
+			CUtils.arraycopy(currentT, 0, out, outOff, toCopy);
+			
 			generatedBytes += toCopy;
 			toGenerate -= toCopy;
 			outOff += toCopy;
 		}
 
 		return len;
+	}
+
+
+	public void zero()
+	{
+		Crypto.zero(currentT);
+		Crypto.zero(info);
 	}
 }

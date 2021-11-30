@@ -1,4 +1,5 @@
 package goryachev.memsafecrypto.bc;
+import goryachev.memsafecrypto.CByteArray;
 
 
 /**
@@ -9,5 +10,5 @@ public interface DerivationFunction
 	public void init(DerivationParameters param);
 
 
-	public int generateBytes(byte[] out, int outOff, int len) throws DataLengthException, IllegalArgumentException;
+	public int generateBytes(CByteArray out, int outOff, int len) throws DataLengthException, IllegalArgumentException;
 }
