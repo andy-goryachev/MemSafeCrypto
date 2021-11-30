@@ -17,6 +17,7 @@ copying and garbage compactification done by the JVM.
 - Argon2
 - Blake2b
 - DigestRandomGenerator
+- HKDFBytesGenerator
 - Poly1305
 - Salsa20Engine
 - Scrypt
