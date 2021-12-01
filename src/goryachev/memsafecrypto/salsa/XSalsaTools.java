@@ -1,8 +1,8 @@
 // Copyright © 2021 Andy Goryachev <andy@goryachev.com>
 package goryachev.memsafecrypto.salsa;
+import goryachev.memsafecrypto.CByteArray;
 import goryachev.memsafecrypto.bc.KeyParameter;
 import goryachev.memsafecrypto.bc.ParametersWithIV;
-import goryachev.memsafecrypto.bc.Poly1305;
 import goryachev.memsafecrypto.bc.XSalsa20Engine;
 
 
@@ -17,16 +17,7 @@ public class XSalsaTools
 	public static final int BUFFER_SIZE = 4096;
 	
 	
-	// TODO remove
-	/** clears the digest by initializing it with an all-zero key */
-	public static void zero(Poly1305 x)
-	{
-		byte[] k = new byte[KEY_LENGTH_BYTES];
-		x.init(new KeyParameter(k));
-	}
-	
-	
-	public static byte[] decrypt(byte[] key, byte[] nonce, int nonceOffset, int nonceLength, byte[] ciphertext, int offset, int length)
+	public static CByteArray decrypt(CByteArray key, byte[] nonce, int nonceOffset, int nonceLength, byte[] ciphertext, int offset, int length)
 	{
 		XSalsa20Engine eng = new XSalsa20Engine();
 		try
@@ -36,7 +27,7 @@ public class XSalsaTools
 			{
 				eng.init(false, new ParametersWithIV(kp, nonce, nonceOffset, nonceLength));
 		
-				byte[] dec = new byte[length];
+				CByteArray dec = new CByteArray(length);
 				eng.processBytes(ciphertext, offset, length, dec, 0);
 				return dec;
 			}
@@ -52,7 +43,7 @@ public class XSalsaTools
 	}
 	
 	
-	public static void encrypt(byte[] key, byte[] nonce, int nonceOffset, int nonceLength, byte[] cleartext, byte[] out, int outOffset)
+	public static void encrypt(CByteArray key, byte[] nonce, int nonceOffset, int nonceLength, CByteArray cleartext, byte[] out, int outOffset)
 	{
 		XSalsa20Engine eng = new XSalsa20Engine();
 		try
@@ -62,7 +53,7 @@ public class XSalsaTools
 			{
 				eng.init(true, new ParametersWithIV(kp, nonce, nonceOffset, nonceLength));
 				
-				eng.processBytes(cleartext, 0, cleartext.length, out, outOffset);
+				eng.processBytes(cleartext, 0, cleartext.length(), out, outOffset);
 			}
 			finally
 			{

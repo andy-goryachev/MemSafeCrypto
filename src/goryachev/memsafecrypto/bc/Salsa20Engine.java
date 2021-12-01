@@ -344,6 +344,44 @@ public class Salsa20Engine
 
 		return len;
 	}
+	
+	
+	public int processBytes(CByteArray in, int inOff, int len, byte[] out, int outOff)
+	{
+		if(!initialised)
+		{
+			throw new IllegalStateException(getAlgorithmName() + " not initialised");
+		}
+
+		if((inOff + len) > in.length())
+		{
+			throw new DataLengthException("input buffer too short");
+		}
+
+		if((outOff + len) > out.length)
+		{
+			throw new OutputLengthException("output buffer too short");
+		}
+
+		if(limitExceeded(len))
+		{
+			throw new MaxBytesExceededException("2^70 byte limit per IV would be exceeded; Change IV");
+		}
+
+		for(int i = 0; i < len; i++)
+		{
+			out[i + outOff] = (byte)(keyStream.get(index) ^ in.get(i + inOff));
+			index = (index + 1) & 63;
+
+			if(index == 0)
+			{
+				advanceCounter();
+				generateKeyStream(keyStream);
+			}
+		}
+
+		return len;
+	}
 
 
 	public long skip(long numberOfBytes)

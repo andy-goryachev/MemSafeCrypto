@@ -93,7 +93,7 @@ public final class OpaqueChars
 	}
 	
 	
-	protected final CCharArray getChars()
+	public final CCharArray getChars()
 	{
 		CByteArray b = getCByteArray();
 		try
