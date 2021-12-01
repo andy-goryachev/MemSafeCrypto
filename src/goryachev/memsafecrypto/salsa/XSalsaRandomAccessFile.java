@@ -2,6 +2,7 @@
 package goryachev.memsafecrypto.salsa;
 import goryachev.common.io.CIOTools;
 import goryachev.common.util.CKit;
+import goryachev.memsafecrypto.CByteArray;
 import goryachev.memsafecrypto.Crypto;
 import goryachev.memsafecrypto.bc.KeyParameter;
 import goryachev.memsafecrypto.bc.ParametersWithIV;
@@ -32,7 +33,7 @@ public class XSalsaRandomAccessFile
 	private final byte[] databuf = new byte[8];
 	
 	
-	public XSalsaRandomAccessFile(File file, boolean forWriting, byte[] key, byte[] iv) throws FileNotFoundException
+	public XSalsaRandomAccessFile(File file, boolean forWriting, CByteArray key, CByteArray iv) throws FileNotFoundException
 	{
 		this.file = file;
 		this.forWriting = forWriting;

@@ -105,6 +105,17 @@ public final class CByteArray
 	}
 	
 	
+	public static CByteArray readOnly(CByteArray src, int offset, int len)
+	{
+		if(src == null)
+		{
+			return null;
+		}
+		
+		return src.toReadOnly(offset, len);
+	}
+	
+	
 	public void write(int b)
 	{
 		checkWriteable();
