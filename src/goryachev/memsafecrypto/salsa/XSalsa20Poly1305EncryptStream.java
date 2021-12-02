@@ -17,6 +17,7 @@ import java.io.OutputStream;
 public class XSalsa20Poly1305EncryptStream
 	extends OutputStream
 {
+	private static final int BUFFER_SIZE = 4096;
 	private XSalsa20Engine xsalsa20 = new XSalsa20Engine();
 	private Poly1305 poly1305 = new Poly1305();
 	private OutputStream os;
@@ -31,7 +32,7 @@ public class XSalsa20Poly1305EncryptStream
 		}
 		
 		this.os = os;
-		this.out = new byte[XSalsaTools.BUFFER_SIZE];
+		this.out = new byte[BUFFER_SIZE];
 
 		KeyParameter keyParameter = new KeyParameter(key);
 		try

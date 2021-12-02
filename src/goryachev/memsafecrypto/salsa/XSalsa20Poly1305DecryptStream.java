@@ -19,10 +19,9 @@ import java.security.MessageDigest;
 public class XSalsa20Poly1305DecryptStream
 	extends InputStream
 {
-	public static final int BUFFER_SIZE = 4096;
+	private static final int BUFFER_SIZE = 4096;
 	private InputStream in;
 	private long toRead;
-	// FIX CByteArray
 	private byte[] buf;
 	private CByteArray out;
 	private int index;

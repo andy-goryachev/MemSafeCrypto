@@ -4,7 +4,7 @@ import goryachev.common.test.TF;
 import goryachev.memsafecrypto.bc.salsa.TestArgon2;
 import goryachev.memsafecrypto.bc.salsa.TestScrypt;
 import goryachev.memsafecrypto.bc.salsa.TestXSalsa20Poly1305Streams;
-import goryachev.memsafecrypto.bc.salsa.TestXSalsa20Streams;
+import goryachev.memsafecrypto.bc.salsa.TestXSalsaTools;
 import goryachev.memsafecrypto.salsa.TestXSalsaRandomAccessFile;
 import goryachev.memsafecrypto.util.TestMemCrypt;
 
@@ -24,7 +24,7 @@ public class TestAll
 			TestMemCrypt.class,
 			TestScrypt.class,
 			TestXSalsa20Poly1305Streams.class,
-			TestXSalsa20Streams.class,
+			TestXSalsaTools.class,
 			TestXSalsaRandomAccessFile.class
 		);
 	}

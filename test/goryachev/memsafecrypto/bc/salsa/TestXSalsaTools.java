@@ -4,15 +4,13 @@ import goryachev.common.test.TF;
 import goryachev.common.test.Test;
 import goryachev.memsafecrypto.CByteArray;
 import goryachev.memsafecrypto.TUtils;
-import goryachev.memsafecrypto.salsa.XSalsa20Decryptor;
-import goryachev.memsafecrypto.salsa.XSalsa20Encryptor;
 import goryachev.memsafecrypto.salsa.XSalsaTools;
 
 
 /**
- * Tests XSalsa20 encryptor/decryptor.
+ * Tests XSalsa20 Tools encryption / decryption.
  */
-public class TestXSalsa20Streams
+public class TestXSalsaTools
 {
 	public static void main(String[] args)
 	{
@@ -33,13 +31,13 @@ public class TestXSalsa20Streams
 			CByteArray data = TUtils.rndByteArray(size);
 			
 			CByteArray os = new CByteArray(size);
-			XSalsa20Encryptor.encrypt(key, nonce, data, os, 0, data.length());
+			XSalsaTools.encrypt(key, nonce, data, os, 0, data.length());
 			
 			CByteArray encrypted = os.toReadOnly();
 			
 			CByteArray decrypted = new CByteArray(size); 
 
-			XSalsa20Decryptor.decrypt(key, nonce, 0, encrypted.length(), encrypted, decrypted);
+			XSalsaTools.decrypt(key, nonce, 0, encrypted.length(), encrypted, decrypted);
 			
 			TF.eq(decrypted.toByteArray(), data.toByteArray());
 		}
