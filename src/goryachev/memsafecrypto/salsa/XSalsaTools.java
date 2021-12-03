@@ -5,6 +5,7 @@ import goryachev.memsafecrypto.bc.KeyParameter;
 import goryachev.memsafecrypto.bc.ParametersWithIV;
 import goryachev.memsafecrypto.bc.Poly1305;
 import goryachev.memsafecrypto.bc.XSalsa20Engine;
+import goryachev.memsafecrypto.util.CUtils;
 
 
 /**
@@ -172,7 +173,7 @@ public class XSalsaTools
 	
 	
 	/** encrypts a CByteArray into a CByteArray with non-authenticated XSalsa20 cipher */
-	public CByteArray encryptXSalsa20Poly1305(CByteArray key, CByteArray nonce, CByteArray input)
+	public static CByteArray encryptXSalsa20Poly1305(CByteArray key, CByteArray nonce, CByteArray input)
 	{
 		if(key.length() != KEY_LENGTH_BYTES)
 		{
@@ -228,6 +229,87 @@ public class XSalsaTools
 				engine.processBytes(input, 0, len, out, 0);
 				poly1305.update(out, 0, len);
 				poly1305.doFinal(out, len);
+				return out;
+			}
+			finally
+			{
+				poly1305.zero();
+			}
+		}
+		finally
+		{
+			engine.zero();
+		}
+	}
+	
+	
+	public static CByteArray decryptXSalsa20Poly1305(CByteArray key, CByteArray nonce, CByteArray input) throws Exception
+	{
+		if(key.length() != KEY_LENGTH_BYTES)
+		{
+			throw new IllegalArgumentException("key must be " + KEY_LENGTH_BYTES * 8 + " bits");
+		}
+
+		XSalsa20Engine engine = new XSalsa20Engine();
+		try
+		{
+			KeyParameter kp = new KeyParameter(key);
+			try
+			{
+				ParametersWithIV param = new ParametersWithIV(kp, nonce);
+				try
+				{
+					engine.init(false, param);
+				}
+				finally
+				{
+					param.zero();
+				}
+			}
+			finally
+			{
+				kp.zero();
+			}
+			
+			Poly1305 poly1305 = new Poly1305();
+			try
+			{
+				CByteArray subkey = new CByteArray(KEY_LENGTH_BYTES);
+				try
+				{
+					engine.processBytes(subkey, 0, subkey.length(), subkey, 0);
+					
+					KeyParameter skp = new KeyParameter(subkey);
+					try
+					{
+						poly1305.init(skp);
+					}
+					finally
+					{
+						skp.zero();
+					}
+				}
+				finally
+				{
+					subkey.zero();
+				}
+				
+				int len = input.length() - MAC_LENGTH_BYTES;
+				CByteArray out = new CByteArray(len);
+				
+				poly1305.update(input, 0, len);
+				engine.processBytes(input, 0, len, out, 0);
+				
+				// compute mac
+				CByteArray mac = new CByteArray(MAC_LENGTH_BYTES);
+				poly1305.doFinal(mac, 0);
+				
+				if(!CUtils.compareConstantTime(mac, 0, MAC_LENGTH_BYTES, input, len))
+				{
+					out.zero();
+					throw new Exception("MAC mismatch");
+				}
+				
 				return out;
 			}
 			finally

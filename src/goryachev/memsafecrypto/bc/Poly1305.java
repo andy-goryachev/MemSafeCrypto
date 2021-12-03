@@ -212,7 +212,7 @@ public class Poly1305
 			}
 
 			int toCopy = Math.min((len - copied), BLOCK_SIZE - currentBlockOffset);
-			System.arraycopy(in, copied + inOff, currentBlock, currentBlockOffset, toCopy);
+			CUtils.arraycopy(in, copied + inOff, currentBlock, currentBlockOffset, toCopy);
 			copied += toCopy;
 			currentBlockOffset += toCopy;
 		}

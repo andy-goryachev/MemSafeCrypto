@@ -408,9 +408,25 @@ public final class CUtils
 	}
 	
 	
-	@Deprecated // replace with CByteArray
     public static boolean isNullOrEmpty(byte[] array)
     {
         return null == array || array.length < 1;
     }
+
+
+	public static boolean compareConstantTime(CByteArray a, int aOffset, int length, CByteArray b, int bOffset)
+	{
+		if((a == null) || (b == null))
+		{
+			return false;
+		}
+
+		int x = 0;
+		for(int i=0; i<length; i++)
+		{
+			x |= (a.get(i + aOffset) ^ b.get(i + bOffset));
+		}
+		
+		return (x == 0);
+	}
 }

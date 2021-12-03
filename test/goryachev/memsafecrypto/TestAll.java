@@ -24,8 +24,8 @@ public class TestAll
 			TestMemCrypt.class,
 			TestScrypt.class,
 			TestXSalsa20Poly1305Streams.class,
-			TestXSalsaTools.class,
-			TestXSalsaRandomAccessFile.class
+			TestXSalsaRandomAccessFile.class,
+			TestXSalsaTools.class
 		);
 	}
 }
