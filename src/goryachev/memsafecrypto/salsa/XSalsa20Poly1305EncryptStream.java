@@ -18,7 +18,7 @@ public class XSalsa20Poly1305EncryptStream
 	extends OutputStream
 {
 	private static final int BUFFER_SIZE = 4096;
-	private XSalsa20Engine xsalsa20 = new XSalsa20Engine();
+	private XSalsa20Engine engine = new XSalsa20Engine();
 	private Poly1305 poly1305 = new Poly1305();
 	private OutputStream os;
 	private byte[] out;
@@ -34,30 +34,37 @@ public class XSalsa20Poly1305EncryptStream
 		this.os = os;
 		this.out = new byte[BUFFER_SIZE];
 
-		KeyParameter keyParameter = new KeyParameter(key);
+		KeyParameter kp = new KeyParameter(key);
 		try
 		{
-			ParametersWithIV iv = new ParametersWithIV(keyParameter, nonce);
-			xsalsa20.init(true, iv);
+			ParametersWithIV param = new ParametersWithIV(kp, nonce);
+			try
+			{
+				engine.init(true, param);
+			}
+			finally
+			{
+				param.zero();
+			}
 		}
 		finally
 		{
-			keyParameter.zero();
+			kp.zero();
 		}
 		
 		CByteArray subkey = new CByteArray(XSalsaTools.KEY_LENGTH_BYTES);
 		try
 		{
-			xsalsa20.processBytes(subkey, 0, XSalsaTools.KEY_LENGTH_BYTES, subkey, 0);
+			engine.processBytes(subkey, 0, XSalsaTools.KEY_LENGTH_BYTES, subkey, 0);
 			
-			KeyParameter kp = new KeyParameter(subkey);
+			KeyParameter skp = new KeyParameter(subkey);
 			try
 			{
-				poly1305.init(kp);
+				poly1305.init(skp);
 			}
 			finally
 			{
-				kp.zero();
+				skp.zero();
 			}
 		}
 		finally
@@ -70,7 +77,7 @@ public class XSalsa20Poly1305EncryptStream
 	public void write(int b) throws IOException
 	{
 		out[0] = (byte)b;
-		xsalsa20.processBytes(out, 0, 1, out, 1);
+		engine.processBytes(out, 0, 1, out, 1);
 		poly1305.update(out, 1, 1);
 		os.write(out, 1, 1);
 	}
@@ -82,7 +89,7 @@ public class XSalsa20Poly1305EncryptStream
 		while(len > 0)
 		{
 			int sz = Math.min(len, out.length);
-			xsalsa20.processBytes(b, off + pos, sz, out, 0);
+			engine.processBytes(b, off + pos, sz, out, 0);
 			poly1305.update(out, 0, sz);
 			os.write(out, 0, sz);
 			
@@ -115,11 +122,11 @@ public class XSalsa20Poly1305EncryptStream
 			}
 			finally
 			{
-				xsalsa20.zero();
+				engine.zero();
 				poly1305.zero();
 				Crypto.zero(out);
 				
-				xsalsa20 = null;
+				engine = null;
 				poly1305 = null;
 				os = null;
 			}			

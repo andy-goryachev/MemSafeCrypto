@@ -101,7 +101,6 @@ public class Salsa20Engine
 		}
 		else if(keyParam instanceof KeyParameter)
 		{
-			// FIX zero
 			setKey(((KeyParameter)keyParam).getKey(), iv);
 		}
 		else
@@ -642,6 +641,8 @@ public class Salsa20Engine
 	
 	public void zero()
 	{
-		// TODO
+		keyStream.zero();
+		x.zero();
+		engineState.zero();
 	}
 }
