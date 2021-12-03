@@ -33,22 +33,22 @@ public class TestXSalsaTools
 			// with CByteArray
 			
 			CByteArray os = new CByteArray(size);
-			XSalsaTools.encrypt(key, nonce, data, os, 0, data.length());
+			XSalsaTools.encryptXSalsa20(key, nonce, data, os, 0, data.length());
 			CByteArray encrypted = os.toReadOnly();
 			
 			CByteArray decrypted = new CByteArray(size); 
-			XSalsaTools.decrypt(key, nonce, 0, encrypted.length(), encrypted, decrypted);
+			XSalsaTools.decryptXSalsa20(key, nonce, 0, encrypted.length(), encrypted, decrypted);
 			
 			TF.eq(decrypted.toByteArray(), data.toByteArray());
 			
 			// with byte[]
 			
 			byte[] os2 = new byte[size];
-			XSalsaTools.encrypt(key, nonce.toByteArray(), 0, nonce.length(), data, os2, 0);
+			XSalsaTools.encryptXSalsa20(key, nonce.toByteArray(), 0, nonce.length(), data, os2, 0);
 			
 			TF.eq(os2, encrypted.toByteArray());
 			
-			CByteArray decrypted2 = XSalsaTools.decrypt(key, nonce.toByteArray(), 0, nonce.length(), os2, 0, os2.length);
+			CByteArray decrypted2 = XSalsaTools.decryptXSalsa20(key, nonce.toByteArray(), 0, nonce.length(), os2, 0, os2.length);
 			
 			TF.eq(decrypted2.toByteArray(), data.toByteArray());
 		}
