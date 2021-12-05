@@ -172,8 +172,15 @@ public class XSalsaTools
 	}
 	
 	
-	/** encrypts a CByteArray into a CByteArray with non-authenticated XSalsa20 cipher */
+	/** encrypts a CByteArray into a CByteArray with authenticated XSalsa20Poly1305 cipher */
 	public static CByteArray encryptXSalsa20Poly1305(CByteArray key, CByteArray nonce, CByteArray input)
+	{
+		return encryptXSalsa20Poly1305(key, nonce, 0, input, 0, input.length());
+	}
+	
+	
+	/** encrypts a CByteArray into a CByteArray with authenticated XSalsa20Poly1305 cipher */
+	public static CByteArray encryptXSalsa20Poly1305(CByteArray key, CByteArray nonce, int nonceOffset, CByteArray input, int inputOffset, int inputLength)
 	{
 		if(key.length() != KEY_LENGTH_BYTES)
 		{
@@ -186,7 +193,7 @@ public class XSalsaTools
 			KeyParameter kp = new KeyParameter(key);
 			try
 			{
-				ParametersWithIV param = new ParametersWithIV(kp, nonce);
+				ParametersWithIV param = new ParametersWithIV(kp, nonce, nonceOffset, NONCE_LENGTH_BYTES);
 				try
 				{
 					engine.init(true, param);
@@ -224,11 +231,10 @@ public class XSalsaTools
 					subkey.zero();
 				}
 				
-				int len = input.length();
-				CByteArray out = new CByteArray(len + MAC_LENGTH_BYTES);
-				engine.processBytes(input, 0, len, out, 0);
-				poly1305.update(out, 0, len);
-				poly1305.doFinal(out, len);
+				CByteArray out = new CByteArray(inputLength + MAC_LENGTH_BYTES);
+				engine.processBytes(input, inputOffset, inputLength, out, 0);
+				poly1305.update(out, 0, inputLength);
+				poly1305.doFinal(out, inputLength);
 				return out;
 			}
 			finally
@@ -243,7 +249,15 @@ public class XSalsaTools
 	}
 	
 	
+	/** decrypts a CByteArray into a CByteArray with authenticated XSalsa20Poly1305 cipher */
 	public static CByteArray decryptXSalsa20Poly1305(CByteArray key, CByteArray nonce, CByteArray input) throws Exception
+	{
+		return decryptXSalsa20Poly1305(key, nonce, 0, input, 0, input.length());
+	}
+	
+	
+	/** decrypts a CByteArray into a CByteArray with authenticated XSalsa20Poly1305 cipher */
+	public static CByteArray decryptXSalsa20Poly1305(CByteArray key, CByteArray nonce, int nonceOffset, CByteArray input, int inputOffset, int inputLength) throws Exception
 	{
 		if(key.length() != KEY_LENGTH_BYTES)
 		{
@@ -256,7 +270,7 @@ public class XSalsaTools
 			KeyParameter kp = new KeyParameter(key);
 			try
 			{
-				ParametersWithIV param = new ParametersWithIV(kp, nonce);
+				ParametersWithIV param = new ParametersWithIV(kp, nonce, nonceOffset, NONCE_LENGTH_BYTES);
 				try
 				{
 					engine.init(false, param);
@@ -294,11 +308,11 @@ public class XSalsaTools
 					subkey.zero();
 				}
 				
-				int len = input.length() - MAC_LENGTH_BYTES;
+				int len = inputLength - MAC_LENGTH_BYTES;
 				CByteArray out = new CByteArray(len);
 				
-				poly1305.update(input, 0, len);
-				engine.processBytes(input, 0, len, out, 0);
+				poly1305.update(input, inputOffset, len);
+				engine.processBytes(input, inputOffset, len, out, 0);
 				
 				// compute mac
 				CByteArray mac = new CByteArray(MAC_LENGTH_BYTES);
