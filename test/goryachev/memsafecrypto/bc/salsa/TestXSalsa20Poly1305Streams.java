@@ -24,20 +24,26 @@ public class TestXSalsa20Poly1305Streams
 	
 	
 	/*
-	TestXSalsa20Poly1305Streams.testEncryptionSpeed:42 total bytes: 100,000,000
-	TestXSalsa20Poly1305Streams.testEncryptionSpeed:65 BC encryption: 1.46
-	TestXSalsa20Poly1305Streams.testEncryptionSpeed:66 MemSafe encryption: 1.51
+	total bytes: 100,000,000
+	BC encryption: 1.21
+	MemSafe encryption: 1.49
 	*/
 	@Test
 	public void testEncryptionSpeed() throws Exception
+	{
+		// BC seems to have a cold start delay, measure on second pass
+		tspeed(false);
+		tspeed(true);
+	}
+	
+	
+	protected void tspeed(boolean showResult) throws Exception
 	{
 		int count = 10;
 		int size = 10_000_000;
 		
 		long timeBC = 0;
 		long timeMemSafe = 0;
-		
-		D.printf("total bytes: %,d", (size * count)); 
 		
 		for(int i=0; i<count; i++)
 		{
@@ -60,8 +66,16 @@ public class TestXSalsa20Poly1305Streams
 			timeMemSafe += (System.nanoTime() - start);
 		}
 		
-		D.printf("BC encryption: %.2f", timeBC / 1_000_000_000.0);
-		D.printf("MemSafe encryption: %.2f", timeMemSafe / 1_000_000_000.0);
+		if(showResult)
+		{
+			String res = 
+				"\n" +
+				String.format("total bytes: %,d", (size * count)) + "\n" +
+				String.format("BC encryption: %.2f", timeBC / 1_000_000_000.0) + "\n" +
+				String.format("MemSafe encryption: %.2f", timeMemSafe / 1_000_000_000.0);
+			
+			D.print(res);
+		}
 	}
 	
 	
