@@ -168,7 +168,7 @@ public final class CByteArray
 	}
 	
 	
-	public void copy(int destPos, byte[] src, int srcPos, int length)
+	public void copyFrom(byte[] src, int srcPos, int length, int destPos)
 	{
 		checkWriteable();
 		
@@ -180,7 +180,7 @@ public final class CByteArray
 	}
 	
 
-	public void copy(int destPos, CByteArray src, int srcPos, int length)
+	public void copyFrom(CByteArray src, int srcPos, int length, int destPos)
 	{
 		checkWriteable();
 		
@@ -289,5 +289,19 @@ public final class CByteArray
 		v++;
 		buffer.put(index, v);
 		return v;
+	}
+	
+	
+	public void setInt(int index, int value)
+	{
+		checkWriteable();
+		
+		buffer.putInt(index, value);
+	}
+	
+	
+	public int getInt(int index)
+	{
+		return buffer.getInt(index);
 	}
 }

@@ -15,6 +15,12 @@ public final class OpaqueBytes
 	}
 	
 	
+	public OpaqueBytes(CByteArray b, int offset, int len)
+	{
+		super(b, offset, len);
+	}
+	
+	
 	public OpaqueBytes()
 	{
 	}

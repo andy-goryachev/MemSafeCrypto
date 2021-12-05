@@ -33,6 +33,12 @@ public abstract class OpaqueMemObject
 	}
 	
 	
+	protected OpaqueMemObject(CByteArray b, int offset, int len)
+	{
+		setBytes(b, offset, len);
+	}
+	
+	
 	protected CByteArray encrypted()
 	{
 		return encrypted;
@@ -92,18 +98,26 @@ public abstract class OpaqueMemObject
 	}
 	
 	
-//	protected final void setBytes(CByteArray value, int off, int len)
-//	{
-//		try
-//		{
-//			encrypted = MemCrypt.encrypt(value);
-//		}
-//		catch(Exception e)
-//		{
-//			// should not happen
-//			throw new Error(e);
-//		}
-//	}
+	protected final void setBytes(CByteArray value, int off, int len)
+	{
+		CByteArray b = CByteArray.readOnly(value, off, len);
+		try
+		{
+			try
+			{
+				encrypted = MemCrypt.encrypt(b);
+			}
+			catch(Exception e)
+			{
+				// should not happen
+				throw new Error(e);
+			}
+		}
+		finally
+		{
+			b.zero();
+		}
+	}
 	
 	
 	public final String toString()

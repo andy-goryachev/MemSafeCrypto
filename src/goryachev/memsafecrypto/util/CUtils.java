@@ -191,13 +191,13 @@ public final class CUtils
 
 	public static void arraycopy(byte[] src, int srcPos, CByteArray dest, int destPos, int length)
 	{
-		dest.copy(destPos, src, srcPos, length);
+		dest.copyFrom(src, srcPos, length, destPos);
 	}
 
 
 	public static void arraycopy(CByteArray src, int srcPos, CByteArray dest, int destPos, int length)
 	{
-		dest.copy(destPos, src, srcPos, length);
+		dest.copyFrom(src, srcPos, length, destPos);
 	}
 	
 	

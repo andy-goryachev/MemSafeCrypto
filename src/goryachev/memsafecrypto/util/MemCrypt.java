@@ -51,7 +51,7 @@ public final class MemCrypt
 		int decryptedLength = data.length() - XSalsaTools.NONCE_LENGTH_BYTES;
 		
 		CByteArray nonce = new CByteArray(XSalsaTools.NONCE_LENGTH_BYTES);
-		nonce.copy(0, data, 0, nonce.length());
+		nonce.copyFrom(data, 0, nonce.length(), 0);
 		
 		CByteArray out = new CByteArray(decryptedLength);
 		
