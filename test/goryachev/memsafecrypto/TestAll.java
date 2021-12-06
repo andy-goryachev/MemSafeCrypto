@@ -20,6 +20,7 @@ public class TestAll
 		(
 			TestArgon2.class,
 			TestBlake2b.class,
+			TestCByteArrayOutputStream.class,
 			TestCCharArray.class,
 			TestMemCrypt.class,
 			TestScrypt.class,

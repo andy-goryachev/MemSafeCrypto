@@ -13,7 +13,7 @@ public class CByteArrayOutputStream
 	extends OutputStream
 	implements ICryptoZeroable
 {
-	private static final int MAX_SIZE = Integer.MAX_VALUE - 64;
+	public static final int MAX_SIZE = Integer.MAX_VALUE - 64;
 	private CByteArray buffer;
 	private int size;
 
@@ -45,7 +45,7 @@ public class CByteArrayOutputStream
 
 	private void grow(int requested)
 	{
-		if((requested < 0) || (requested >= MAX_SIZE))
+		if((requested < 0) || (requested > MAX_SIZE))
 		{
 			throw new OutOfMemoryError();
 		}
