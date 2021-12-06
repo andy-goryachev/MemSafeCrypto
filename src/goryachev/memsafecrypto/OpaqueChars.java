@@ -102,7 +102,7 @@ public final class OpaqueChars
 		}
 		finally
 		{
-			b.zero();
+			Crypto.zero(b);
 		}
 	}
 	

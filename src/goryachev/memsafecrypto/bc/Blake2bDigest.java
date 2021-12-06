@@ -355,7 +355,7 @@ public class Blake2bDigest
 			if(remainingLength < len)
 			{
 				// full buffer + at least 1 byte
-				System.arraycopy(message, offset, buffer, bufferPos, remainingLength);
+				CUtils.arraycopy(message, offset, buffer, bufferPos, remainingLength);
 				t0 += BLOCK_LENGTH_BYTES;
 				if(t0 == 0)
 				{
@@ -368,7 +368,7 @@ public class Blake2bDigest
 			}
 			else
 			{
-				System.arraycopy(message, offset, buffer, bufferPos, len);
+				CUtils.arraycopy(message, offset, buffer, bufferPos, len);
 				bufferPos += len;
 				return;
 			}

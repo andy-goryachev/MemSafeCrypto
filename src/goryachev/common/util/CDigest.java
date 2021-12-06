@@ -44,7 +44,7 @@ public class CDigest
 	}
 	
 	
-	public void updateByte(byte b)
+	public void update(byte b)
 	{
 		md.update(b);
 	}
@@ -135,5 +135,11 @@ public class CDigest
 	public byte[] digest()
 	{
 		return md.digest();
+	}
+	
+	
+	public void reset()
+	{
+		md.reset();
 	}
 }
