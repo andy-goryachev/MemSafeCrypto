@@ -9,7 +9,7 @@ import goryachev.memsafecrypto.util.DirectArrayBase;
 public class CCharArray
 	extends DirectArrayBase
 {
-	protected static final int BYTES_PER_CHAR = 2;
+	public static final int BYTES_PER_CHAR = 2;
 	
 	
 	public CCharArray(int capacity)

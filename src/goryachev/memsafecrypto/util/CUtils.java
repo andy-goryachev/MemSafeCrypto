@@ -1,13 +1,16 @@
 // Copyright © 2021 Andy Goryachev <andy@goryachev.com>
 package goryachev.memsafecrypto.util;
+import goryachev.common.util.CKit;
 import goryachev.memsafecrypto.CByteArray;
 import goryachev.memsafecrypto.CCharArray;
 import goryachev.memsafecrypto.CIntArray;
 import goryachev.memsafecrypto.CLongArray;
-import java.io.ByteArrayOutputStream;
+import goryachev.memsafecrypto.OpaqueChars;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.Charset;
 import java.security.SecureRandom;
 
 
@@ -34,6 +37,7 @@ public final class CUtils
 	}
 
 
+	/** do not use for secrets! */
 	public static byte[] toByteArray(String string)
 	{
 		byte[] bytes = new byte[string.length()];
@@ -428,5 +432,138 @@ public final class CUtils
 		}
 		
 		return (x == 0);
+	}
+	
+	
+	@Deprecated // leaks secrets in byte[]
+	public static byte[] charsToBytes(OpaqueChars input, Charset charset)
+	{
+		if(input == null)
+		{
+			return null;
+		}
+		
+		CCharArray cs = input.getChars();
+		try
+		{
+			CByteArray b = charsToBytes(cs, charset);
+			try
+			{
+				return b.toByteArray();
+			}
+			finally
+			{
+				b.zero();
+			}
+		}
+		finally
+		{
+			cs.zero();
+		}
+	}
+	
+	
+	public static CByteArray charsToBytes(CCharArray a)
+	{
+		if(a == null)
+		{
+			return null;
+		}
+		
+		int sz = a.length();
+		CByteArray b = new CByteArray(sz * CCharArray.BYTES_PER_CHAR);
+		for(int i=0; i<sz; i++)
+		{
+			char c = a.get(i);
+			b.buffer.putChar(i * CCharArray.BYTES_PER_CHAR, c);
+		}
+		return b;
+	}
+	
+	
+	public static CCharArray bytesToChars(CByteArray b)
+	{
+		if(b == null)
+		{
+			return null;
+		}
+		
+		int sz = b.length() / 2;
+		if((sz * 2) != b.length())
+		{
+			throw new IllegalArgumentException("length must be even: " + b.length());
+		}
+		
+		CCharArray a = new CCharArray(sz);
+		for(int i=0; i<sz; i++)
+		{
+			char c = b.buffer.getChar(i * 2);
+			a.set(i, c);
+		}
+		return a;
+	}
+
+
+	/** 
+	 * converts CCharArray into a CByteArray using the specified Charset.
+	 * due to limitations of Charset stream encoder which only works with Byte/CharBuffers,
+	 * the conversion is made one code point at a time.
+	 */
+	public static CByteArray charsToBytes(CCharArray chars, Charset charset)
+	{
+		int len = chars.length();
+		CByteArrayOutputStream out = new CByteArrayOutputStream(len * 4);
+		CharBuffer cbuf = CharBuffer.allocate(2);
+		try
+		{
+			for(int i=0; i<chars.length(); i++)
+			{
+				cbuf.clear();
+				char c = chars.get(i);
+				cbuf.append(c);
+				
+				if(Character.isHighSurrogate(c))
+				{
+					if(i + 1 < chars.length())
+					{
+						char c2 = chars.get(i + 1);
+						cbuf.append(c2);
+						i++;
+					}
+				}
+				
+				ByteBuffer bb = charset.encode(cbuf);
+				for(int j=0; j<bb.position(); j++)
+				{
+					byte b = bb.get(j);
+					out.write(b);
+					b = 0;
+				}
+			}
+			
+			return out.toCByteArray();
+		}
+		finally
+		{
+			CKit.close(out);
+			cbuf.clear();
+			cbuf.append('\u0000');
+			cbuf.append('\u0000');
+		}
+	}
+	
+
+	static int codePointAtImpl(char[] a, int index, int limit)
+	{
+		char c1 = a[index];
+		if(Character.isHighSurrogate(c1) && ++index < limit)
+		{
+			char c2 = a[index];
+			if(Character.isLowSurrogate(c2))
+			{
+				return Character.toCodePoint(c1, c2);
+			}
+		}
+		return c1;
 	}
 }

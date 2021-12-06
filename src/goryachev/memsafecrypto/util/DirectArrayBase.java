@@ -22,13 +22,18 @@ public class DirectArrayBase
 	
 	protected DirectArrayBase(DirectArrayBase src)
 	{
-		int sz = src.sizeInBytes();
-		buffer = ByteBuffer.allocateDirect(sz);
+		this(src, 0, src.sizeInBytes());
+	}
+	
+	
+	protected DirectArrayBase(DirectArrayBase src, int offset, int length)
+	{
+		buffer = ByteBuffer.allocateDirect(length);
 		
 		// copy without affecting the source buffer position
-		for(int i=0; i<sz; i++)
+		for(int i=0; i<length; i++)
 		{
-			byte v = src.buffer.get(i);
+			byte v = src.buffer.get(i + offset);
 			buffer.put(i, v);
 		}
 	}

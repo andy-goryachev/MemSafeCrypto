@@ -81,7 +81,7 @@ public final class OpaqueChars
 	
 	public final void set(CCharArray cs)
 	{
-		CByteArray b = CByteArray.charsToBytes(cs);
+		CByteArray b = CUtils.charsToBytes(cs);
 		try
 		{
 			setBytes(b);
@@ -98,7 +98,7 @@ public final class OpaqueChars
 		CByteArray b = getCByteArray();
 		try
 		{
-			return CByteArray.bytesToChars(b);
+			return CUtils.bytesToChars(b);
 		}
 		finally
 		{
