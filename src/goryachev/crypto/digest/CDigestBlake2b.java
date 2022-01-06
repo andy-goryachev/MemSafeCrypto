@@ -1,4 +1,4 @@
-// Copyright © 2021 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2021-2022 Andy Goryachev <andy@goryachev.com>
 package goryachev.crypto.digest;
 import goryachev.common.util.api.IMessageDigestBlake2b;
 import org.bouncycastle.crypto.digests.Blake2bDigest;

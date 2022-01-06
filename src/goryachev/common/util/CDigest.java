@@ -1,4 +1,4 @@
-// Copyright © 2012-2021 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2012-2022 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import goryachev.common.util.api.IMessageDigest;
 import goryachev.common.util.api.IMessageDigestBlake2b;
