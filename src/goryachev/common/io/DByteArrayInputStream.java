@@ -3,10 +3,13 @@ package goryachev.common.io;
 import java.io.ByteArrayInputStream;
 
 
-public class CByteArrayInputStream
+/**
+ * ByteArrayInputStream with getPosition();
+ */
+public class DByteArrayInputStream
 	extends ByteArrayInputStream
 {
-	public CByteArrayInputStream(byte[] b)
+	public DByteArrayInputStream(byte[] b)
 	{
 		super(b);
 	}
