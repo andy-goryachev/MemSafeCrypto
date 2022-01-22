@@ -136,4 +136,29 @@ public class CCharArray
 		
 		return rv;
 	}
+	
+	
+	public boolean sameContentAs(CCharArray a)
+	{
+		if(a == null)
+		{
+			return false;
+		}
+		
+		int sz = length();
+		if(sz != a.length())
+		{
+			return false;
+		}
+		
+		for(int i=0; i<sz; i++)
+		{
+			char c = get(i);
+			if(c != a.get(i))
+			{
+				return false;
+			}
+		}
+		return true;
+	}
 }
