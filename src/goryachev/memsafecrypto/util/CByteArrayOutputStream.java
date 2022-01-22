@@ -30,7 +30,7 @@ public class CByteArrayOutputStream
 
 	public CByteArrayOutputStream()
 	{
-		this(128);
+		this(256);
 	}
 
 
@@ -109,5 +109,6 @@ public class CByteArrayOutputStream
 
 	public void zero()
 	{
+		buffer.zero();
 	}
 }
