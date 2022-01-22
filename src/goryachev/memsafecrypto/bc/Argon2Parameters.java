@@ -3,6 +3,9 @@ import goryachev.memsafecrypto.CByteArray;
 import goryachev.memsafecrypto.Crypto;
 
 
+/**
+ * @see https://www.rfc-editor.org/rfc/rfc9106.html
+ */
 public class Argon2Parameters
 {
 	public static final int ARGON2_d = 0x00;
@@ -29,6 +32,9 @@ public class Argon2Parameters
 	private final CharToByteConverter converter;
 	
 
+	/**
+	 * @param version: either ARGON2_VERSION_10 or ARGON2_VERSION_13
+	 */
 	protected Argon2Parameters(int type, CByteArray salt, CByteArray secret, CByteArray additional, int iterations, int memory, int lanes, int version, CharToByteConverter converter)
 	{
 		this.salt = CByteArray.readOnly(salt);
@@ -126,12 +132,16 @@ public class Argon2Parameters
 		private CharToByteConverter converter = PasswordConverter.UTF8;
 
 		
+		/** creates a Builder with type ARGON2_i */
 		public Builder()
 		{
 			this(DEFAULT_TYPE);
 		}
 
 
+		/**
+		 * @param type - either ARGON2_d, ARGON2_i, or ARGON2_id
+		 */
 		public Builder(int type)
 		{
 			this.type = type;
@@ -142,6 +152,11 @@ public class Argon2Parameters
 		}
 
 
+		/**
+		 * @param parallelism - degree of parallelism p determines how many independent (but synchronizing)
+		 * computational chains (lanes) can be run. 
+		 * It MUST be an integer value from 1 to 2^(24)-1.
+		 */
 		public Builder withParallelism(int parallelism)
 		{
 			this.lanes = parallelism;
@@ -149,6 +164,12 @@ public class Argon2Parameters
 		}
 
 
+		/**
+		 * @param salt - Nonce S, which is a salt for password hashing applications. 
+		 * It MUST have a length not greater than 2^(32)-1 bytes. 
+		 * 16 bytes is RECOMMENDED for password hashing. 
+		 * The salt SHOULD be unique for each password.
+		 */
 		public Builder withSalt(CByteArray salt)
 		{
 			this.salt = salt;
@@ -156,6 +177,10 @@ public class Argon2Parameters
 		}
 
 
+		/**
+		 * @param secret - Secret value K is OPTIONAL. 
+		 * If used, it MUST have a length not greater than 2^(32)-1 bytes.
+		 */
 		public Builder withSecret(CByteArray secret)
 		{
 			this.secret = secret;
@@ -163,6 +188,10 @@ public class Argon2Parameters
 		}
 
 
+		/**
+		 * @param addiitonal - Associated data X is OPTIONAL.
+		 * If used, it MUST have a length not greater than 2^(32)-1 bytes.
+		 */
 		public Builder withAdditional(CByteArray additional)
 		{
 			this.additional = additional;
@@ -170,6 +199,10 @@ public class Argon2Parameters
 		}
 
 
+		/**
+		 * @param iterations - Number of passes t (used to tune the running time independently of the memory size)
+		 * MUST be an integer number from 1 to 2^(32)-1.
+		 */
 		public Builder withIterations(int iterations)
 		{
 			this.iterations = iterations;
@@ -177,6 +210,10 @@ public class Argon2Parameters
 		}
 
 
+		/**
+		 * @param memory - Memory size m MUST be an integer number of kibibytes from 8*p to 2^(32)-1.
+		 * The actual number of blocks is m', which is m rounded down to the nearest multiple of 4*p.
+		 */
 		public Builder withMemoryAsKB(int memory)
 		{
 			this.memory = memory;
@@ -191,6 +228,7 @@ public class Argon2Parameters
 		}
 
 
+		/** @param version - either ARGON2_VERSION_10 or ARGON2_VERSION_13 (default) */
 		public Builder withVersion(int version)
 		{
 			this.version = version;
