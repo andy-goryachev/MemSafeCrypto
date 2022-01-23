@@ -82,16 +82,17 @@ public class TestArgon2
 		
 		int[] memKB =
 		{
-			64_000,
-			512_000,
-			2_000_000
+			256_000
+//			64_000,
+//			512_000,
+//			2_000_000
 		};
 		
 		int[] lanes =
 		{
-			1,
+//			1,
 			4,
-			48 // my machine has 24 cores 
+//			48 // my machine has 24 cores 
 		};
 		
 		int[] iterations =

@@ -63,6 +63,7 @@ public final class CKit
 	private static final long MS_IN_A_MINUTE = 60000L;
 	private static final long MS_IN_AN_HOUR = 3600000L;
 	private static final long MS_IN_A_DAY = 86400000L;
+	private static final double NANOSECONDS_IN_A_SECOND = 1_000_000_000.0;
 	
 	
 	public static void close(Closeable x)
@@ -2530,10 +2531,10 @@ public final class CKit
 	}
 	
 	
-	/** returns elapsed time in milliseconds, since the last time in nanoseconds, as returned by System.nanoTime() */
-	public static long elapsed(long startNanoseconds)
+	/** returns elapsed time in seconds, since the last time in nanoseconds, as returned by System.nanoTime() */
+	public static double elapsedSeconds(long startNanoseconds)
 	{
 		long t = System.nanoTime() - startNanoseconds;
-		return (t / 1_000_000L);
+		return (t / NANOSECONDS_IN_A_SECOND);
 	}
 }

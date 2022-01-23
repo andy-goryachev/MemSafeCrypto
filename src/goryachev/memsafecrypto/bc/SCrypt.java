@@ -8,8 +8,8 @@ import goryachev.memsafecrypto.util.CUtils;
 /**
  * Implementation of the scrypt a password-based key derivation function.
  * <p>
- * Scrypt was created by Colin Percival and is specified in <a
- * href="https://tools.ietf.org/html/rfc7914">RFC 7914 - The scrypt Password-Based Key Derivation Function</a>
+ * Scrypt was created by Colin Percival and is specified in 
+ * <a href="https://tools.ietf.org/html/rfc7914">RFC 7914 - The scrypt Password-Based Key Derivation Function</a>
  */
 public class SCrypt
 {
