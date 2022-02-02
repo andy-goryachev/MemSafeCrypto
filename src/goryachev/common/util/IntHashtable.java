@@ -399,7 +399,7 @@ public class IntHashtable<T>
 			{
 				Entry<Object> e = entry;
 				entry = e.next;
-				return keys ? new Integer(e.key) : e.value;
+				return keys ? Integer.valueOf(e.key) : e.value;
 			}
 			
 			throw new NoSuchElementException("IntHashtableEnumerator");

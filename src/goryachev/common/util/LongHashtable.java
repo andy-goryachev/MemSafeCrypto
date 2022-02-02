@@ -395,7 +395,7 @@ public class LongHashtable
 			{
 				Entry e = entry;
 				entry = e.next;
-				return keys ? new Long(e.key) : e.value;
+				return keys ? Long.valueOf(e.key) : e.value;
 			}
 
 			throw new NoSuchElementException("Enumerator");
