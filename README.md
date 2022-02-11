@@ -5,11 +5,13 @@ instead of primitive arrays, to avoid leaving sensitive data in memory due to in
 copying and garbage compactification done by the JVM.
 
 
+
 ## Summary of Changes
 
-- introducted ICryptoZeroable interface
+- introducted [ICryptoZeroable](src/goryachev/memsafecrypto/ICryptoZeroable.java) interface
 - created CByteArray, CIntArray, and CLongArray classes based on DirectByteBuffer
 - modified BouncyCastle classes to use new array types
+
 
 
 ## Supported Primitives
@@ -25,11 +27,23 @@ copying and garbage compactification done by the JVM.
 - XSalsa20Engine
 
 
+
 ## Original Code
 
 This project is based on BouncyCastle release 1.69:
 
 https://github.com/bcgit/bc-java
+
+
+
+## Projects That Use MemSafeCrypto
+
+[SecDB](https://github.com/andy-goryachev/SecDB)
+
+[Passwørd Safe](https://github.com/andy-goryachev/PasswordSafe)
+
+[Access Panel](https://github.com/andy-goryachev/AccessPanelPublic)
+
 
 
 ## License
