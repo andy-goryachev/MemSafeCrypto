@@ -141,7 +141,8 @@ public class ObjectCounter<T>
 	
 	public int hashCode()
 	{
-		return FH.hash(ObjectCounter.class, counts);
+		int h = FH.hash(ObjectCounter.class);
+		return FH.hash(h, counts);
 	}
 
 

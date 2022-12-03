@@ -2,6 +2,7 @@
 package goryachev.common.util;
 import goryachev.common.util.api.IMessageDigest;
 import goryachev.common.util.api.IMessageDigestBlake2b;
+import java.io.InputStream;
 
 
 /** A Message Digest with convenience methods. */
@@ -141,5 +142,32 @@ public class CDigest
 	public void reset()
 	{
 		md.reset();
+	}
+	
+	
+	public byte[] compute(byte[] bytes)
+	{
+		update(bytes);
+		return digest();
+	}
+	
+	
+	public byte[] compute(InputStream in) throws Exception
+	{
+		byte[] buf = new byte[4096];
+		for(;;)
+		{
+			CKit.checkCancelled();
+			
+			int rd = in.read(buf);
+			if(rd < 0)
+			{
+				return digest();
+			}
+			else if(rd > 0)
+			{
+				update(buf, 0, rd);
+			}
+		}
 	}
 }

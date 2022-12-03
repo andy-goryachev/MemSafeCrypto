@@ -52,7 +52,8 @@ public class JavaVersion
 	
 	public int hashCode()
 	{
-		return FH.hash(JavaVersion.class, version);
+		int h = FH.hash(JavaVersion.class);
+		return FH.hash(h, version);
 	}
 	
 	

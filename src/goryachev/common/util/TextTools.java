@@ -1337,4 +1337,55 @@ public class TextTools
 		}
 		return -1;
 	}
+	
+	
+	public static boolean isWhiteSpaceOrCtrl(char c)
+	{
+		if(c <= ' ')
+		{
+			return true;
+		}
+		return isWhitespace(c);
+	}
+	
+	
+	/** trims, replaces any repeating control or whitespace characters with a single space */ 
+	public static String toSingleLine(String text)
+	{
+		if(text == null)
+		{
+			return null;
+		}
+		
+		int len = text.length();
+		SB sb = new SB(len);
+		
+		boolean white = true;
+		for(int i=0; i<len; i++)
+		{
+			char c = text.charAt(i);
+			if(isWhiteSpaceOrCtrl(c))
+			{
+				if(!white)
+				{
+					white = true;
+				}
+				continue;
+			}
+			else
+			{
+				if(white)
+				{
+					if(sb.length() > 0)
+					{
+						sb.append(' ');
+					}
+				}
+				white = false;
+				sb.append(c);
+			}
+		}
+		
+		return sb.toString();
+	}
 }

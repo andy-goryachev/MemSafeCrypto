@@ -4,7 +4,6 @@
 /user.home*/
 ~*
 /*.jar
-.settings/
 /*.log
 /*.conf
 /*.rtf

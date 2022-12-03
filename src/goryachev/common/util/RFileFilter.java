@@ -53,7 +53,9 @@ public class RFileFilter
 	
 	public int hashCode()
 	{
-		int h = FH.hash(RFileFilter.class, excludePatterns, includePatterns);
+		int h = FH.hash(RFileFilter.class);
+		h = FH.hash(h, excludePatterns);
+		h = FH.hash(h, includePatterns);
 		h = FH.hash(h, ignoreHidden);
 		return FH.hash(h, ignoreSystem); 
 	}
