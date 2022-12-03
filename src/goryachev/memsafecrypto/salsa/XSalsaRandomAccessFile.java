@@ -148,6 +148,58 @@ public class XSalsaRandomAccessFile
 	{
 		write(buf, 0, buf.length);
 	}
+	
+	
+	/**
+	 * Writes bytes to the file as is, unencryped.
+	 * This method does advance the position in the encryption engine,
+	 * unless the write operation throws an exception.
+	 * When that happens, the position is reset to the value it had
+	 * prior to this call.
+	 */ 
+	public void writeUnencrypted(byte[] buf) throws IOException
+	{
+		long pos = raf.getFilePointer();
+		try
+		{
+			raf.write(buf);
+			pos = -1L;
+			engine.skip(buf.length);
+		}
+		finally
+		{
+			if(pos >= 0L)
+			{
+				seek(pos);
+			}
+		}		
+	}
+	
+
+	/**
+	 * Reads bytes from the file as is, unencrypted.
+	 * This method does advance the position in the encryption engine,
+	 * unless the read operation throws an exception.
+	 * When that happens, the position is reset to the value it had
+	 * prior to this call.
+	 */
+	public void readUnencrypted(byte[] buf) throws IOException
+	{
+		long pos = raf.getFilePointer();
+		try
+		{
+			raf.readFully(buf);
+			pos = -1L;
+			engine.skip(buf.length);
+		}
+		finally
+		{
+			if(pos >= 0L)
+			{
+				seek(pos);
+			}
+		}
+	}
 
 
 	public void close() throws IOException
