@@ -38,11 +38,13 @@ https://github.com/bcgit/bc-java
 
 ## Projects That Use MemSafeCrypto
 
-[SecDB](https://github.com/andy-goryachev/SecDB)
+[Access Panel](https://github.com/andy-goryachev/AccessPanelPublic)
+
+[DirCrypt](https://github.com/andy-goryachev/DirCrypt)
 
 [Passwørd Safe](https://github.com/andy-goryachev/PasswordSafe)
 
-[Access Panel](https://github.com/andy-goryachev/AccessPanelPublic)
+[SecDB](https://github.com/andy-goryachev/SecDB)
 
 
 
