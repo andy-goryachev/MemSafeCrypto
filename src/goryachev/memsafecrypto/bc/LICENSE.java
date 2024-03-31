@@ -1,5 +1,5 @@
 package goryachev.memsafecrypto.bc;
-import org.bouncycastle.util.Strings;
+import goryachev.memsafecrypto.bc.util.Strings;
 
 
 /**
