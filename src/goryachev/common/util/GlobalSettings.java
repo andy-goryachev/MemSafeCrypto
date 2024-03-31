@@ -1,4 +1,4 @@
-// Copyright © 2016-2022 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2024 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import java.io.File;
 import java.util.Collection;
@@ -10,28 +10,10 @@ import java.util.List;
  */
 public class GlobalSettings
 {
-	/** settings storage interface */
-	public interface Provider
-	{
-		public String getString(String key);
-		
-		public void setString(String key, String val);
-		
-		public SStream getStream(String key);
-		
-		public void setStream(String key, SStream s);
-		
-		public List<String> getKeys();
-		
-		public void save();
-	}
-	
-	//
-	
-	private static Provider provider;
+	private static GlobalSettingsProvider provider;
 	
 	
-	public static void setProvider(Provider p)
+	public static void setProvider(GlobalSettingsProvider p)
 	{
 		provider = p;
 	}
@@ -46,7 +28,7 @@ public class GlobalSettings
 	}
 	
 	
-	private static Provider provider()
+	private static GlobalSettingsProvider provider()
 	{
 		if(provider == null)
 		{
@@ -66,8 +48,39 @@ public class GlobalSettings
 	{
 		return provider().getKeys();
 	}
+
+
+	public static void setBoolean(String key, boolean value)
+	{
+		set(key, String.valueOf(value));
+	}
+
+
+	public static Boolean getBoolean(String key)
+	{
+		String v = getString(key);
+		if(v != null)
+		{
+			if("true".equals(v))
+			{
+				return Boolean.TRUE;
+			}
+			else if("false".equals(v))
+			{
+				return Boolean.FALSE;
+			}
+		}
+		return null;
+	}
 	
 	
+	public static boolean getBoolean(String key, boolean defaultValue)
+	{
+		Boolean b = getBoolean(key);
+		return b == null ? defaultValue : b;
+	}
+
+
 	public static String getString(String key)
 	{
 		return provider().getString(key);

@@ -1,4 +1,4 @@
-// Copyright © 2012-2022 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2012-2024 Andy Goryachev <andy@goryachev.com>
 package goryachev.crypto;
 import goryachev.common.util.CKit;
 import goryachev.common.util.WeakList;
@@ -27,7 +27,8 @@ public abstract class EntropyGathererBase
 	}
 	
 	//
-	
+
+	// TODO do we need to synchronize the access to it?
 	protected final DigestRandomGenerator random;
 	private final SecureRandomSpi spi;
 	private final Provider provider;
@@ -135,7 +136,7 @@ public abstract class EntropyGathererBase
 	public final void addSeedMaterial(String s)
 	{
 		byte[] b = s.getBytes(CKit.CHARSET_UTF8);
-		random.addSeedMaterial(b);
+		addSeedMaterial(b);
 	}
 	
 	

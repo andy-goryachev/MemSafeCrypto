@@ -1,4 +1,4 @@
-// Copyright © 2020-2022 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2020-2024 Andy Goryachev <andy@goryachev.com>
 package goryachev.memsafecrypto.salsa;
 import goryachev.common.io.CIOTools;
 import goryachev.common.util.CKit;
@@ -100,7 +100,49 @@ public class XSalsaRandomAccessFile
 		} while(read < len);
 	}
 
+	
+	public int readByte() throws IOException
+	{
+		for(;;)
+		{
+			int rv = read(databuf, 0, 1);
+			if(rv < 1)
+			{
+				return -1;
+			}
+			else if(rv == 0)
+			{
+				continue;
+			}
+			else
+			{
+				return databuf[0] & 0xff;
+			}
+		}
+	}
+	
+	
+	public void writeByte(int x) throws IOException
+	{
+		databuf[0] = (byte)x;
+		write(databuf, 0, 1);
+	}
+	
 
+	public int readInt() throws IOException
+	{
+		readFully(databuf, 0, 4);
+		return CIOTools.bytesToInt(databuf);
+	}
+	
+	
+	public void writeInt(int x) throws IOException
+	{
+		CIOTools.intToBytes(databuf, x);
+		write(databuf, 0, 4);
+	}
+	
+	
 	public long readLong() throws IOException
 	{
 		readFully(databuf, 0, 8);

@@ -1,4 +1,4 @@
-// Copyright © 2022 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2022-2024 Andy Goryachev <andy@goryachev.com>
 package goryachev.memsafecrypto;
 import goryachev.memsafecrypto.util.DirectArrayBase;
 
