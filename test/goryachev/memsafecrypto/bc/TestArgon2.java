@@ -28,11 +28,11 @@ public class TestArgon2
 	{
 		switch(x)
 		{
-		case Argon2Parameters.ARGON2_d:
+		case org.bouncycastle.crypto.params.Argon2Parameters.ARGON2_d:
 			return "argon2d";
-		case Argon2Parameters.ARGON2_i:
+		case org.bouncycastle.crypto.params.Argon2Parameters.ARGON2_i:
 			return "argon2i";
-		case Argon2Parameters.ARGON2_id:
+		case org.bouncycastle.crypto.params.Argon2Parameters.ARGON2_id:
 			return "argon2id";
 		}
 		throw new Error("?" + x);
@@ -75,9 +75,9 @@ public class TestArgon2
 	{
 		int[] types = 
 		{
-			Argon2Parameters.ARGON2_d,
-			Argon2Parameters.ARGON2_i,
-			Argon2Parameters.ARGON2_id
+			org.bouncycastle.crypto.params.Argon2Parameters.ARGON2_d,
+			org.bouncycastle.crypto.params.Argon2Parameters.ARGON2_i,
+			org.bouncycastle.crypto.params.Argon2Parameters.ARGON2_id
 		};
 		
 		int[] memKB =
@@ -153,8 +153,8 @@ public class TestArgon2
 			long elapsed0 = System.nanoTime() - start0;
 			
 			// memsafe
-			goryachev.memsafecrypto.bc.Argon2Parameters mp = new goryachev.memsafecrypto.bc.Argon2Parameters.Builder(type).
-				withVersion(goryachev.memsafecrypto.bc.Argon2Parameters.ARGON2_VERSION_13).
+			goryachev.memsafecrypto.bc.crypto.params.Argon2Parameters mp = new goryachev.memsafecrypto.bc.crypto.params.Argon2Parameters.Builder(type).
+				withVersion(goryachev.memsafecrypto.bc.crypto.params.Argon2Parameters.ARGON2_VERSION_13).
 				withMemoryAsKB(memKB).
 				withParallelism(lanes).
 				withIterations(iterations).
@@ -164,7 +164,7 @@ public class TestArgon2
 			CByteArray res = new CByteArray(256/8);
 			long start = System.nanoTime();
 			
-			goryachev.memsafecrypto.bc.Argon2BytesGenerator ms = new goryachev.memsafecrypto.bc.Argon2BytesGenerator();
+			goryachev.memsafecrypto.bc.crypto.generators.Argon2BytesGenerator ms = new goryachev.memsafecrypto.bc.crypto.generators.Argon2BytesGenerator();
 			ms.init(mp);
 			ms.generateBytes(pw, res);
 			

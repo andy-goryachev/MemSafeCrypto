@@ -31,17 +31,17 @@ public class TestSHA256Digest
 			byte[] expected = new byte[bits/8];
 			bc.doFinal(expected, 0);
 
-			goryachev.memsafecrypto.bc.SHA256Digest b1 = new goryachev.memsafecrypto.bc.SHA256Digest();
+			goryachev.memsafecrypto.bc.crypto.digests.SHA256Digest b1 = new goryachev.memsafecrypto.bc.crypto.digests.SHA256Digest();
 			b1.update(data, 0, data.length);
 			byte[] r1 = new byte[bits/8];
 			b1.doFinal(r1, 0);
 			
-			goryachev.memsafecrypto.bc.SHA256Digest b2 = new goryachev.memsafecrypto.bc.SHA256Digest();
+			goryachev.memsafecrypto.bc.crypto.digests.SHA256Digest b2 = new goryachev.memsafecrypto.bc.crypto.digests.SHA256Digest();
 			b2.update(data, 0, data.length);
 			CByteArray r2 = new CByteArray(bits/8);
 			b2.doFinal(r2, 0);
 			
-			goryachev.memsafecrypto.bc.SHA256Digest b3 = new goryachev.memsafecrypto.bc.SHA256Digest();
+			goryachev.memsafecrypto.bc.crypto.digests.SHA256Digest b3 = new goryachev.memsafecrypto.bc.crypto.digests.SHA256Digest();
 			b3.update(data2, 0, data2.length());
 			CByteArray r3 = new CByteArray(bits/8);
 			b3.doFinal(r3, 0);

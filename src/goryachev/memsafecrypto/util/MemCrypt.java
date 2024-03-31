@@ -1,7 +1,7 @@
 // Copyright © 2011-2024 Andy Goryachev <andy@goryachev.com>
 package goryachev.memsafecrypto.util;
 import goryachev.memsafecrypto.CByteArray;
-import goryachev.memsafecrypto.bc.Blake2bDigest;
+import goryachev.memsafecrypto.bc.crypto.digests.Blake2bDigest;
 import goryachev.memsafecrypto.salsa.XSalsaTools;
 import java.security.SecureRandom;
 

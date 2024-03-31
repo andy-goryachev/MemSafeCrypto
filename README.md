@@ -27,6 +27,13 @@ copying and garbage compactification done by the JVM.
 - XSalsa20Engine
 
 
+## Dependencies
+
+None.
+
+(Bouncycastle library is used for tests only).
+
+
 
 ## Original Code
 

@@ -49,7 +49,7 @@ public class TestScrypt
 			byte[] expected = org.bouncycastle.crypto.generators.SCrypt.generate(pass, salt, N, r, p, dkLen);
 			
 			// memsafe
-			CByteArray res = goryachev.memsafecrypto.bc.SCrypt.generate(pw, sa, N, r, p, dkLen);
+			CByteArray res = goryachev.memsafecrypto.bc.crypto.generators.SCrypt.generate(pw, sa, N, r, p, dkLen);
 			
 			TF.eq(res.toByteArray(), expected);
 		}

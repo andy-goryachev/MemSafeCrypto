@@ -1,7 +1,7 @@
 // Copyright © 2021-2024 Andy Goryachev <andy@goryachev.com>
 package goryachev.memsafecrypto;
-import goryachev.memsafecrypto.bc.Blake2bDigest;
-import goryachev.memsafecrypto.bc.DigestRandomGenerator;
+import goryachev.memsafecrypto.bc.crypto.digests.Blake2bDigest;
+import goryachev.memsafecrypto.bc.crypto.prng.DigestRandomGenerator;
 import java.security.Provider;
 import java.security.SecureRandom;
 import java.security.SecureRandomSpi;

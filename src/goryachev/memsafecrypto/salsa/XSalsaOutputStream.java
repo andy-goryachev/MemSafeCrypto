@@ -4,9 +4,9 @@ import goryachev.common.io.CIOTools;
 import goryachev.common.util.CKit;
 import goryachev.memsafecrypto.CByteArray;
 import goryachev.memsafecrypto.Crypto;
-import goryachev.memsafecrypto.bc.KeyParameter;
-import goryachev.memsafecrypto.bc.ParametersWithIV;
-import goryachev.memsafecrypto.bc.XSalsa20Engine;
+import goryachev.memsafecrypto.bc.crypto.engines.XSalsa20Engine;
+import goryachev.memsafecrypto.bc.crypto.params.KeyParameter;
+import goryachev.memsafecrypto.bc.crypto.params.ParametersWithIV;
 import java.io.IOException;
 import java.io.OutputStream;
 

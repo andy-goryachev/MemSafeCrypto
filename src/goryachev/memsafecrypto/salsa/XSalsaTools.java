@@ -1,10 +1,10 @@
 // Copyright © 2021-2024 Andy Goryachev <andy@goryachev.com>
 package goryachev.memsafecrypto.salsa;
 import goryachev.memsafecrypto.CByteArray;
-import goryachev.memsafecrypto.bc.KeyParameter;
-import goryachev.memsafecrypto.bc.ParametersWithIV;
-import goryachev.memsafecrypto.bc.Poly1305;
-import goryachev.memsafecrypto.bc.XSalsa20Engine;
+import goryachev.memsafecrypto.bc.crypto.engines.XSalsa20Engine;
+import goryachev.memsafecrypto.bc.crypto.macs.Poly1305;
+import goryachev.memsafecrypto.bc.crypto.params.KeyParameter;
+import goryachev.memsafecrypto.bc.crypto.params.ParametersWithIV;
 import goryachev.memsafecrypto.util.CUtils;
 
 
