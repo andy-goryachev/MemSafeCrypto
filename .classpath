@@ -5,7 +5,7 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/bouncycastle/bcprov-jdk15on-169.jar" sourcepath="lib/bouncycastle/lcrypto-jdk15on-169.zip"/>
+	<classpathentry kind="lib" path="lib/bouncycastle/bcprov-jdk18on-177.jar" sourcepath="lib/bouncycastle/lcrypto-jdk18on-177.zip"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="output" path="out"/>

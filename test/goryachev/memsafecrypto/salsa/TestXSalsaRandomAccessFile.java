@@ -3,7 +3,7 @@ package goryachev.memsafecrypto.salsa;
 import goryachev.common.test.TF;
 import goryachev.common.test.Test;
 import goryachev.common.util.CKit;
-import goryachev.common.util.D;
+import goryachev.common.util.Hex;
 import goryachev.memsafecrypto.CByteArray;
 import goryachev.memsafecrypto.CRandom;
 import java.io.File;
@@ -104,7 +104,7 @@ public class TestXSalsaRandomAccessFile
 	{
 		File f = File.createTempFile("DirCrypt_TestFileIO", null);
 		f.deleteOnExit();
-		D.print(f);
+		TF.print(f);
 		
 		CByteArray key = genBytes(XSalsaTools.KEY_LENGTH_BYTES);
 		CByteArray iv = genBytes(XSalsaTools.NONCE_LENGTH_BYTES);
@@ -135,10 +135,10 @@ public class TestXSalsaRandomAccessFile
 			CKit.close(xf);
 		}
 		
-		D.print("len=", f.length());
+		TF.print("len=", f.length());
 		byte[] b = CKit.readBytes(f);
 		
-		D.dump(b);
+		TF.print(Hex.toHexStringASCII(b));
 	}
 
 
